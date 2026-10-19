@@ -1851,7 +1851,18 @@ function stayFoodDropdown(event) {
 
 document.getElementById("timeline").addEventListener("click", (e) => {
   const btn = e.target.closest(".food-toggle");
-  if (!btn) return;
+  if (!btn) {
+    // Clicked outside any food toggle — close all open dropdowns
+    document.querySelectorAll(".food-dropdown:not([hidden])").forEach(d => {
+      d.hidden = true;
+      const b = d.previousElementSibling;
+      b.setAttribute("aria-expanded", "false");
+      b.querySelector(".chev").textContent = "▾";
+      d.closest(".day-card")?.classList.remove("food-open");
+      d.closest("article.day")?.classList.remove("food-open");
+    });
+    return;
+  }
   const dd = btn.nextElementSibling;
   const day = btn.closest("article.day");
   const open = dd.hidden;
@@ -1929,12 +1940,25 @@ function renderTimeline() {
 
 
             const reservationButton =
-              event[6]
+              event[2] === "Stay"
                 ? `
                   <button
                     class="reserve"
                     type="button"
                     data-title="${esc(cleanTitle(event[3]))}"
+                    data-details="${esc(event[4] || "")}"
+                    data-numbers="${esc(event[6] || "")}"
+                  >
+                    🔑 Reservations
+                  </button>
+                `
+                : event[6]
+                ? `
+                  <button
+                    class="reserve"
+                    type="button"
+                    data-title="${esc(cleanTitle(event[3]))}"
+                    data-details=""
                     data-numbers="${esc(event[6])}"
                   >
                     🔑 Reservations
@@ -1944,8 +1968,10 @@ function renderTimeline() {
 
 
             const detail =
-              event[4] &&
-              !hidden.has(event[4])
+              event[2] === "Stay"
+                ? ""
+                : event[4] &&
+                  !hidden.has(event[4])
 
                 ? `
                   <p class="detail">
@@ -2088,7 +2114,8 @@ function renderTimeline() {
 
         openModal(
           button.dataset.title,
-          button.dataset.numbers
+          button.dataset.details || "",
+          button.dataset.numbers || ""
         );
 
       });
@@ -2102,17 +2129,24 @@ const modal =
   document.getElementById("modal");
 
 
-function openModal(title, numbers) {
+function openModal(title, details, numbers) {
 
   document.getElementById("modalTitle")
     .textContent = title;
 
-
-  document.getElementById("modalNumbers")
-    .innerHTML = numbers
+  let html = "";
+  if (details) {
+    html += esc(details) + "<br><br>";
+  }
+  if (numbers) {
+    html += numbers
       .split("|")
       .map(esc)
       .join("<br>");
+  }
+
+  document.getElementById("modalNumbers")
+    .innerHTML = html;
 
 
   modal.showModal();
