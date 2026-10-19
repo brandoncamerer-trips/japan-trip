@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Japan Journey 2026</name>
+    <description>Sequim team Japan mission trip, Nov 3–13 2026</description>
+    <Placemark>
+      <name>1. Tokyo</name>
+      <description>Nov 4–6 · Nov 12–13 — Hotel Metropolitan Haneda</description>
+      <Point><coordinates>139.7798,35.5494,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>2. Yugawara</name>
+      <description>Nov 6–7 — Ryokan Uohan (Hakone area)</description>
+      <Point><coordinates>139.1006,35.1431,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>3. Nara</name>
+      <description>Nov 7–9 — APA Hotel Kintetsu Nara Ekimae</description>
+      <Point><coordinates>135.8342,34.7037,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>4. Nagoya</name>
+      <description>Nov 9–11 — Comfort Hotel Nagoya Shinkansenguchi</description>
+      <Point><coordinates>136.8815,35.1709,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>5. Toyohashi</name>
+      <description>Nov 11–12 — Hotel Arc Riche Toyohashi</description>
+      <Point><coordinates>137.3834,34.7657,0</coordinates></Point>
+    </Placemark>
+    <Placemark>
+      <name>6. Saitama</name>
+      <description>Nov 12 (day visit) — Romulos, then Pastor Mita</description>
+      <Point><coordinates>139.6455,35.8616,0</coordinates></Point>
+    </Placemark>
+  </Document>
+</kml>
