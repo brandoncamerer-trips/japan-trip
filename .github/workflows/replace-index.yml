@@ -1,6 +1,8 @@
 name: Replace index.html with grouped Nov 2 version
 on:
-  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/replace-index.yml
 permissions:
   contents: write
 jobs:
