@@ -612,6 +612,10 @@ html[data-theme="dark"] .status-chip::before {
   animation: rise .45s both;
 }
 
+a.date {
+  text-decoration: none;
+}
+
 .date {
   z-index: 2;
   width: 76px;
@@ -1594,16 +1598,6 @@ const events = [
     "evening"
   ],
 
-  [
-    "Nov. 2",
-    "Cairo → Atlanta → Seattle",
-    "Visit",
-    "Topgolf Renton",
-    "Evening activity in Renton",
-    "https://www.google.com/maps/search/?api=1&query=Topgolf+Renton",
-    "",
-    "evening"
-  ],
 
   [
     "Nov. 3",
@@ -2495,9 +2489,9 @@ function renderTimeline() {
             style="animation-delay:${index * 25}ms"
           >
 
-            <div class="date">
-              ${formatDayLabel(group.date)}
-            </div>
+            ${group.date === "Nov. 2"
+              ? `<a class="date" href="Monday/">${formatDayLabel(group.date)}</a>`
+              : `<div class="date">${formatDayLabel(group.date)}</div>`}
 
 
             <div class="day-card">
