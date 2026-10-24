@@ -866,6 +866,56 @@ html[data-theme="dark"] .day-head {
     padding: 34px 18px 38px;
   }
 
+  .page {
+    padding: 24px 12px 48px;
+  }
+
+  .views-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .view-tabs {
+    gap: 6px;
+    width: 100%;
+  }
+
+  .view-tab {
+    flex: 1 1 0;
+    padding: 7px 2px;
+    font-size: 13px;
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  .tab-full {
+    display: none;
+  }
+
+  .tab-short {
+    display: inline;
+  }
+
+  .toolbar-right {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tool-btn {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .search-box {
+    flex: 1 1 110px;
+    width: auto;
+    min-width: 0;
+    padding: 7px 12px;
+    font-size: 13px;
+  }
+
   .map-btn {
     width: 100%;
     text-align: center;
@@ -1039,6 +1089,22 @@ html[data-theme="dark"] .day-head {
   background: var(--navy);
   color: #fff;
   border-color: var(--navy);
+}
+
+.tab-short {
+  display: none;
+}
+
+a.view-tab {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.monday-tab {
+  border-color: var(--red);
+  color: var(--red);
 }
 
 .map-view {
@@ -1355,7 +1421,8 @@ tr.best .opt-tag {
           role="tab"
           aria-selected="false"
           type="button"
-        >Draft Train Schedule</button>
+        ><span class="tab-full">Draft Train Schedule</span><span class="tab-short">Trains</span></button>
+        <a class="view-tab monday-tab" href="Monday/"><span class="tab-full">Monday Nov 2</span><span class="tab-short">Monday</span></a>
       </div>
 
       <div class="toolbar-right">
