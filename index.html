@@ -716,6 +716,28 @@ html[data-theme="dark"] .day-head {
   border-top: 1px solid var(--line);
 }
 
+.time-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px 2px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+}
+
+.time-divider::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--line);
+}
+
+.time-divider:first-child::after {
+  content: none;
+}
+
 .event-icon {
   width: 37px;
   height: 37px;
@@ -1049,6 +1071,10 @@ html[data-theme="dark"] .day-head {
 
   .event {
     padding: 7px 12px;
+  }
+
+  .time-divider {
+    padding: 8px 12px 0;
   }
 
   .event h3 {
@@ -1531,7 +1557,8 @@ const events = [
     "Leave Sequim by 11:30 AM",
     "Drive to Renton for the night before departure",
     "",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1541,7 +1568,8 @@ const events = [
     "Holritz arrives from Cairo",
     "DL 75 · 1:15 pm",
     "https://www.flightaware.com/live/flight/DAL75",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1551,7 +1579,8 @@ const events = [
     "Holritz departs Atlanta for Seattle",
     "DL 903 · 8:40 pm · Arrives Seattle 11:17 pm",
     "https://www.flightaware.com/live/flight/DAL903",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1561,7 +1590,8 @@ const events = [
     "LivAway Suites Seattle-Renton",
     "751 Park Ave N, Renton · 3 rooms (2 Queen + 2 King) · Check-in from 3 PM, out Nov 3 at 11 AM · Conf B_61972482 / B_61972418 / B_61972356 · Non-refundable",
     "https://www.google.com/maps/search/?api=1&query=LivAway+Suites+Seattle-Renton+751+Park+Ave+N+Renton+WA",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1571,7 +1601,8 @@ const events = [
     "Topgolf Renton",
     "Evening activity in Renton",
     "https://www.google.com/maps/search/?api=1&query=Topgolf+Renton",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1581,7 +1612,8 @@ const events = [
     "Holritz departs Seattle for Haneda",
     "DL 167 · 11:25 am",
     "https://www.flightaware.com/live/flight/DAL167",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1591,7 +1623,8 @@ const events = [
     "Sequim Bible Team departs Seattle for Haneda",
     "UA 7929 · 3:40 pm",
     "https://www.flightaware.com/live/flight/UAL7929",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1601,7 +1634,8 @@ const events = [
     "Holritz arrives Tokyo Haneda",
     "3:05 pm",
     "",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1611,7 +1645,8 @@ const events = [
     "Sequim Bible Team arrives Haneda",
     "7:15 pm",
     "",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1621,7 +1656,8 @@ const events = [
     "Hotel Metropolitan Haneda",
     "Overnight at Haneda Airport",
     "https://haneda.hotel-metropolitan.com/",
-    "3872-3260-8887|3872-3261-0274"
+    "3872-3260-8887|3872-3261-0274",
+    "evening"
   ],
 
   [
@@ -1631,7 +1667,8 @@ const events = [
     "Romancecar Shinjuku → Hakone-Yumoto",
     "Leave Haneda hotel ~6 AM · Romancecar ~7–8 AM, ~75–90 min · Reserved seats · Freepass surcharge ~¥1,200 one-way",
     "",
-    ""
+    "",
+    "morning"
   ],
 
   [
@@ -1641,7 +1678,8 @@ const events = [
     "Hakone loop with Hakone Free Pass",
     "Tozan railway, cable car, ropeway, pirate ship on Lake Ashi, buses — plus facility discounts · 2-day pass ¥7,100 from Shinjuku / ¥6,000 from Odawara",
     "https://en.wikipedia.org/wiki/Hakone,_Kanagawa",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1651,7 +1689,8 @@ const events = [
     "Hotel Metropolitan Haneda",
     "Overnight at Haneda Airport",
     "https://haneda.hotel-metropolitan.com/",
-    "3872-3260-8887|3872-3261-0274"
+    "3872-3260-8887|3872-3261-0274",
+    "evening"
   ],
 
   [
@@ -1661,7 +1700,8 @@ const events = [
     "TWR Board Meeting",
     "9:30 AM · Ochanomizu Christian Center Bldg., 2-chōme Kanda Surugadai, Chiyoda City, Tokyo 101-0062 · With Rev. Shuji Kondo",
     "https://twr.org/project/japan-ministry",
-    ""
+    "",
+    "morning"
   ],
 
   [
@@ -1671,7 +1711,8 @@ const events = [
     "Slowdown morning",
     "Relaxed morning after the TWR meeting \u00b7 Depart for Yugawara ~3 PM",
     "",
-    ""
+    "",
+    "morning"
   ],
 
   [
@@ -1681,7 +1722,8 @@ const events = [
     "Train to Yugawara",
     "JR Tokaido Line · Depart ~3 PM (Paul free from 2:30) · Individual tickets ~¥1,980",
     "",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1691,7 +1733,8 @@ const events = [
     "Yugawara evening stroll",
     "Evening onsen-town stroll in Yugawara after arrival",
     "",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1701,7 +1744,8 @@ const events = [
     "Yugawara Onsen Ryokan Uohan",
     "Miyakami 458, Yugawara · 2 rooms · Check-in after 3 PM, out by 10 AM · Conf 1067154254 / 1067154250",
     "https://www.google.com/maps/search/?api=1&query=Yugawara+Onsen+Ryokan+Uohan+Miyakami+458+Yugawara+Japan",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1711,7 +1755,8 @@ const events = [
     "Shinkansen to Kyoto",
     "Leave Yugawara ~8:30–9 AM · Via Odawara, Hikari to Kyoto ~2h",
     "",
-    ""
+    "",
+    "morning"
   ],,
 
   [
@@ -1721,7 +1766,8 @@ const events = [
     "Kyoto — Nijo Castle",
     "Light tour · Samurai castle",
     "https://en.wikipedia.org/wiki/Nij%C5%8D_Castle",
-    ""
+    "",
+    "midday"
   ],,
 
   [
@@ -1731,7 +1777,8 @@ const events = [
     "Kyoto — Golden Pavilion (Kinkakuji)",
     "Light tour",
     "https://en.wikipedia.org/wiki/Kinkaku-ji",
-    ""
+    "",
+    "midday"
   ],,
 
   [
@@ -1741,7 +1788,8 @@ const events = [
     "Train Kyoto → Nara",
     "JR Miyakoji Rapid ~45 min ¥720 or Kintetsu Limited Express ~35 min ¥1,280 · Arrive hotel ~6–7 PM",
     "",
-    ""
+    "",
+    "evening"
   ],,
 
   [
@@ -1751,7 +1799,8 @@ const events = [
     "APA Hotel Kintetsu Nara Ekimae",
     "Kamisanjomachi 29-1, Nara · 3 rooms, 2 nights · Check-in from 3 PM · Arrive ~6–7 PM Nov 7, out Nov 9 by 10 AM · Conf 6988012294",
     "https://www.google.com/maps/search/?api=1&query=APA+Hotel+Kintetsu+Nara+Ekimae+Kamisanjomachi+29-1+Nara+Japan",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1761,7 +1810,8 @@ const events = [
     "Shirakashi Christ Church",
     "Morning · Rev. Shuji Kondo preaching · Fellowship afterward · Contact: kondohbc@gmail.com",
     "https://www.google.com/maps/search/?api=1&query=Shirakashi+Christ+Church+Nara",
-    ""
+    "",
+    "morning"
   ],
 
   [
@@ -1771,7 +1821,8 @@ const events = [
     "APA Hotel Kintetsu Nara Ekimae",
     "Night 2 of 2 · Check-out Nov 9 by 10 AM · Conf 6988012294",
     "https://www.google.com/maps/search/?api=1&query=APA+Hotel+Kintetsu+Nara+Ekimae+Kamisanjomachi+29-1+Nara+Japan",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1781,7 +1832,8 @@ const events = [
     "Deer Park + Nara sightseeing",
     "Morning deer park, then historic city sightseeing",
     "https://en.wikipedia.org/wiki/Nara_(city)",
-    ""
+    "",
+    "morning"
   ],
 
   [
@@ -1791,7 +1843,8 @@ const events = [
     "Evening transfer to Nagoya",
     "",
     "",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1801,7 +1854,8 @@ const events = [
     "Comfort Hotel Nagoya Shinkansenguchi",
     "1-13-7 Noritake, Nakamura-ku, Nagoya · 3 rooms, 2 nights · Breakfast included · Check-in after 3 PM, out Nov 11 by 10 AM · Conf 1067178358 / 1067178366 / 1067178362",
     "https://www.google.com/maps/search/?api=1&query=Comfort+Hotel+Nagoya+Shinkansenguchi+1-13-7+Noritake+Nagoya+Japan",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1811,7 +1865,8 @@ const events = [
     "CBI Lunch Meeting",
     "11:30 AM · Paul attends lunch with CBI leaders · Full team hangs out nearby · Dr. Rich McLaughlin, Brett Rayl (CBI Director), Andy Overly, Rev. Shuji Kondo, Joe Hansen (BMW)",
     "",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1821,7 +1876,8 @@ const events = [
     "Seichi & Ruthanne Kamimura + Gonzalezes",
     "Multi-family visit",
     "",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1831,7 +1887,8 @@ const events = [
     "Comfort Hotel Nagoya Shinkansenguchi",
     "Night 2 of 2 · Check-out Nov 11 by 10 AM · Conf 1067178358 / 1067178366 / 1067178362",
     "https://www.google.com/maps/search/?api=1&query=Comfort+Hotel+Nagoya+Shinkansenguchi+1-13-7+Noritake+Nagoya+Japan",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1841,7 +1898,8 @@ const events = [
     "Bullet train to Toyohashi and Gamagori",
     "Rail transfer",
     "",
-    ""
+    "",
+    "morning"
   ],
 
   [
@@ -1851,7 +1909,8 @@ const events = [
     "Toyohashi Grace Baptist Church and Gamagori Baptist Church",
     "Rev. Takuji Yamazaki · bibliar828@yahoo.co.jp · Rev. Akira Asada · godslove@s3.dion.ne.jp · Evening in Gamagori",
     "https://www.toyohashigrace.com/english-page",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1861,7 +1920,8 @@ const events = [
     "Hotel Arc Riche Toyohashi",
     "1-55 Ekimaeodori, Toyohashi · 3 rooms · Check-in from 3 PM, out Nov 12 at 11 AM · Expedia 73567460122672",
     "https://www.google.com/maps/search/?api=1&query=Hotel+Arc+Riche+Toyohashi+1-55+Ekimaeodori+Toyohashi+Japan",
-    ""
+    "",
+    "evening"
   ],
 
   [
@@ -1871,7 +1931,8 @@ const events = [
     "Bullet train to Tokyo",
     "Toyohashi → Tokyo · then local trains to Saitama",
     "",
-    ""
+    "",
+    "morning"
   ],
 
   [
@@ -1881,7 +1942,8 @@ const events = [
     "Visit Romulos and Pastor Mita",
     "Visit Romulos first; Pastor Mita is their pastoral relationship",
     "",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1891,7 +1953,8 @@ const events = [
     "Hotel Metropolitan Haneda",
     "Return stay at Haneda Airport",
     "https://haneda.hotel-metropolitan.com/",
-    "3872-3455-9939|3872-3457-9077"
+    "3872-3455-9939|3872-3457-9077",
+    "evening"
   ],
 
   [
@@ -1901,7 +1964,8 @@ const events = [
     "Imperial Palace guided tour + castle",
     "Morning in Tokyo · Back to Haneda by 2 PM",
     "",
-    ""
+    "",
+    "morning"
   ],
 
   [
@@ -1911,7 +1975,8 @@ const events = [
     "Team and Holritz depart Haneda",
     "DL 166 · 4:30 pm · Arrives Seattle 8:29 am",
     "https://www.flightaware.com/live/flight/DAL166",
-    ""
+    "",
+    "midday"
   ],
 
   [
@@ -1921,7 +1986,8 @@ const events = [
     "Holritz continues to Atlanta",
     "DL 554 · 11:25 am · Arrives Atlanta 7:30 pm",
     "https://www.flightaware.com/live/flight/DAL554",
-    ""
+    "",
+    "midday"
   ]
 ];
 
@@ -2301,6 +2367,8 @@ function renderTimeline() {
 
           .map(event => {
 
+            const __bucket = event[7] || "midday";
+
             const [icon, className] =
               meta[event[2]];
 
@@ -2358,7 +2426,7 @@ function renderTimeline() {
                 : "";
 
 
-            return `
+            return { bucket: __bucket, html: `
               <div class="event">
 
                 <div class="event-icon ${className}">
@@ -2388,11 +2456,20 @@ function renderTimeline() {
                 </div>
 
               </div>
-            `;
+            ` };
 
           })
 
-          .join("")
+          .sort((a, b) => ["morning", "midday", "evening"].indexOf(a.bucket) - ["morning", "midday", "evening"].indexOf(b.bucket))
+
+          .reduce((acc, item) => {
+            if (!acc.seen.has(item.bucket)) {
+              acc.seen.add(item.bucket);
+              acc.out.push(`<div class="time-divider"><span>${{ morning: "Morning", midday: "Mid-day", evening: "Evening" }[item.bucket]}</span></div>`);
+            }
+            acc.out.push(item.html);
+            return acc;
+          }, { seen: new Set(), out: [] }).out.join("")
 
           || `
             <div class="empty">
