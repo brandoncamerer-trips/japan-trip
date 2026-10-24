@@ -710,6 +710,26 @@ html[data-theme="dark"] .day-head {
   display: none;
 }
 
+.card-foot {
+  border-top: 1px solid var(--line);
+  padding: 12px 20px 14px;
+}
+
+.collapsed .card-foot {
+  display: none;
+}
+
+.monday-btn {
+  display: inline-block;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--navy);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
 .event {
   display: flex;
   gap: 14px;
@@ -2524,6 +2544,10 @@ function renderTimeline() {
               <div class="events">
                 ${rows}
               </div>
+
+              ${group.date === "Nov. 2"
+                ? `<div class="card-foot"><a class="monday-btn" href="Monday/">Possible Monday activity →</a></div>`
+                : ""}
 
             </div>
 
