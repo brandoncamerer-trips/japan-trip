@@ -880,6 +880,37 @@ html[data-theme="dark"] .day-head {
   color: var(--muted);
 }
 
+.arrival-modal {
+  width: min(560px, calc(100% - 32px));
+}
+
+.arrival-modal .modal-inner {
+  text-align: left;
+}
+
+.arrival-steps {
+  margin: 18px 0;
+  padding-left: 22px;
+  color: var(--ink);
+}
+
+.arrival-steps li {
+  margin: 14px 0;
+}
+
+.arrival-steps ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.arrival-steps img {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
 .numbers {
   margin: 22px 0;
   padding: 15px 0;
@@ -1465,7 +1496,7 @@ tr.best .opt-tag {
       <div
         class="last-updated"
         id="lastUpdated"
-      >Last updated: October 24, 2026</div>
+      >Last updated: October 28, 2026</div>
 
     </div>
   </section>
@@ -1566,6 +1597,51 @@ tr.best .opt-tag {
     <div class="numbers" id="modalNumbers"></div>
 
     <button class="done" id="closeModal" type="button">
+      Done
+    </button>
+  </div>
+</dialog>
+
+<dialog class="modal arrival-modal" id="arrivalModal">
+  <div class="modal-stripe"></div>
+
+  <div class="modal-inner">
+    <div class="modal-label">Haneda arrival</div>
+    <h2>Arrival instructions</h2>
+
+    <p>Step by step from landing at Tokyo Haneda (Terminal 3) to Hotel Metropolitan Haneda.</p>
+
+    <ol class="arrival-steps">
+      <li>Get off the plane with our bags.</li>
+      <li>Go through immigration (have QR code ready) — <a href="https://www.vjw.digital.go.jp/main/#/vjwplo001" target="_blank" rel="noopener">Visit Japan Web QR code</a>.</li>
+      <li>Go to the ATM in the terminal.
+        <ul>
+          <li>Brandon withdraws yen.</li>
+        </ul>
+        <img src="arrival-suica-atm.png" alt="ATM and Welcome Suica vending machine at the Monorail station in Haneda Terminal 3">
+      </li>
+      <li>Go to the Suica terminal (Welcome card vending machine).
+        <ul>
+          <li>Get 4 Suica cards (transit cards).</li>
+          <li>Brandon loads the 4 cards with yen.</li>
+          <li>Hand out each card to each person.</li>
+        </ul>
+      </li>
+      <li>Head to the Monorail.
+        <img src="arrival-terminal.png" alt="Terminal 3 hall showing the Monorail on the left and the Keikyu Line on the right">
+      </li>
+      <li>Each person scans their card and boards the Monorail.
+        <ul>
+          <li>Use the “Local Train”. The “Haneda Express” and “Rapid Train” do not stop at Tenkūbashi Station.</li>
+        </ul>
+      </li>
+      <li>Get off at the first stop (2 minute ride) — Tenkūbashi Station.</li>
+      <li>Walk directly to the hotel.
+        <img src="arrival-hotel-walk.png" alt="Map of the 1-minute walk from Tenkūbashi Station North Exit to Hotel Metropolitan Haneda">
+      </li>
+    </ol>
+
+    <button class="done" id="closeArrivalModal" type="button">
       Done
     </button>
   </div>
@@ -2450,6 +2526,20 @@ function renderTimeline() {
                 ? stayFoodDropdown(event)
                 : "";
 
+            const arrivalButton =
+              event[0] === "Nov. 4" &&
+              event[3] === "Sequim Bible Team arrives Haneda"
+                ? `
+                  <button
+                    class="reserve"
+                    type="button"
+                    onclick="document.getElementById('arrivalModal').showModal()"
+                  >
+                    ✈️ Arrival instructions
+                  </button>
+                `
+                : "";
+
 
             return { bucket: __bucket, html: `
               <div class="event">
@@ -2471,6 +2561,8 @@ function renderTimeline() {
                     </h3>
 
                     ${reservationButton}
+
+                    ${arrivalButton}
 
                   </div>
 
@@ -2642,6 +2734,28 @@ modal.addEventListener("click", event => {
 
   if (event.target === modal) {
     modal.close();
+  }
+
+});
+
+
+const arrivalModal =
+  document.getElementById("arrivalModal");
+
+
+document
+  .getElementById("closeArrivalModal")
+  .addEventListener("click", () => {
+
+    arrivalModal.close();
+
+  });
+
+
+arrivalModal.addEventListener("click", event => {
+
+  if (event.target === arrivalModal) {
+    arrivalModal.close();
   }
 
 });
