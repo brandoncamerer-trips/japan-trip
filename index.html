@@ -811,7 +811,7 @@ html[data-theme="dark"] .day-head {
   line-height: 1.55;
 }
 
-.reserve {
+.reserve, .arrival-btn {
   padding: 6px 10px;
   border: 1px solid #d8c79f;
   border-radius: 999px;
@@ -1022,7 +1022,7 @@ html[data-theme="dark"] .day-head {
     display: block;
   }
 
-  .reserve {
+  .reserve, .arrival-btn {
     margin-top: 8px;
   }
 
@@ -1062,6 +1062,7 @@ html[data-theme="dark"] .day-head {
   .controls,
   .modal,
   .reserve,
+  .arrival-btn,
   .refresh-schedule,
   .last-refreshed {
     display: none !important;
@@ -2531,7 +2532,7 @@ function renderTimeline() {
               event[3] === "Sequim Bible Team arrives Haneda"
                 ? `
                   <button
-                    class="reserve"
+                    class="arrival-btn"
                     type="button"
                     onclick="document.getElementById('arrivalModal').showModal()"
                   >
