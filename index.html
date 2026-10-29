@@ -811,7 +811,7 @@ html[data-theme="dark"] .day-head {
   line-height: 1.55;
 }
 
-.reserve, .arrival-btn {
+.reserve, .arrival-btn, .fuji-btn {
   padding: 6px 10px;
   border: 1px solid #d8c79f;
   border-radius: 999px;
@@ -1022,7 +1022,7 @@ html[data-theme="dark"] .day-head {
     display: block;
   }
 
-  .reserve, .arrival-btn {
+  .reserve, .arrival-btn, .fuji-btn {
     margin-top: 8px;
   }
 
@@ -1063,6 +1063,7 @@ html[data-theme="dark"] .day-head {
   .modal,
   .reserve,
   .arrival-btn,
+  .fuji-btn,
   .refresh-schedule,
   .last-refreshed {
     display: none !important;
@@ -1648,6 +1649,36 @@ tr.best .opt-tag {
   </div>
 </dialog>
 
+<dialog class="modal arrival-modal" id="fujiModal">
+  <div class="modal-stripe"></div>
+
+  <div class="modal-inner">
+    <div class="modal-label">Hakone · Nov 5</div>
+    <h2>Fuji-first Hakone schedule — POTENTIAL</h2>
+
+    <p>Potential schedule, not yet fixed. Times are planned, not exact departures — check the boat and ropeway boards that morning. The Hakone Free Pass is NOT yet bought. Romancecar seats are booked separately.</p>
+
+    <ol class="arrival-steps">
+      <li>7:37 AM – 9:22 AM: Romancecar Hakone 41 (EXE10), Shinjuku → Hakone-Yumoto — BOOKED, booking 00119, Carriage 06 seats 13A, 13B, 13C, 14A, 14B.</li>
+      <li>~9:30 AM: Bus Hakone-Yumoto → Moto-Hakone.</li>
+      <li>10:10 AM: Hakone Shrine + lakeside torii — Fuji view from the lake shore.</li>
+      <li>~11:00 AM: Pirate ship Moto-Hakone → Togendai — top deck, Fuji across the lake.</li>
+      <li>11:30 AM: Lunch at Togendai.</li>
+      <li>~12:15 PM: Ropeway Togendai → Owakudani.</li>
+      <li>12:35 PM: Owakudani — volcanic valley, black eggs, Fuji view.</li>
+      <li>1:20 PM: Ropeway Owakudani → Sounzan.</li>
+      <li>1:40 PM: Cable car Sounzan → Gora.</li>
+      <li>~2:00 PM: Train Gora → Hakone-Yumoto.</li>
+      <li>Buffer at Hakone-Yumoto until the return train — be at the station by ~4:35 PM.</li>
+      <li>4:51 PM – 6:28 PM: Romancecar Hakone 16 (EXE6), Hakone-Yumoto → Shinjuku — BOOKED.</li>
+    </ol>
+
+    <button class="done" id="closeFujiModal" type="button">
+      Done
+    </button>
+  </div>
+</dialog>
+
 <script>
 
 const events = [
@@ -1767,7 +1798,7 @@ const events = [
     "Hakone",
     "Visit",
     "Hakone loop — POTENTIAL Fuji-first schedule",
-    "Potential schedule (not yet fixed): ~9:30 bus Hakone-Yumoto → Moto-Hakone · 10:10 Hakone Shrine + lakeside torii (Fuji view) · ~11:00 pirate ship Moto-Hakone → Togendai, top deck (Fuji across the lake) · 11:30 lunch at Togendai · ~12:15 ropeway Togendai → Owakudani · 12:35 Owakudani, black eggs + Fuji view · 1:20 ropeway → Sounzan · 1:40 cable car → Gora · ~2:00 train Gora → Hakone-Yumoto · Buffer at Hakone-Yumoto until the 4:51 PM return · Times are planned, not exact departures — check boat/ropeway boards that morning · Hakone Free Pass NOT yet bought (2-day ¥7,100 from Shinjuku, covers loop + base fare, not Romancecar seats)",
+    "Potential Fuji-first Hakone loop — tap “View Fuji schedule” for the full timed popup · Hakone Free Pass NOT yet bought (2-day ¥7,100 from Shinjuku, covers loop + base fare, not Romancecar seats)",
     "https://en.wikipedia.org/wiki/Hakone,_Kanagawa",
     "",
     "midday"
@@ -2552,6 +2583,20 @@ function renderTimeline() {
                 `
                 : "";
 
+            const fujiButton =
+              event[0] === "Nov. 5" &&
+              event[3] === "Hakone loop — POTENTIAL Fuji-first schedule"
+                ? `
+                  <button
+                    class="fuji-btn"
+                    type="button"
+                    onclick="document.getElementById('fujiModal').showModal()"
+                  >
+                    🗻 View Fuji schedule
+                  </button>
+                `
+                : "";
+
 
             return { bucket: __bucket, html: `
               <div class="event">
@@ -2575,6 +2620,8 @@ function renderTimeline() {
                     ${reservationButton}
 
                     ${arrivalButton}
+
+                    ${fujiButton}
 
                   </div>
 
@@ -2768,6 +2815,28 @@ arrivalModal.addEventListener("click", event => {
 
   if (event.target === arrivalModal) {
     arrivalModal.close();
+  }
+
+});
+
+
+const fujiModal =
+  document.getElementById("fujiModal");
+
+
+document
+  .getElementById("closeFujiModal")
+  .addEventListener("click", () => {
+
+    fujiModal.close();
+
+  });
+
+
+fujiModal.addEventListener("click", event => {
+
+  if (event.target === fujiModal) {
+    fujiModal.close();
   }
 
 });
