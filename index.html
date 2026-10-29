@@ -1755,10 +1755,10 @@ const events = [
     "Nov. 5",
     "Hakone",
     "Rail",
-    "Romancecar Shinjuku → Hakone-Yumoto",
-    "Leave Haneda hotel ~6 AM · Romancecar ~7–8 AM, ~75–90 min · Reserved seats · Freepass surcharge ~¥1,200 one-way",
+    "Romancecar Shinjuku → Hakone-Yumoto — BOOKED",
+    "Hakone 41 (EXE10) · Shinjuku 7:37 AM → Hakone-Yumoto 9:22 AM · 5 adults, Standard, Carriage 06 seats 13A, 13B, 13C, 14A, 14B · ¥5,750 express seats only · Leave Haneda hotel ~6 AM for Shinjuku · Ticketless — bring the paying card + purchase screen to board",
     "",
-    "",
+    "00119",
     "morning"
   ],
 
@@ -1766,11 +1766,22 @@ const events = [
     "Nov. 5",
     "Hakone",
     "Visit",
-    "Hakone loop with Hakone Free Pass",
-    "Tozan railway, cable car, ropeway, pirate ship on Lake Ashi, buses — plus facility discounts · 2-day pass ¥7,100 from Shinjuku / ¥6,000 from Odawara",
+    "Hakone loop — POTENTIAL Fuji-first schedule",
+    "Potential schedule (not yet fixed): ~9:30 bus Hakone-Yumoto → Moto-Hakone · 10:10 Hakone Shrine + lakeside torii (Fuji view) · ~11:00 pirate ship Moto-Hakone → Togendai, top deck (Fuji across the lake) · 11:30 lunch at Togendai · ~12:15 ropeway Togendai → Owakudani · 12:35 Owakudani, black eggs + Fuji view · 1:20 ropeway → Sounzan · 1:40 cable car → Gora · ~2:00 train Gora → Hakone-Yumoto · Buffer at Hakone-Yumoto until the 4:51 PM return · Times are planned, not exact departures — check boat/ropeway boards that morning · Hakone Free Pass NOT yet bought (2-day ¥7,100 from Shinjuku, covers loop + base fare, not Romancecar seats)",
     "https://en.wikipedia.org/wiki/Hakone,_Kanagawa",
     "",
     "midday"
+  ],
+
+  [
+    "Nov. 5",
+    "Hakone",
+    "Rail",
+    "Romancecar Hakone-Yumoto → Shinjuku — BOOKED",
+    "Hakone 16 (EXE6) · Hakone-Yumoto 4:51 PM → Shinjuku 6:28 PM · 5 adults, Standard · ¥5,750 express seats only · Be at Hakone-Yumoto station by ~4:35 PM · Then back to the Haneda hotel the same night",
+    "",
+    "",
+    "evening"
   ],
 
   [
@@ -3036,16 +3047,15 @@ const TRAIN_LEGS = [
     date: "Thu Nov 5",
     route: "Shinjuku → Hakone-Yumoto + Hakone loop (day trip)",
     service: "Odakyu Romancecar + Hakone Free Pass",
-    chips: ["Leave Haneda hotel ~6 AM", "Romancecar ~75–90 min", "Return to Haneda same night"],
-    fare: "¥7,100 pass + ¥1,200",
-    alert: "⚠️ The Hakone Free Pass is a 2-day pass (¥7,100 from Shinjuku / ¥6,000 from Odawara) — there is no 1-day version. It covers the loop transport (Tozan railway, cable car, ropeway, pirate ship, buses) and discounts at ~70 facilities, but NOT the Romancecar, which needs a separate ~¥1,200 one-way limited express ticket. Only day 1 of the pass gets used on this trip.",
+    chips: ["Leave Haneda hotel ~6 AM", "BOOKED: Hakone 41 out / Hakone 16 back", "Return to Haneda same night"],
+    fare: "¥11,500 for 5 (express only)",
+    alert: "⚠️ The Hakone Free Pass is a 2-day pass (¥7,100 from Shinjuku / ¥6,000 from Odawara) — there is no 1-day version. It covers the loop transport (Tozan railway, cable car, ropeway, pirate ship, buses) and discounts at ~70 facilities, but NOT the Romancecar. The Romancecar express seats are ¥1,150/adult each way, ¥11,500 total for 5, booked Oct 28, 2026. The Free Pass itself is NOT yet bought — only day 1 of it would get used on this trip.",
     options: [
-      { tag: "A", best: true, cols: ["~7:00", "~8:30", "Pass + ¥1,200"], note: "Best option. Earliest Romancecar pattern (Sagami 91 departs ~7:00). Leaves Haneda ~6 AM for Shinjuku." },
-      { tag: "B", best: false, cols: ["~8:00", "~9:30", "Pass + ¥1,200"], note: "Good backup if the morning runs slow. Still a full Hakone day." },
-      { tag: "C", best: false, cols: ["~9:00", "~10:30", "Pass + ¥1,200"], note: "Latest sensible departure — the loop gets compressed." },
+      { tag: "A", best: true, cols: ["7:37", "9:22", "¥5,750 for 5"], note: "BOOKED — Hakone 41 (EXE10), Shinjuku → Hakone-Yumoto, Carriage 06 seats 13A, 13B, 13C, 14A, 14B, booking 00119." },
+      { tag: "B", best: false, cols: ["16:51", "18:28 Shinjuku", "¥5,750 for 5"], note: "BOOKED return — Hakone 16 (EXE6), Hakone-Yumoto → Shinjuku." },
     ],
-    optHeaders: ["Depart Shinjuku", "Arrive Hakone-Yumoto", "Cost"],
-    note: "All Romancecar seats are reserved — book ahead via the Odakyu site or at Shinjuku. Return to Haneda the same night (regular Odakyu / JR route back via Shinjuku). Re-verify the November Romancecar timetable in early November."
+    optHeaders: ["Depart", "Arrive", "Cost"],
+    note: "BOOKED Oct 28, 2026, paid on Visa ending 7237 (outbound booking 00119; return booking number not recorded). Express seats only — the Hakone Free Pass (not yet bought) covers the base fare and loop transport. Return to Haneda the same night after the 6:28 PM Shinjuku arrival."
   },
   {
     leg: 2,
@@ -3146,7 +3156,7 @@ const TRAIN_LEGS = [
 ];
 
 const TRAIN_PRICING = [
-  ["Nov 5 · Hakone Free Pass (2-day, Shinjuku) + Romancecar one-way", "¥7,100 + ¥1,200"],
+  ["Nov 5 · Hakone Free Pass (2-day, Shinjuku) + Romancecar round trip", "¥7,100 + ¥2,300"],
   ["Nov 6 · Tokyo → Yugawara (JR Tokaido Line)", "¥1,980"],
   ["Nov 7 · Yugawara/Odawara → Kyoto (Hikari reserved)", "Confirm at booking"],
   ["Nov 7 · Kyoto → Nara (JR ¥720 / Kintetsu Ltd Exp ¥1,280)", "¥720 / ¥1,280"],
@@ -3165,7 +3175,7 @@ function renderTrainSchedule() {
   const el = document.getElementById("trainView");
   if (!el) return;
 
-  let html = `<div class="train-warn">⚠️ <b>Draft — re-verify before travel.</b> The November 2026 timetable isn't published yet (JR releases timetables ~1 month ahead). Times below come from the official JR Central timetable effective March 14, 2026 and established service patterns. Re-check on Jorudan or at a JR ticket office in early November. Group of 5 traveling together. <b>Nothing is booked.</b></div>`;
+  let html = `<div class="train-warn">⚠️ <b>Draft — re-verify before travel.</b> The November 2026 timetable isn't published yet (JR releases timetables ~1 month ahead). Times below come from the official JR Central timetable effective March 14, 2026 and established service patterns. Re-check on Jorudan or at a JR ticket office in early November. Group of 5 traveling together. <b>Romancecar Leg 1 (Nov 5) is booked; nothing else is booked.</b></div>`;
 
   TRAIN_LEGS.forEach(L => {
     html += `<article class="train-card">
