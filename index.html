@@ -1498,7 +1498,7 @@ tr.best .opt-tag {
       <div
         class="last-updated"
         id="lastUpdated"
-      >Last updated: October 30, 2026</div>
+      >Last updated: November 1, 2026</div>
 
     </div>
   </section>
@@ -1853,7 +1853,7 @@ const events = [
     "Tokyo / Hakone Area",
     "Rail",
     "Train to Yugawara",
-    "JR Tokaido Line · Depart ~3 PM (Paul free from 2:30) · Individual tickets ~¥1,980",
+    "JR Tokaido Line · Depart 3:07 PM (Paul free from 2:30) · Individual tickets ¥1,790",
     "",
     "",
     "midday"
@@ -1886,7 +1886,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Rail",
     "Shinkansen to Kyoto",
-    "Leave Yugawara ~8:30–9 AM · Via Odawara, Hikari to Kyoto ~2h · Arrive Kyoto Station ~11:15 AM",
+    "Leave Yugawara ~8:30–9 AM · Via Odawara, Shinkansen to Kyoto · Arrive Kyoto ~11:34 AM–12:12 PM (earliest 10:12 AM on Hikari 633 — leave ~7:40 AM)",
     "",
     "",
     "morning"
@@ -3119,7 +3119,7 @@ renderFilters();
 renderTimeline();
 
 
-// ---- Draft Train Schedule (research only — nothing booked; re-verify Nov timetable) ----
+// ---- Draft Train Schedule (nothing booked except the Romancecar; times verified Nov 1, 2026) ----
 
 const TRAIN_LEGS = [
   {
@@ -3142,16 +3142,16 @@ const TRAIN_LEGS = [
     date: "Fri Nov 6",
     route: "Tokyo Station → Yugawara Station",
     service: "JR Tokaido Line (local/rapid)",
-    chips: ["~1h 20m–1h 30m", "Every 10–20 min", "No Shinkansen needed"],
-    fare: "¥1,980",
+    chips: ["~1h 38m", "Direct trains from Tokyo", "No Shinkansen needed"],
+    fare: "¥1,790",
     alert: "",
     options: [
-      { tag: "A", best: true, cols: ["~15:00", "~16:30", "¥1,980"], note: "Best option. Paul free from 2:30; arrives at Uohan in good time for the evening." },
-      { tag: "B", best: false, cols: ["~15:30", "~17:00", "¥1,980"], note: "Comfortable backup." },
-      { tag: "C", best: false, cols: ["~16:00", "~17:30", "¥1,980"], note: "Latest sensible departure — still fine, ryokan check-in opens at 3 PM." },
+      { tag: "A", best: true, cols: ["15:07", "16:45", "¥1,790"], note: "Best option — direct train, no transfer. Paul free from 2:30; arrives at Uohan in good time for the evening." },
+      { tag: "B", best: false, cols: ["14:37", "16:23", "¥1,790"], note: "Earlier direct train — more buffer in the afternoon." },
+      { tag: "C", best: false, cols: ["~16:00", "~17:40", "¥1,790"], note: "Later trains may need a quick transfer at Atami — still fine, ryokan check-in opens at 3 PM." },
     ],
     optHeaders: ["Depart Tokyo", "Arrive Yugawara", "Fare"],
-    note: "Take any JR Tokaido Line train bound for Atami / Ito / Numazu. Yugawara is 2 stops past Atami (Atami → Kinomiya → Yugawara) — you may need a quick cross-platform transfer at Atami. Buy from a ticket machine or tap in with Suica. Green Car (~¥1,000 surcharge) is worth it for 5 people with luggage."
+    note: "The 14:37 and 15:07 departures from Tokyo run direct to Yugawara — no transfer. Other Tokaido Line trains bound for Atami / Ito / Numazu may need a quick cross-platform transfer at Atami (Yugawara is 2 stops past Atami: Atami → Kinomiya → Yugawara). Buy from a ticket machine or tap in with Suica. Green Car (~¥1,000 surcharge) is worth it for 5 people with luggage."
   },
   {
     leg: 3,
@@ -3160,11 +3160,11 @@ const TRAIN_LEGS = [
     service: "Shinkansen Hikari (via Odawara)",
     chips: ["~2h Shinkansen", "Local hop to Odawara first", "Reserve seats"],
     fare: "Confirm at booking",
-    alert: "⚠️ Trade-off: leaving Yugawara at 8:30–9 AM likely misses the early Hikari pattern (e.g. Hikari 633, Odawara 08:11 → Kyoto 10:12) and means a later Kyoto arrival, compressing the Nijo Castle + Golden Pavilion tour. Re-verify the November timetable in early November and pick the earliest workable Hikari.",
+    alert: "⚠️ Verified Nov 1: the earliest Kyoto arrival needs Hikari 633 from Odawara at 08:11 (→ Kyoto 10:12) — that means leaving Yugawara around 7:40 AM. Leaving at 8:30–9 AM lands Kyoto at 11:34–12:12, compressing the Nijo Castle + Golden Pavilion tour.",
     options: [
-      { tag: "A", best: true, cols: ["~8:30", "Odawara → Hikari", "~11:00–11:30", "TBC"], note: "Best option on the 8:30–9 AM plan: local to Odawara, then the next Hikari to Kyoto." },
-      { tag: "B", best: false, cols: ["~9:00", "Odawara → Hikari", "~12:00", "TBC"], note: "Backup — Kyoto tour gets tight; prioritize Nijo Castle if time is short." },
-      { tag: "C", best: false, cols: ["~8:30", "Atami → Kodama", "~11:34", "TBC"], note: "Fallback via Atami: Kodama stops everywhere and is slower, but the 08:43 pattern is a known option." },
+      { tag: "A", best: true, cols: ["~7:40", "Odawara → Hikari 633 (08:11)", "10:12", "TBC"], note: "Earliest arrival — full Kyoto day, but an early start from Uohan." },
+      { tag: "B", best: false, cols: ["~8:00", "Odawara → Kodama 807 (08:35)", "11:34", "TBC"], note: "Slower all-stops Kodama, but no rushing and still a workable Kyoto afternoon." },
+      { tag: "C", best: false, cols: ["~9:30", "Odawara → Hikari 637 (10:11)", "12:12", "TBC"], note: "Latest sensible option — Kyoto tour gets tight; prioritize Nijo Castle if time is short." },
     ],
     optHeaders: ["Leave Yugawara", "Route", "Arrive Kyoto", "Fare"],
     note: "Why Hikari, not Nozomi: slightly cheaper for a ~15 min difference, and the group skipped JR Passes so you pay full fare either way. With 5 people's bags, reserve seats via SmartEX or a JR ticket office. Bags over 160 cm (H+W+D) need an oversized-baggage seat."
@@ -3179,7 +3179,7 @@ const TRAIN_LEGS = [
     alert: "",
     options: [
       { tag: "A", best: true, cols: ["~17:00", "Kintetsu Ltd Exp", "~17:35", "¥1,280"], note: "Best option. Kintetsu Nara Station is steps from Nara Park, closest to the APA hotel." },
-      { tag: "B", best: false, cols: ["~17:00", "JR Miyakoji Rapid", "~17:45", "¥720"], note: "Cheaper, but JR Nara Station is a 15–20 min walk from Nara Park." },
+      { tag: "B", best: false, cols: ["17:03", "JR Miyakoji Rapid", "17:51", "¥720"], note: "Verified Nov 1. Cheaper, but JR Nara Station is a 15–20 min walk from Nara Park." },
       { tag: "C", best: false, cols: ["~18:00", "Either", "~18:35–18:45", "¥720 / ¥1,280"], note: "Latest sensible departure — still lands at the hotel by ~7 PM." },
     ],
     optHeaders: ["Depart Kyoto", "Service", "Arrive Nara", "Fare"],
@@ -3191,28 +3191,28 @@ const TRAIN_LEGS = [
     route: "Nara → Kyoto → Nagoya",
     service: "JR Nara Line + Shinkansen Hikari",
     chips: ["~1h 40m total incl. transfer", "Miyakoji Rapid every 30 min", "Hikari ~2×/hour"],
-    fare: "~¥6,420",
+    fare: "¥6,470",
     alert: "⚠️ Transfer alert: at Kyoto, follow signs for the Shinkansen (centralized transfer gates). Allow ~15 min to change from the JR Nara Line platforms to the Shinkansen platforms.",
     options: [
-      { tag: "A", best: true, cols: ["~17:00", "~17:48", "~18:05", "~18:40", "~¥6,420"], note: "Best option. Full evening in Nagoya; hotel check-in with time to spare." },
-      { tag: "B", best: false, cols: ["~18:00", "~18:48", "~19:05", "~19:40", "~¥6,420"], note: "Comfortable backup — maximizes Nara sightseeing time." },
-      { tag: "C", best: false, cols: ["~19:00", "~19:48", "~20:05", "~20:40", "~¥6,420"], note: "Latest sensible departure. Still fine, but a late hotel arrival." },
+      { tag: "A", best: true, cols: ["17:07", "17:55", "18:07", "18:42", "¥6,470"], note: "Verified Nov 1 — Miyakoji Rapid 642 to Kyoto, then Hikari 718 (12 min to transfer at Kyoto). Full evening in Nagoya; hotel check-in with time to spare." },
+      { tag: "B", best: false, cols: ["~18:00", "~18:48", "~19:05", "~19:40", "~¥6,470"], note: "Comfortable backup — maximizes Nara sightseeing time." },
+      { tag: "C", best: false, cols: ["~19:00", "~19:48", "~20:05", "~20:40", "~¥6,470"], note: "Latest sensible departure. Still fine, but a late hotel arrival." },
     ],
     optHeaders: ["Depart Nara (Miyakoji Rapid)", "Arrive Kyoto", "Depart Kyoto (Hikari)", "Arrive Nagoya", "Fare"],
-    note: "Miyakoji Rapid runs every 30 min (typically :00 and :30 from Nara) — no reservation needed, just tap in. Fare split: Nara → Kyoto ¥720 + Kyoto → Nagoya Hikari reserved ~¥5,700. Buy the Shinkansen ticket at Kyoto or via SmartEX ahead of time."
+    note: "Miyakoji Rapid runs every 30 min (typically :00 and :30 from Nara) — no reservation needed, just tap in. Fare split: Nara → Kyoto ¥720 + Kyoto → Nagoya Hikari reserved ¥5,750 (¥6,470 total). Buy the Shinkansen ticket at Kyoto or via SmartEX ahead of time."
   },
   {
     leg: 6,
     date: "Wed Nov 11",
     route: "Nagoya → Toyohashi",
-    service: "Kodama or Hikari Shinkansen",
+    service: "Kodama Shinkansen",
     chips: ["~20–30 min", "Very frequent", "Commuter corridor"],
-    fare: "~¥3,200",
+    fare: "¥3,630",
     alert: "",
     options: [
-      { tag: "A", best: true, cols: ["~8:30", "Kodama", "~9:00", "~¥3,200"], note: "Best option. Kodama runs ~2×/hour and stops at Toyohashi. Plenty of seats in the morning." },
-      { tag: "B", best: false, cols: ["~9:00", "Hikari", "~9:20", "~¥3,200"], note: "Faster if timing lines up — but Hikari stops at Toyohashi less often. Check the board." },
-      { tag: "C", best: false, cols: ["~9:30", "Kodama", "~10:00", "~¥3,200"], note: "Backup. Still arrives in good time for the day's church visits." },
+      { tag: "A", best: true, cols: ["08:38", "Kodama 806", "09:04", "¥3,630"], note: "Verified Nov 1 — there is no ~9:00 Hikari to Toyohashi; this Kodama is the right morning train and arrives earlier. Plenty of seats in the morning." },
+      { tag: "B", best: false, cols: ["~9:10", "Kodama", "~9:40", "~¥3,630"], note: "Next Kodama pattern — check the board at Nagoya. Still arrives in good time for the day's church visits." },
+      { tag: "C", best: false, cols: ["~9:40", "Kodama", "~10:10", "~¥3,630"], note: "Latest sensible backup." },
     ],
     optHeaders: ["Depart Nagoya", "Train", "Arrive Toyohashi", "Fare"],
     note: "Toyohashi is 2 stops west of Nagoya (Nagoya → Mikawa-Anjo → Toyohashi). Non-reserved seats are fine for this short ride, even with luggage. No need to over-plan — check departures at Nagoya Station."
@@ -3222,13 +3222,13 @@ const TRAIN_LEGS = [
     date: "Thu Nov 12",
     route: "Toyohashi → Tokyo",
     service: "Shinkansen Hikari",
-    chips: ["~1h 40m", "Frequent mornings", "Reserve seats"],
-    fare: "~¥11,000",
-    alert: "",
+    chips: ["~1h 33m (Hikari 632)", "Reserve seats", "¥9,100 reserved"],
+    fare: "¥9,100",
+    alert: "⚠️ Verified Nov 1: there is NO ~8:00 AM Hikari from Toyohashi. Take the 07:09 Hikari 632 to keep the Saitama day on track, or the 08:51 Hikari 638 and accept a compressed visit.",
     options: [
-      { tag: "A", best: true, cols: ["~8:00", "Hikari", "~9:40", "~¥11,000"], note: "Best option. Early arrival maximizes time for the Saitama visit (Romulos / Pastor Mita) before Haneda." },
-      { tag: "B", best: false, cols: ["~8:30", "Hikari", "~10:10", "~¥11,000"], note: "Good backup. Still leaves a full day." },
-      { tag: "C", best: false, cols: ["~9:00", "Hikari", "~10:40", "~¥11,000"], note: "Latest sensible departure — Saitama visit gets compressed." },
+      { tag: "A", best: true, cols: ["07:09", "Hikari 632", "08:42", "¥9,100"], note: "Best option — early arrival maximizes time for the Saitama visits (Romulos / Pastor Mita, DeVernas) before Haneda." },
+      { tag: "B", best: false, cols: ["08:51", "Hikari 638", "10:12", "¥9,100"], note: "Sleeps later, but the Saitama day gets compressed." },
+      { tag: "C", best: false, cols: ["08:10", "Kodama 802", "10:18", "¥9,100"], note: "All-stops Kodama — slowest, no advantage over the 08:51 Hikari." },
     ],
     optHeaders: ["Depart Toyohashi", "Train", "Arrive Tokyo", "Fare"],
     note: "Morning Hikari trains can be busy with commuters — reserve seats for 5 people. From Tokyo Station, take JR lines north toward Saitama (Takasaki/Utsunomiya Line from Ueno, or Saikyo Line from Shinjuku). After Saitama, allow ~60–90 min to reach Haneda by train."
@@ -3237,13 +3237,13 @@ const TRAIN_LEGS = [
 
 const TRAIN_PRICING = [
   ["Nov 5 · Hakone Free Pass (2-day, Shinjuku) + Romancecar round trip", "¥7,100 + ¥2,300"],
-  ["Nov 6 · Tokyo → Yugawara (JR Tokaido Line)", "¥1,980"],
+  ["Nov 6 · Tokyo → Yugawara (JR Tokaido Line)", "¥1,790"],
   ["Nov 7 · Yugawara/Odawara → Kyoto (Hikari reserved)", "Confirm at booking"],
   ["Nov 7 · Kyoto → Nara (JR ¥720 / Kintetsu Ltd Exp ¥1,280)", "¥720 / ¥1,280"],
   ["Nov 9 · Nara → Kyoto (Miyakoji Rapid)", "¥720"],
-  ["Nov 9 · Kyoto → Nagoya (Hikari reserved)", "~¥5,700"],
-  ["Nov 11 · Nagoya → Toyohashi (Kodama reserved)", "~¥3,200"],
-  ["Nov 12 · Toyohashi → Tokyo (Hikari reserved)", "~¥11,000"],
+  ["Nov 9 · Kyoto → Nagoya (Hikari reserved)", "¥5,750"],
+  ["Nov 11 · Nagoya → Toyohashi (Kodama reserved)", "¥3,630"],
+  ["Nov 12 · Toyohashi → Tokyo (Hikari reserved)", "¥9,100"],
   ["Nov 4–6 · Tokyo local JR (estimate)", "~¥1,500"],
 ];
 
@@ -3255,7 +3255,7 @@ function renderTrainSchedule() {
   const el = document.getElementById("trainView");
   if (!el) return;
 
-  let html = `<div class="train-warn">⚠️ <b>Draft — re-verify before travel.</b> The November 2026 timetable isn't published yet (JR releases timetables ~1 month ahead). Times below come from the official JR Central timetable effective March 14, 2026 and established service patterns. Re-check on Jorudan or at a JR ticket office in early November. Group of 5 traveling together. <b>Romancecar Leg 1 (Nov 5) is booked; nothing else is booked.</b></div>`;
+  let html = `<div class="train-warn">✅ <b>Times verified November 1, 2026</b> against the November 2026 timetable (Jorudan). Group of 5 traveling together. <b>Romancecar Leg 1 (Nov 5) is booked; nothing else is booked</b> — buy reserved Shinkansen seats after arriving in Japan.</div>`;
 
   TRAIN_LEGS.forEach(L => {
     html += `<article class="train-card">
