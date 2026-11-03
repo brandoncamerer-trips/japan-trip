@@ -1241,6 +1241,52 @@ a.view-tab {
   gap: 18px;
 }
 
+.notes-view[hidden] {
+  display: none;
+}
+
+.notes-card {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+  padding: 22px 20px;
+  max-width: 640px;
+}
+
+.notes-title {
+  margin: 0 0 6px;
+  font: 700 22px Georgia, serif;
+}
+
+.notes-help {
+  margin: 0 0 14px;
+  opacity: .75;
+  font-size: 14px;
+}
+
+.notes-card textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  font: inherit;
+  background: transparent;
+  color: inherit;
+  resize: vertical;
+}
+
+.notes-submit {
+  margin-top: 12px;
+}
+
+.notes-status {
+  margin-top: 10px;
+  font-size: 14px;
+  min-height: 1.2em;
+}
+
 .train-card {
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -1524,6 +1570,13 @@ tr.best .opt-tag {
           aria-selected="false"
           type="button"
         ><span class="tab-full">Draft Train Schedule</span><span class="tab-short">Trains</span></button>
+        <button
+          class="view-tab"
+          data-view="notes"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        >Notes</button>
       </div>
 
       <div class="toolbar-right">
@@ -1577,6 +1630,20 @@ tr.best .opt-tag {
     </div>
 
     <div id="trainView" class="train-view" hidden></div>
+
+    <div id="notesView" class="notes-view" hidden>
+      <div class="notes-card">
+        <h2 class="notes-title">Crew notes</h2>
+        <p class="notes-help">Anyone can post a note — no account needed. Notes are saved to the trip log.</p>
+        <form id="noteForm">
+          <textarea id="noteText" rows="5" maxlength="2000" placeholder="Write a note…" aria-label="Write a note"></textarea>
+          <input type="text" id="noteTrap" name="website" autocomplete="off" tabindex="-1" style="display:none" aria-hidden="true">
+          <br>
+          <button class="tool-btn notes-submit" id="noteSubmit" type="submit">Submit note</button>
+          <div class="notes-status" id="noteStatus" role="status" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
 
   </section>
 </main>
@@ -3250,8 +3317,60 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     if (controls) controls.hidden = view !== "timeline";
     document.getElementById("map").hidden = view !== "map";
     document.getElementById("trainView").hidden = view !== "trains";
+    document.getElementById("notesView").hidden = view !== "notes";
   });
 });
+
+
+// ---- Crew notes: public insert-only via Supabase ----
+
+const NOTES_CONFIG = {
+  url: "https://ypntbpqjtcvbyjlepqvv.supabase.co",
+  anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwbnRicHFqdGN2YnlqbGVwcXZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM2ODU5NzIsImV4cCI6MjEwOTI2MTk3Mn0.b2DtiO42sECoryq_mlqeUE0jQrAFPmQriM62hHGwlfo"
+};
+
+const noteForm = document.getElementById("noteForm");
+
+if (noteForm) {
+  noteForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const status = document.getElementById("noteStatus");
+    const button = document.getElementById("noteSubmit");
+    const textEl = document.getElementById("noteText");
+    const trap = document.getElementById("noteTrap");
+    const note = textEl.value.trim();
+
+    if (trap.value) return;
+    if (!note) {
+      status.textContent = "Write something first.";
+      return;
+    }
+
+    button.disabled = true;
+    status.textContent = "Sending…";
+
+    try {
+      const res = await fetch(`${NOTES_CONFIG.url}/rest/v1/notes`, {
+        method: "POST",
+        headers: {
+          "apikey": NOTES_CONFIG.anonKey,
+          "Authorization": `Bearer ${NOTES_CONFIG.anonKey}`,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({ note })
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      textEl.value = "";
+      status.textContent = "✓ Note saved — thank you!";
+    } catch (err) {
+      status.textContent = "Could not send — check your connection and try again.";
+    } finally {
+      button.disabled = false;
+    }
+  });
+}
 
 </script>
 
