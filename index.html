@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="description" content="A complete interactive itinerary for Japan Journey 2026.">
 <meta property="og:title" content="Japan Journey 2026">
 <meta property="og:description" content="November 2–13, 2026 · Tokyo, Hakone, Nara, Nagoya, Toyohashi, Saitama — flights, hotels, trains, and restaurants for the crew.">
@@ -16,6 +19,26 @@
 <meta name="twitter:image" content="https://brandoncamerer-trips.github.io/japan-trip/preview.webp">
 
 <title>Japan Journey 2026</title>
+<script>
+// Cache freshness self-check: if the server has a newer build, reload once to it.
+const SITE_BUILD = "20261103-0830";
+(function () {
+  try {
+    if (!/^https?:$/.test(location.protocol)) return;
+    fetch(location.pathname + "?cb=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.text(); })
+      .then(function (html) {
+        const m = html.match(/const SITE_BUILD = "([^"]+)"/);
+        if (!m || m[1] === SITE_BUILD) return;
+        const fresh = m[1];
+        if (sessionStorage.getItem("siteBuildReload") === fresh) return;
+        sessionStorage.setItem("siteBuildReload", fresh);
+        location.replace(location.pathname + "?v=" + fresh);
+      })
+      .catch(function () {});
+  } catch (e) {}
+})();
+</script>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <link rel="icon" type="image/png" sizes="512x512" href="favicon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
