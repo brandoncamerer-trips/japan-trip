@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261103-1055";
+const SITE_BUILD = "20261103-1140";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1491,6 +1491,10 @@ a.view-tab {
 
 .day-actions {
   padding: 8px 14px 2px;
+}
+
+.collapsed .day-actions {
+  display: none;
 }
 
 .add-notes-btn {
@@ -3750,7 +3754,8 @@ async function loadCrewPhotos() {
       body: JSON.stringify({ prefix: "", limit: 200, sortBy: { column: "created_at", order: "desc" } })
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const items = (await res.json()).filter(x => x.name && x.id);
+    const MEDIA_EXTS = ["jpg", "jpeg", "png", "gif", "webp", "heic", "mp4", "mov", "webm", "m4v"];
+    const items = (await res.json()).filter(x => x.name && !x.name.startsWith(".") && MEDIA_EXTS.includes((x.name.split(".").pop() || "").toLowerCase()));
     grid.innerHTML = "";
     const VIDEO_EXTS = ["mp4", "mov", "webm", "m4v"];
     for (const it of items) {
@@ -3912,17 +3917,19 @@ if (photoGridEl) {
   });
 }
 
-const lightboxEl = document.getElementById("lightbox");
-if (lightboxEl) {
-  lightboxEl.addEventListener("click", (e) => {
-    if (e.target === lightboxEl) closeLightbox();
-  });
-  const closeBtn = document.getElementById("lightboxClose");
-  if (closeBtn) closeBtn.addEventListener("click", closeLightbox);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !lightboxEl.hidden) closeLightbox();
-  });
-}
+document.addEventListener("click", (e) => {
+  if (e.target.closest && e.target.closest("#lightboxClose")) {
+    closeLightbox();
+    return;
+  }
+  const box = document.getElementById("lightbox");
+  if (box && e.target === box) closeLightbox();
+});
+
+document.addEventListener("keydown", (e) => {
+  const box = document.getElementById("lightbox");
+  if (e.key === "Escape" && box && !box.hidden) closeLightbox();
+});
 
 document.addEventListener("click", (e) => {
   const btn = e.target.closest(".add-notes-btn");
@@ -3937,7 +3944,7 @@ document.addEventListener("click", (e) => {
 </script>
 
 <div class="lightbox" id="lightbox" hidden>
-  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close">✕</button>
+  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close" onclick="closeLightbox()">✕</button>
   <img id="lightboxImg" alt="Photo" hidden>
   <video id="lightboxVideo" controls playsinline hidden></video>
 </div>
