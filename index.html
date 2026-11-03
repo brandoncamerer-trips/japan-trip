@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261103-1140";
+const SITE_BUILD = "20261103-1445";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1713,6 +1713,65 @@ tr.best .opt-tag {
   margin-bottom: 18px;
   color: #5c4d1a;
 }
+.snake-view[hidden] {
+  display: none;
+}
+.snake-card {
+  text-align: center;
+}
+.snake-score-row {
+  display: flex;
+  justify-content: space-between;
+  max-width: 340px;
+  margin: 0 auto 8px;
+  font-size: 15px;
+}
+#snakeCanvas {
+  display: block;
+  margin: 0 auto;
+  width: min(340px, 86vw);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  background: #12240f;
+  border-radius: 12px;
+  touch-action: none;
+}
+.snake-msg {
+  margin: 10px auto 4px;
+  font-size: 14px;
+  min-height: 20px;
+  opacity: 0.85;
+}
+.snake-start {
+  margin: 6px auto 2px;
+  font-size: 16px;
+  padding: 10px 22px;
+}
+.snake-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 64px);
+  grid-template-rows: repeat(2, 64px);
+  gap: 8px;
+  justify-content: center;
+  margin: 14px auto 4px;
+}
+.snake-dir {
+  font-size: 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  background: rgba(127, 127, 127, 0.14);
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.snake-dir:active {
+  background: rgba(127, 127, 127, 0.32);
+}
+.snake-up { grid-column: 2; grid-row: 1; }
+.snake-left { grid-column: 1; grid-row: 2; }
+.snake-down { grid-column: 2; grid-row: 2; }
+.snake-right { grid-column: 3; grid-row: 2; }
+
 </style>
 </head>
 
@@ -1806,6 +1865,13 @@ tr.best .opt-tag {
           aria-selected="false"
           type="button"
         >Photos</button>
+        <button
+          class="view-tab"
+          data-view="snake"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        >Snake</button>
       </div>
 
       <div class="toolbar-right">
@@ -1887,6 +1953,25 @@ tr.best .opt-tag {
         <p class="notes-session-note" id="photoEmpty" hidden>No photos yet — add the first one.</p>
       </div>
       <div class="photo-grid" id="photoGrid"></div>
+    </div>
+
+    <div id="snakeView" class="snake-view" hidden>
+      <div class="notes-card snake-card">
+        <h2 class="notes-title">Snake</h2>
+        <div class="snake-score-row">
+          <span>Score: <strong id="snakeScore">0</strong></span>
+          <span>Best: <strong id="snakeBest">0</strong></span>
+        </div>
+        <canvas id="snakeCanvas" width="340" height="340" aria-label="Snake game board"></canvas>
+        <div class="snake-msg" id="snakeMsg">Tap Start, then swipe, use arrow keys, or tap the pad.</div>
+        <button class="tool-btn snake-start" id="snakeStart" type="button">▶ Start</button>
+        <div class="snake-pad" aria-hidden="false">
+          <button class="snake-dir snake-up" type="button" data-dir="up" aria-label="Up">▲</button>
+          <button class="snake-dir snake-left" type="button" data-dir="left" aria-label="Left">◀</button>
+          <button class="snake-dir snake-down" type="button" data-dir="down" aria-label="Down">▼</button>
+          <button class="snake-dir snake-right" type="button" data-dir="right" aria-label="Right">▶</button>
+        </div>
+      </div>
     </div>
 
   </section>
@@ -3613,6 +3698,12 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     if (view === "notes") loadCrewNotes();
     document.getElementById("photosView").hidden = view !== "photos";
     if (view === "photos") loadCrewPhotos();
+    const snakeViewEl = document.getElementById("snakeView");
+    if (snakeViewEl) {
+      snakeViewEl.hidden = view !== "snake";
+      if (view === "snake" && window.snakeOnShow) snakeOnShow();
+      if (view !== "snake" && window.snakeOnHide) snakeOnHide();
+    }
   });
 });
 
@@ -3940,6 +4031,193 @@ document.addEventListener("click", (e) => {
     window.scrollTo({ top: 0 });
   }
 });
+
+
+// ---- Snake game (Snake tab) ----
+(function () {
+  const canvas = document.getElementById("snakeCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const scoreEl = document.getElementById("snakeScore");
+  const bestEl = document.getElementById("snakeBest");
+  const msgEl = document.getElementById("snakeMsg");
+  const startBtn = document.getElementById("snakeStart");
+
+  const CELLS = 17;
+  const SIZE = 340;
+  const CELL = SIZE / CELLS;
+
+  let best = 0;
+  try { best = parseInt(localStorage.getItem("snakeBest") || "0", 10) || 0; } catch (e) { best = 0; }
+  bestEl.textContent = best;
+
+  let snake, dir, nextDirs, food, score, timer, speed, state;
+
+  function placeFood() {
+    while (true) {
+      const f = { x: Math.floor(Math.random() * CELLS), y: Math.floor(Math.random() * CELLS) };
+      if (!snake.some(s => s.x === f.x && s.y === f.y)) { food = f; return; }
+    }
+  }
+
+  function reset() {
+    snake = [{ x: 8, y: 8 }, { x: 7, y: 8 }, { x: 6, y: 8 }];
+    dir = { x: 1, y: 0 };
+    nextDirs = [];
+    score = 0;
+    speed = 135;
+    scoreEl.textContent = "0";
+    placeFood();
+    draw();
+  }
+
+  function draw() {
+    ctx.fillStyle = "#12240f";
+    ctx.fillRect(0, 0, SIZE, SIZE);
+    ctx.strokeStyle = "rgba(255,255,255,0.05)";
+    ctx.lineWidth = 1;
+    for (let i = 1; i < CELLS; i++) {
+      ctx.beginPath(); ctx.moveTo(i * CELL, 0); ctx.lineTo(i * CELL, SIZE); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, i * CELL); ctx.lineTo(SIZE, i * CELL); ctx.stroke();
+    }
+    // food
+    ctx.fillStyle = "#e5484d";
+    ctx.beginPath();
+    ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, CELL / 2 - 2, 0, Math.PI * 2);
+    ctx.fill();
+    // snake
+    snake.forEach((s, i) => {
+      ctx.fillStyle = i === 0 ? "#7bd88f" : "#3fae5a";
+      const pad = i === 0 ? 1 : 2;
+      ctx.beginPath();
+      ctx.roundRect(s.x * CELL + pad, s.y * CELL + pad, CELL - pad * 2, CELL - pad * 2, 5);
+      ctx.fill();
+    });
+  }
+
+  function step() {
+    if (nextDirs.length) dir = nextDirs.shift();
+    const head = { x: snake[0].x + dir.x, y: snake[0].y + dir.y };
+    if (head.x < 0 || head.y < 0 || head.x >= CELLS || head.y >= CELLS ||
+        snake.some(s => s.x === head.x && s.y === head.y)) {
+      gameOver();
+      return;
+    }
+    snake.unshift(head);
+    if (head.x === food.x && head.y === food.y) {
+      score += 1;
+      scoreEl.textContent = score;
+      placeFood();
+      if (score % 5 === 0 && speed > 75) {
+        speed -= 10;
+        restartTimer();
+      }
+    } else {
+      snake.pop();
+    }
+    draw();
+  }
+
+  function restartTimer() {
+    if (timer) clearInterval(timer);
+    timer = setInterval(step, speed);
+  }
+
+  function startGame() {
+    reset();
+    state = "running";
+    msgEl.textContent = "Good luck — don't bite yourself!";
+    startBtn.textContent = "⏸ Pause";
+    restartTimer();
+  }
+
+  function pauseGame(quiet) {
+    if (state !== "running") return;
+    state = "paused";
+    if (timer) clearInterval(timer);
+    timer = null;
+    startBtn.textContent = "▶ Resume";
+    if (!quiet) msgEl.textContent = "Paused.";
+  }
+
+  function gameOver() {
+    state = "over";
+    if (timer) clearInterval(timer);
+    timer = null;
+    if (score > best) {
+      best = score;
+      bestEl.textContent = best;
+      try { localStorage.setItem("snakeBest", String(best)); } catch (e) {}
+    }
+    msgEl.textContent = "Game over — score " + score + ". Tap Start to play again.";
+    startBtn.textContent = "▶ Start";
+    draw();
+  }
+
+  function setDir(x, y) {
+    if (state !== "running") return;
+    const last = nextDirs.length ? nextDirs[nextDirs.length - 1] : dir;
+    if (last.x === -x && last.y === -y) return;
+    if (last.x === x && last.y === y) return;
+    if (nextDirs.length < 3) nextDirs.push({ x: x, y: y });
+  }
+
+  startBtn.addEventListener("click", () => {
+    if (state === "running") pauseGame(false);
+    else if (state === "paused") {
+      state = "running";
+      msgEl.textContent = "Good luck — don't bite yourself!";
+      startBtn.textContent = "⏸ Pause";
+      restartTimer();
+    } else startGame();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (document.getElementById("snakeView").hidden) return;
+    const k = e.key;
+    if (k === "ArrowUp" || k === "w" || k === "W") { setDir(0, -1); e.preventDefault(); }
+    else if (k === "ArrowDown" || k === "s" || k === "S") { setDir(0, 1); e.preventDefault(); }
+    else if (k === "ArrowLeft" || k === "a" || k === "A") { setDir(-1, 0); e.preventDefault(); }
+    else if (k === "ArrowRight" || k === "d" || k === "D") { setDir(1, 0); e.preventDefault(); }
+  });
+
+  document.querySelectorAll(".snake-dir").forEach(btn => {
+    const go = (e) => {
+      e.preventDefault();
+      const d = btn.dataset.dir;
+      if (d === "up") setDir(0, -1);
+      else if (d === "down") setDir(0, 1);
+      else if (d === "left") setDir(-1, 0);
+      else if (d === "right") setDir(1, 0);
+    };
+    btn.addEventListener("touchstart", go, { passive: false });
+    btn.addEventListener("click", go);
+  });
+
+  let touchStart = null;
+  canvas.addEventListener("touchstart", (e) => {
+    touchStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }, { passive: true });
+  canvas.addEventListener("touchmove", (e) => { e.preventDefault(); }, { passive: false });
+  canvas.addEventListener("touchend", (e) => {
+    if (!touchStart) return;
+    const dx = e.changedTouches[0].clientX - touchStart.x;
+    const dy = e.changedTouches[0].clientY - touchStart.y;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) > 24) {
+      if (Math.abs(dx) > Math.abs(dy)) setDir(dx > 0 ? 1 : -1, 0);
+      else setDir(0, dy > 0 ? 1 : -1);
+    }
+    touchStart = null;
+  });
+
+  document.addEventListener("visibilitychange", () => { if (document.hidden) pauseGame(true); });
+
+  window.snakeOnShow = function () { if (state === undefined) { state = "ready"; reset(); } else draw(); };
+  window.snakeOnHide = function () { pauseGame(true); };
+
+  state = "ready";
+  reset();
+})();
 
 </script>
 
