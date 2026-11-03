@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261103-1010";
+const SITE_BUILD = "20261103-1055";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1311,7 +1311,7 @@ a.view-tab {
 }
 
 .notes-feed-wrap {
-  margin-top: 18px;
+  max-width: 640px;
 }
 
 .notes-feed-label {
@@ -1403,6 +1403,106 @@ a.view-tab {
   height: 160px;
   object-fit: cover;
   display: block;
+}
+
+.photo-grid video {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-grid figure {
+  position: relative;
+  cursor: pointer;
+}
+
+.photo-play {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(10, 15, 20, .65);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.upload-progress {
+  margin-top: 10px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.upload-progress[hidden] {
+  display: none;
+}
+
+.upload-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--navy);
+  border-radius: 999px;
+  transition: width .25s ease;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 15, 20, .93);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  padding: 18px;
+}
+
+.lightbox[hidden] {
+  display: none;
+}
+
+.lightbox img,
+.lightbox video {
+  max-width: 100%;
+  max-height: 90vh;
+  border-radius: 10px;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, .14);
+  color: #fff;
+  font-size: 17px;
+  cursor: pointer;
+}
+
+.day-actions {
+  padding: 8px 14px 2px;
+}
+
+.add-notes-btn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
 }
 
 .train-card {
@@ -1766,20 +1866,20 @@ tr.best .opt-tag {
           <button class="tool-btn notes-submit" id="noteSubmit" type="submit">Submit note</button>
           <div class="notes-status" id="noteStatus" role="status" aria-live="polite"></div>
         </form>
-        <div class="notes-feed-wrap" id="notesFeedWrap">
-          <div class="notes-feed-label">Submitted notes</div>
-          <div class="notes-feed" id="notesFeed"></div>
-        </div>
+      </div>
+      <div class="notes-feed-wrap" id="notesFeedWrap">
+        <div class="notes-feed-label">Submitted notes</div>
+        <div class="notes-feed" id="notesFeed"></div>
       </div>
     </div>
 
     <div id="photosView" class="photos-view" hidden>
       <div class="notes-card">
-        <h2 class="notes-title">Crew photos</h2>
-        <p class="notes-help">Anyone can add photos — straight from your phone, no account needed. Everyone with this link can see them.</p>
-        <label class="tool-btn photo-add" for="photoInput">📷 Add photos</label>
-        <input type="file" id="photoInput" accept="image/*" multiple hidden>
+        <h2 class="notes-title">Photos</h2>
+        <label class="tool-btn photo-add" for="photoInput">📷 Add photos or videos</label>
+        <input type="file" id="photoInput" accept="image/*,video/*" multiple hidden>
         <div class="notes-status" id="photoStatus" role="status" aria-live="polite"></div>
+        <div class="upload-progress" id="uploadProgress" hidden><div class="upload-bar" id="uploadBar"></div></div>
         <p class="notes-session-note" id="photoEmpty" hidden>No photos yet — add the first one.</p>
       </div>
       <div class="photo-grid" id="photoGrid"></div>
@@ -2976,6 +3076,10 @@ function renderTimeline() {
               </button>
 
 
+              <div class="day-actions">
+                <button class="add-notes-btn" type="button">＋ Add notes</button>
+              </div>
+
               <div class="events">
                 ${rows}
               </div>
@@ -3625,7 +3729,7 @@ if (noteForm) {
   });
 }
 
-// ---- Crew photos: public upload + gallery via Supabase Storage ----
+// ---- Photos: public upload + gallery via Supabase Storage ----
 
 function photoPublicUrl(name) {
   return NOTES_CONFIG.url + "/storage/v1/object/public/photos/" + encodeURIComponent(name);
@@ -3648,18 +3752,29 @@ async function loadCrewPhotos() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const items = (await res.json()).filter(x => x.name && x.id);
     grid.innerHTML = "";
+    const VIDEO_EXTS = ["mp4", "mov", "webm", "m4v"];
     for (const it of items) {
       const fig = document.createElement("figure");
-      const a = document.createElement("a");
-      a.href = photoPublicUrl(it.name);
-      a.target = "_blank";
-      a.rel = "noopener";
-      const img = document.createElement("img");
-      img.src = photoPublicUrl(it.name);
-      img.loading = "lazy";
-      img.alt = "Crew photo";
-      a.appendChild(img);
-      fig.appendChild(a);
+      fig.dataset.name = it.name;
+      const ext = (it.name.split(".").pop() || "").toLowerCase();
+      if (VIDEO_EXTS.includes(ext)) {
+        const v = document.createElement("video");
+        v.src = photoPublicUrl(it.name);
+        v.muted = true;
+        v.playsInline = true;
+        v.preload = "metadata";
+        fig.appendChild(v);
+        const badge = document.createElement("span");
+        badge.className = "photo-play";
+        badge.textContent = "▶";
+        fig.appendChild(badge);
+      } else {
+        const img = document.createElement("img");
+        img.src = photoPublicUrl(it.name);
+        img.loading = "lazy";
+        img.alt = "Photo";
+        fig.appendChild(img);
+      }
       grid.appendChild(fig);
     }
     if (empty) empty.hidden = items.length > 0;
@@ -3700,10 +3815,25 @@ if (photoInput) {
     if (!files.length) return;
     let done = 0;
     let failed = 0;
+    const progress = document.getElementById("uploadProgress");
+    const bar = document.getElementById("uploadBar");
+    if (progress && bar) {
+      progress.hidden = false;
+      bar.style.width = "0%";
+    }
     for (const file of files) {
       status.textContent = `Uploading ${done + failed + 1} of ${files.length}…`;
       try {
-        const { blob, ext } = await downscaleToJpeg(file);
+        let prepared;
+        if ((file.type || "").startsWith("video/")) {
+          if (file.size > 45 * 1024 * 1024) throw new Error("Video too large");
+          const typeMap = { "video/mp4": "mp4", "video/quicktime": "mov", "video/webm": "webm" };
+          const m = (file.name || "").match(/\.([a-z0-9]+)$/i);
+          prepared = { blob: file, ext: typeMap[file.type] || (m ? m[1].toLowerCase() : "mp4") };
+        } else {
+          prepared = await downscaleToJpeg(file);
+        }
+        const { blob, ext } = prepared;
         const name = Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + ext;
         const res = await fetch(NOTES_CONFIG.url + "/storage/v1/object/photos/" + name, {
           method: "POST",
@@ -3719,16 +3849,98 @@ if (photoInput) {
       } catch (err) {
         failed++;
       }
+      if (bar) bar.style.width = Math.round(((done + failed) / files.length) * 100) + "%";
+    }
+    if (progress && bar) {
+      bar.style.width = "100%";
+      setTimeout(() => { progress.hidden = true; }, 700);
     }
     photoInput.value = "";
     status.textContent = failed
-      ? `Added ${done} photo${done === 1 ? "" : "s"} — ${failed} failed, check your connection and try those again.`
-      : `✓ Added ${done} photo${done === 1 ? "" : "s"} — thank you!`;
+      ? `Added ${done} — ${failed} didn't go through (videos must be under ~45 MB). Check your connection and try again.`
+      : `✓ Added ${done} — thank you!`;
     loadCrewPhotos();
   });
 }
 
+// ---- Photo lightbox (in-page pop-up) + Add-notes jump ----
+
+const VIDEO_EXTS_LB = ["mp4", "mov", "webm", "m4v"];
+
+function openLightbox(name) {
+  const box = document.getElementById("lightbox");
+  const img = document.getElementById("lightboxImg");
+  const vid = document.getElementById("lightboxVideo");
+  if (!box || !img || !vid) return;
+  const ext = (name.split(".").pop() || "").toLowerCase();
+  const url = photoPublicUrl(name);
+  if (VIDEO_EXTS_LB.includes(ext)) {
+    img.hidden = true;
+    img.removeAttribute("src");
+    vid.hidden = false;
+    vid.src = url;
+    vid.play().catch(() => {});
+  } else {
+    vid.hidden = true;
+    vid.pause();
+    vid.removeAttribute("src");
+    img.hidden = false;
+    img.src = url;
+  }
+  box.hidden = false;
+  document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+  const box = document.getElementById("lightbox");
+  const vid = document.getElementById("lightboxVideo");
+  if (!box) return;
+  box.hidden = true;
+  if (vid) {
+    vid.pause();
+    vid.removeAttribute("src");
+    vid.load();
+  }
+  document.body.style.overflow = "";
+}
+
+const photoGridEl = document.getElementById("photoGrid");
+if (photoGridEl) {
+  photoGridEl.addEventListener("click", (e) => {
+    const fig = e.target.closest("figure[data-name]");
+    if (fig) openLightbox(fig.dataset.name);
+  });
+}
+
+const lightboxEl = document.getElementById("lightbox");
+if (lightboxEl) {
+  lightboxEl.addEventListener("click", (e) => {
+    if (e.target === lightboxEl) closeLightbox();
+  });
+  const closeBtn = document.getElementById("lightboxClose");
+  if (closeBtn) closeBtn.addEventListener("click", closeLightbox);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !lightboxEl.hidden) closeLightbox();
+  });
+}
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".add-notes-btn");
+  if (!btn) return;
+  const tab = document.querySelector('.view-tab[data-view="notes"]');
+  if (tab) {
+    tab.click();
+    window.scrollTo({ top: 0 });
+  }
+});
+
 </script>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close">✕</button>
+  <img id="lightboxImg" alt="Photo" hidden>
+  <video id="lightboxVideo" controls playsinline hidden></video>
+</div>
 
 </body>
 </html>
