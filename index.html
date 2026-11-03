@@ -693,6 +693,11 @@ html[data-theme="dark"] .day-head {
   font: 700 clamp(19px, 3vw, 24px) Georgia, serif;
 }
 
+.place-complete {
+  font: 700 clamp(19px, 3vw, 24px) Georgia, serif;
+  color: #178a4c;
+}
+
 .chev {
   font-size: 20px;
   transition: .2s;
@@ -1487,18 +1492,10 @@ tr.best .opt-tag {
 
       <div class="kanji" aria-label="Jesus">イエス</div>
 
-      <div class="countdown" role="timer" aria-live="polite">
-        <div class="countdown-label" id="countdownLabel">
-          Until departure
-        </div>
-
-        <div class="units" id="units"></div>
-      </div>
-
       <div
         class="last-updated"
         id="lastUpdated"
-      >Last updated: November 1, 2026</div>
+      >Last updated: November 3, 2026</div>
 
     </div>
   </section>
@@ -1528,7 +1525,6 @@ tr.best .opt-tag {
           aria-selected="false"
           type="button"
         ><span class="tab-full">Draft Train Schedule</span><span class="tab-short">Trains</span></button>
-        <a class="view-tab" href="Monday/"><span class="tab-full">Monday Nov 2</span><span class="tab-short">Monday</span></a>
       </div>
 
       <div class="toolbar-right">
@@ -2474,6 +2470,31 @@ document.getElementById("timeline").addEventListener("click", (e) => {
   day?.classList.toggle("food-open", open);
 });
 
+function todayPartsIn(tz) {
+  const parts = {};
+  new Intl.DateTimeFormat("en-US", {
+    timeZone: tz,
+    year: "numeric",
+    month: "numeric",
+    day: "numeric"
+  }).formatToParts(new Date()).forEach(p => {
+    parts[p.type] = p.value;
+  });
+  return { y: Number(parts.year), m: Number(parts.month), d: Number(parts.day) };
+}
+
+
+function isDayComplete(dateStr) {
+  const day = parseInt(String(dateStr).replace("Nov. ", ""), 10);
+  if (isNaN(day)) return false;
+  // Nov. 2-3 are US-side days (Pacific); Nov. 4 onward are Japan days (JST).
+  const t = todayPartsIn(day <= 3 ? "America/Los_Angeles" : "Asia/Tokyo");
+  if (t.y !== 2026) return t.y > 2026;
+  if (t.m !== 11) return t.m > 11;
+  return day < t.d;
+}
+
+
 function renderTimeline() {
 
   const groups = [];
@@ -2509,6 +2530,8 @@ function renderTimeline() {
 
     groups
       .map((group, index) => {
+
+        const complete = isDayComplete(group.date);
 
         const rows = group.events
 
@@ -2671,20 +2694,20 @@ function renderTimeline() {
             style="animation-delay:${index * 25}ms"
           >
 
-            ${group.date === "Nov. 2"
-              ? `<a class="date" href="Monday/">${formatDayLabel(group.date)}</a>`
-              : `<div class="date">${formatDayLabel(group.date)}</div>`}
+            <div class="date">${formatDayLabel(group.date)}</div>
 
 
-            <div class="day-card">
+            <div class="day-card${complete ? " collapsed" : ""}">
 
               <button
                 class="day-head"
                 type="button"
-                aria-expanded="true"
+                aria-expanded="${complete ? "false" : "true"}"
               >
 
-                <span>
+                ${complete
+                  ? `<span class="place place-complete">✓ Complete</span>`
+                  : `<span>
 
                   <span class="dest">
                     ⌖ Destination
@@ -2694,7 +2717,7 @@ function renderTimeline() {
                     ${esc(group.place)}
                   </span>
 
-                </span>
+                </span>`}
 
                 <span class="chev">
                   ⌄
@@ -2706,10 +2729,6 @@ function renderTimeline() {
               <div class="events">
                 ${rows}
               </div>
-
-              ${group.date === "Nov. 2"
-                ? `<div class="card-foot"><a class="monday-btn" href="Monday/">Possible Monday activity →</a></div>`
-                : ""}
 
             </div>
 
@@ -2853,100 +2872,6 @@ fujiModal.addEventListener("click", event => {
 });
 
 
-const departure =
-  new Date(
-    "2026-11-02T11:30:00-08:00"
-  ).getTime();
-
-
-function updateCountdown() {
-
-  const timeLeft =
-    Math.max(
-      0,
-      departure - Date.now()
-    );
-
-
-  if (!timeLeft) {
-
-    document.getElementById(
-      "countdownLabel"
-    ).textContent =
-      "The journey has begun";
-
-
-    document.getElementById(
-      "units"
-    ).innerHTML = "";
-
-    return;
-  }
-
-
-  const values = [
-
-    [
-      Math.floor(
-        timeLeft / 86400000
-      ),
-      "days"
-    ],
-
-    [
-      Math.floor(
-        timeLeft / 3600000
-      ) % 24,
-      "hours"
-    ],
-
-    [
-      Math.floor(
-        timeLeft / 60000
-      ) % 60,
-      "mins"
-    ],
-
-    [
-      Math.floor(
-        timeLeft / 1000
-      ) % 60,
-      "secs"
-    ]
-
-  ];
-
-
-  document.getElementById("units")
-    .innerHTML = values
-
-      .map(([value, label]) => `
-
-        <div class="unit">
-
-          <div class="num">
-            ${String(value).padStart(2, "0")}
-          </div>
-
-          <small>
-            ${label}
-          </small>
-
-        </div>
-
-      `)
-
-      .join("");
-
-}
-
-
-updateCountdown();
-
-setInterval(
-  updateCountdown,
-  1000
-);
 
 
 /* Last updated date is stamped at deploy time (see #lastUpdated). */
