@@ -693,8 +693,7 @@ html[data-theme="dark"] .day-head {
   font: 700 clamp(19px, 3vw, 24px) Georgia, serif;
 }
 
-.place-complete {
-  font: 700 clamp(19px, 3vw, 24px) Georgia, serif;
+.dest-complete {
   color: #178a4c;
 }
 
@@ -2705,19 +2704,19 @@ function renderTimeline() {
                 aria-expanded="${complete ? "false" : "true"}"
               >
 
-                ${complete
-                  ? `<span class="place place-complete">✓ Complete</span>`
-                  : `<span>
+                <span>
 
-                  <span class="dest">
+                  ${complete
+                    ? `<span class="dest dest-complete">✓ Complete</span>`
+                    : `<span class="dest">
                     ⌖ Destination
-                  </span>
+                  </span>`}
 
                   <span class="place">
                     ${esc(group.place)}
                   </span>
 
-                </span>`}
+                </span>
 
                 <span class="chev">
                   ⌄
