@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261103-1455";
+const SITE_BUILD = "20261103-1515";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -4101,6 +4101,7 @@ document.addEventListener("click", (e) => {
 
 
 
+
 // ---- Snake game (Snake tab) ----
 (function () {
   const canvas = document.getElementById("snakeCanvas");
@@ -4132,11 +4133,15 @@ document.addEventListener("click", (e) => {
   async function loadSnakeBoard() {
     if (!boardEl || typeof NOTES_CONFIG === "undefined") return;
     try {
-      const res = await fetch(NOTES_CONFIG.url + "/rest/v1/snake_scores?select=name,score,created_at&order=score.desc,created_at.asc&limit=3", {
+      const res = await fetch(NOTES_CONFIG.url + "/rest/v1/snake_scores?select=name,score,created_at&order=score.desc,created_at.asc&limit=10", {
         headers: { "apikey": NOTES_CONFIG.anonKey, "Authorization": "Bearer " + NOTES_CONFIG.anonKey }
       });
       if (!res.ok) throw new Error("HTTP " + res.status);
-      const rows = await res.json();
+      let rows = await res.json();
+      if (rows.length > 3) {
+        const cutoff = rows[2].score;
+        rows = rows.filter((r, idx) => idx < 3 || r.score === cutoff);
+      }
       boardEl.innerHTML = "";
       if (!rows.length) {
         const p = document.createElement("p");
@@ -4179,6 +4184,30 @@ document.addEventListener("click", (e) => {
       });
       return res.ok;
     } catch (err) { return false; }
+  }
+
+  const PENDING_KEY = "snakePendingScores";
+  function loadPending() {
+    try { return JSON.parse(localStorage.getItem(PENDING_KEY) || "[]"); } catch (e) { return []; }
+  }
+  function savePending(q) {
+    try { localStorage.setItem(PENDING_KEY, JSON.stringify(q)); } catch (e) {}
+  }
+  function queuePending(name, score) {
+    const q = loadPending();
+    q.push({ name: name, score: score });
+    savePending(q);
+  }
+  async function flushPending() {
+    const q = loadPending();
+    if (!q.length) return;
+    const keep = [];
+    for (const item of q) {
+      const ok = await submitSnakeScore(item.name, item.score);
+      if (!ok) keep.push(item);
+    }
+    savePending(keep);
+    if (keep.length !== q.length) loadSnakeBoard();
   }
 
   let snake, dir, nextDirs, food, score, timer, speed, state, posted;
@@ -4293,6 +4322,9 @@ document.addEventListener("click", (e) => {
         if (ok) {
           msgEl.textContent = "Game over — score " + score + ", posted to the leaderboard! 🏆";
           loadSnakeBoard();
+        } else {
+          queuePending(nm, score);
+          msgEl.textContent = "Game over — score " + score + ". No connection, so it's saved on this phone and will post when you're back online.";
         }
       });
     }
@@ -4357,7 +4389,10 @@ document.addEventListener("click", (e) => {
 
   document.addEventListener("visibilitychange", () => { if (document.hidden) pauseGame(true); });
 
+  window.addEventListener("online", flushPending);
+
   window.snakeOnShow = function () {
+    flushPending();
     loadSnakeBoard();
     if (state === undefined) { state = "ready"; reset(); } else draw();
   };
