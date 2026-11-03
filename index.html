@@ -1287,6 +1287,59 @@ a.view-tab {
   min-height: 1.2em;
 }
 
+.notes-feed-wrap {
+  margin-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.notes-feed-head {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: 0;
+  padding: 12px 0 4px;
+  font: inherit;
+  font-weight: 700;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.nf-chev {
+  opacity: .55;
+  font-size: 13px;
+}
+
+.note-item {
+  border-top: 1px solid var(--line);
+  padding: 10px 0;
+}
+
+.note-item:first-child {
+  border-top: 0;
+}
+
+.note-text {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.note-time {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: .6;
+}
+
+.notes-session-note {
+  margin: 6px 0 0;
+  font-size: 12px;
+  opacity: .55;
+}
+
 .train-card {
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -1634,7 +1687,7 @@ tr.best .opt-tag {
     <div id="notesView" class="notes-view" hidden>
       <div class="notes-card">
         <h2 class="notes-title">Crew notes</h2>
-        <p class="notes-help">Anyone can post a note — no account needed. Notes are saved to the trip log.</p>
+        <p class="notes-help">Anyone can post — no account needed. Everyone with this link can read all the notes.</p>
         <form id="noteForm">
           <textarea id="noteText" rows="5" maxlength="2000" placeholder="Write a note…" aria-label="Write a note"></textarea>
           <input type="text" id="noteTrap" name="website" autocomplete="off" tabindex="-1" style="display:none" aria-hidden="true">
@@ -1642,6 +1695,13 @@ tr.best .opt-tag {
           <button class="tool-btn notes-submit" id="noteSubmit" type="submit">Submit note</button>
           <div class="notes-status" id="noteStatus" role="status" aria-live="polite"></div>
         </form>
+        <div class="notes-feed-wrap" id="notesFeedWrap">
+          <button type="button" class="notes-feed-head" id="notesFeedToggle" aria-expanded="true">
+            <span>Crew notes feed</span><span class="nf-chev" id="notesFeedChev">▾</span>
+          </button>
+          <div class="notes-feed" id="notesFeed"></div>
+          <p class="notes-session-note">Newest first. Times shown in your local time zone.</p>
+        </div>
       </div>
     </div>
 
@@ -1791,7 +1851,7 @@ const events = [
 
   [
     "Nov. 3",
-    "Renton Area",
+    "Seattle → Tokyo Haneda",
     "Visit",
     "Breakfast",
     "",
@@ -1802,7 +1862,7 @@ const events = [
 
   [
     "Nov. 3",
-    "Renton Area",
+    "Seattle → Tokyo Haneda",
     "Visit",
     "Activity TBD",
     "",
@@ -1813,7 +1873,7 @@ const events = [
 
   [
     "Nov. 3",
-    "Renton Area",
+    "Seattle → Tokyo Haneda",
     "Car",
     "Drop car at Sunset Community Church",
     "",
@@ -1824,7 +1884,7 @@ const events = [
 
   [
     "Nov. 3",
-    "Renton Area",
+    "Seattle → Tokyo Haneda",
     "Car",
     "Head to airport",
     "Depart 12:30 PM",
@@ -3362,6 +3422,7 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     document.getElementById("map").hidden = view !== "map";
     document.getElementById("trainView").hidden = view !== "trains";
     document.getElementById("notesView").hidden = view !== "notes";
+    if (view === "notes") loadCrewNotes();
   });
 });
 
@@ -3375,7 +3436,59 @@ const NOTES_CONFIG = {
 
 const noteForm = document.getElementById("noteForm");
 
+async function loadCrewNotes() {
+  const feed = document.getElementById("notesFeed");
+  const wrap = document.getElementById("notesFeedWrap");
+  if (!feed || !wrap) return;
+  try {
+    const res = await fetch(`${NOTES_CONFIG.url}/rest/v1/notes?select=note,created_at&order=created_at.desc&limit=200`, {
+      headers: {
+        "apikey": NOTES_CONFIG.anonKey,
+        "Authorization": `Bearer ${NOTES_CONFIG.anonKey}`
+      }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const rows = await res.json();
+    feed.innerHTML = "";
+    if (!rows.length) {
+      const empty = document.createElement("p");
+      empty.className = "notes-session-note";
+      empty.textContent = "No notes yet — be the first to post.";
+      feed.appendChild(empty);
+    } else {
+      for (const row of rows) {
+        const item = document.createElement("div");
+        item.className = "note-item";
+        const p = document.createElement("p");
+        p.className = "note-text";
+        p.textContent = row.note;
+        const t = document.createElement("div");
+        t.className = "note-time";
+        t.textContent = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(row.created_at));
+        item.append(p, t);
+        feed.appendChild(item);
+      }
+    }
+  } catch (err) {
+    /* leave the current feed as-is on a load error */
+  }
+}
+
+loadCrewNotes();
+
 if (noteForm) {
+  const feedToggle = document.getElementById("notesFeedToggle");
+  if (feedToggle) {
+    feedToggle.addEventListener("click", () => {
+      const feed = document.getElementById("notesFeed");
+      const chev = document.getElementById("notesFeedChev");
+      const collapsed = feed.style.display === "none";
+      feed.style.display = collapsed ? "" : "none";
+      if (chev) chev.textContent = collapsed ? "▾" : "▸";
+      feedToggle.setAttribute("aria-expanded", String(collapsed));
+    });
+  }
+
   noteForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
@@ -3406,6 +3519,7 @@ if (noteForm) {
         body: JSON.stringify({ note })
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await loadCrewNotes();
       textEl.value = "";
       status.textContent = "✓ Note saved — thank you!";
     } catch (err) {
