@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261103-1445";
+const SITE_BUILD = "20261103-1455";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1772,6 +1772,66 @@ tr.best .opt-tag {
 .snake-down { grid-column: 2; grid-row: 2; }
 .snake-right { grid-column: 3; grid-row: 2; }
 
+.snake-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin: 0 auto 10px;
+  max-width: 340px;
+}
+.snake-name-row label {
+  font-size: 14px;
+  white-space: nowrap;
+}
+#snakeName {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 12px;
+  font-size: 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(127, 127, 127, 0.45);
+  background: transparent;
+  color: inherit;
+}
+.snake-board-wrap {
+  max-width: 640px;
+  margin: 14px auto 0;
+}
+.snake-board {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.snake-lb-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: rgba(127, 127, 127, 0.10);
+  font-size: 16px;
+}
+.snake-lb-rank {
+  font-size: 18px;
+  min-width: 28px;
+}
+.snake-lb-name {
+  flex: 1;
+  text-align: left;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.snake-lb-score {
+  font-weight: 700;
+}
+.snake-lb-empty {
+  font-size: 14px;
+  opacity: 0.75;
+  padding: 6px 2px;
+}
+
 </style>
 </head>
 
@@ -1958,12 +2018,16 @@ tr.best .opt-tag {
     <div id="snakeView" class="snake-view" hidden>
       <div class="notes-card snake-card">
         <h2 class="notes-title">Snake</h2>
+        <div class="snake-name-row">
+          <label for="snakeName">Your name</label>
+          <input type="text" id="snakeName" maxlength="20" placeholder="Name for the leaderboard" autocomplete="off">
+        </div>
         <div class="snake-score-row">
           <span>Score: <strong id="snakeScore">0</strong></span>
           <span>Best: <strong id="snakeBest">0</strong></span>
         </div>
         <canvas id="snakeCanvas" width="340" height="340" aria-label="Snake game board"></canvas>
-        <div class="snake-msg" id="snakeMsg">Tap Start, then swipe, use arrow keys, or tap the pad.</div>
+        <div class="snake-msg" id="snakeMsg">Put your name in, tap Start, then swipe, use arrow keys, or tap the pad.</div>
         <button class="tool-btn snake-start" id="snakeStart" type="button">▶ Start</button>
         <div class="snake-pad" aria-hidden="false">
           <button class="snake-dir snake-up" type="button" data-dir="up" aria-label="Up">▲</button>
@@ -1972,8 +2036,11 @@ tr.best .opt-tag {
           <button class="snake-dir snake-right" type="button" data-dir="right" aria-label="Right">▶</button>
         </div>
       </div>
+      <div class="snake-board-wrap" id="snakeBoardWrap">
+        <div class="notes-feed-label">🏆 Leaderboard — Top 3</div>
+        <div class="snake-board" id="snakeBoard"></div>
+      </div>
     </div>
-
   </section>
 </main>
 
@@ -4033,6 +4100,7 @@ document.addEventListener("click", (e) => {
 });
 
 
+
 // ---- Snake game (Snake tab) ----
 (function () {
   const canvas = document.getElementById("snakeCanvas");
@@ -4042,6 +4110,8 @@ document.addEventListener("click", (e) => {
   const bestEl = document.getElementById("snakeBest");
   const msgEl = document.getElementById("snakeMsg");
   const startBtn = document.getElementById("snakeStart");
+  const nameInput = document.getElementById("snakeName");
+  const boardEl = document.getElementById("snakeBoard");
 
   const CELLS = 17;
   const SIZE = 340;
@@ -4051,7 +4121,67 @@ document.addEventListener("click", (e) => {
   try { best = parseInt(localStorage.getItem("snakeBest") || "0", 10) || 0; } catch (e) { best = 0; }
   bestEl.textContent = best;
 
-  let snake, dir, nextDirs, food, score, timer, speed, state;
+  try { nameInput.value = localStorage.getItem("snakeName") || ""; } catch (e) {}
+  nameInput.addEventListener("input", () => {
+    try { localStorage.setItem("snakeName", nameInput.value); } catch (e) {}
+  });
+
+  function playerName() { return nameInput.value.trim().slice(0, 20); }
+
+  // ---- Shared leaderboard (Supabase, top 3) ----
+  async function loadSnakeBoard() {
+    if (!boardEl || typeof NOTES_CONFIG === "undefined") return;
+    try {
+      const res = await fetch(NOTES_CONFIG.url + "/rest/v1/snake_scores?select=name,score,created_at&order=score.desc,created_at.asc&limit=3", {
+        headers: { "apikey": NOTES_CONFIG.anonKey, "Authorization": "Bearer " + NOTES_CONFIG.anonKey }
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      const rows = await res.json();
+      boardEl.innerHTML = "";
+      if (!rows.length) {
+        const p = document.createElement("p");
+        p.className = "snake-lb-empty";
+        p.textContent = "No scores yet — set the first one.";
+        boardEl.appendChild(p);
+        return;
+      }
+      const medals = ["🥇", "🥈", "🥉"];
+      rows.forEach((row, i) => {
+        const div = document.createElement("div");
+        div.className = "snake-lb-row";
+        const rank = document.createElement("span");
+        rank.className = "snake-lb-rank";
+        rank.textContent = medals[i] || (i + 1) + ".";
+        const nm = document.createElement("span");
+        nm.className = "snake-lb-name";
+        nm.textContent = row.name;
+        const sc = document.createElement("span");
+        sc.className = "snake-lb-score";
+        sc.textContent = row.score;
+        div.append(rank, nm, sc);
+        boardEl.appendChild(div);
+      });
+    } catch (err) { /* keep current board on error */ }
+  }
+
+  async function submitSnakeScore(name, score) {
+    if (typeof NOTES_CONFIG === "undefined") return false;
+    try {
+      const res = await fetch(NOTES_CONFIG.url + "/rest/v1/snake_scores", {
+        method: "POST",
+        headers: {
+          "apikey": NOTES_CONFIG.anonKey,
+          "Authorization": "Bearer " + NOTES_CONFIG.anonKey,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({ name: name, score: score })
+      });
+      return res.ok;
+    } catch (err) { return false; }
+  }
+
+  let snake, dir, nextDirs, food, score, timer, speed, state, posted;
 
   function placeFood() {
     while (true) {
@@ -4066,6 +4196,7 @@ document.addEventListener("click", (e) => {
     nextDirs = [];
     score = 0;
     speed = 135;
+    posted = false;
     scoreEl.textContent = "0";
     placeFood();
     draw();
@@ -4080,12 +4211,10 @@ document.addEventListener("click", (e) => {
       ctx.beginPath(); ctx.moveTo(i * CELL, 0); ctx.lineTo(i * CELL, SIZE); ctx.stroke();
       ctx.beginPath(); ctx.moveTo(0, i * CELL); ctx.lineTo(SIZE, i * CELL); ctx.stroke();
     }
-    // food
     ctx.fillStyle = "#e5484d";
     ctx.beginPath();
     ctx.arc(food.x * CELL + CELL / 2, food.y * CELL + CELL / 2, CELL / 2 - 2, 0, Math.PI * 2);
     ctx.fill();
-    // snake
     snake.forEach((s, i) => {
       ctx.fillStyle = i === 0 ? "#7bd88f" : "#3fae5a";
       const pad = i === 0 ? 1 : 2;
@@ -4124,6 +4253,11 @@ document.addEventListener("click", (e) => {
   }
 
   function startGame() {
+    if (!playerName()) {
+      msgEl.textContent = "Put your name in first — the leaderboard needs it.";
+      nameInput.focus();
+      return;
+    }
     reset();
     state = "running";
     msgEl.textContent = "Good luck — don't bite yourself!";
@@ -4152,6 +4286,16 @@ document.addEventListener("click", (e) => {
     msgEl.textContent = "Game over — score " + score + ". Tap Start to play again.";
     startBtn.textContent = "▶ Start";
     draw();
+    const nm = playerName();
+    if (score > 0 && nm && !posted) {
+      posted = true;
+      submitSnakeScore(nm, score).then(ok => {
+        if (ok) {
+          msgEl.textContent = "Game over — score " + score + ", posted to the leaderboard! 🏆";
+          loadSnakeBoard();
+        }
+      });
+    }
   }
 
   function setDir(x, y) {
@@ -4174,6 +4318,7 @@ document.addEventListener("click", (e) => {
 
   document.addEventListener("keydown", (e) => {
     if (document.getElementById("snakeView").hidden) return;
+    if (document.activeElement === nameInput) return;
     const k = e.key;
     if (k === "ArrowUp" || k === "w" || k === "W") { setDir(0, -1); e.preventDefault(); }
     else if (k === "ArrowDown" || k === "s" || k === "S") { setDir(0, 1); e.preventDefault(); }
@@ -4212,11 +4357,15 @@ document.addEventListener("click", (e) => {
 
   document.addEventListener("visibilitychange", () => { if (document.hidden) pauseGame(true); });
 
-  window.snakeOnShow = function () { if (state === undefined) { state = "ready"; reset(); } else draw(); };
+  window.snakeOnShow = function () {
+    loadSnakeBoard();
+    if (state === undefined) { state = "ready"; reset(); } else draw();
+  };
   window.snakeOnHide = function () { pauseGame(true); };
 
   state = "ready";
   reset();
+  loadSnakeBoard();
 })();
 
 </script>
