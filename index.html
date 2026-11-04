@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261103-1515";
+const SITE_BUILD = "20261103-1945";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1832,6 +1832,68 @@ tr.best .opt-tag {
   padding: 6px 2px;
 }
 
+.snake-board-wrap {
+  max-width: 640px;
+  margin: 0 auto 16px;
+  padding: 18px 18px 14px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(255, 193, 7, 0.16), rgba(255, 193, 7, 0.04) 55%, rgba(63, 174, 90, 0.10));
+  border: 1px solid rgba(255, 193, 7, 0.35);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.10);
+}
+.snake-lb-title {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 0.2px;
+}
+.snake-lb-sub {
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.75;
+  margin: 2px 0 12px;
+}
+.snake-board {
+  gap: 6px;
+}
+.snake-lb-row {
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(127, 127, 127, 0.16);
+  border-radius: 12px;
+  padding: 9px 14px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+.snake-lb-row[data-rank="1"] {
+  background: linear-gradient(90deg, rgba(255, 215, 64, 0.45), rgba(255, 215, 64, 0.15));
+  border-color: rgba(212, 160, 0, 0.55);
+  font-size: 18px;
+  padding: 12px 16px;
+}
+.snake-lb-row[data-rank="2"] {
+  background: linear-gradient(90deg, rgba(192, 192, 192, 0.35), rgba(192, 192, 192, 0.10));
+}
+.snake-lb-row[data-rank="3"] {
+  background: linear-gradient(90deg, rgba(205, 127, 50, 0.30), rgba(205, 127, 50, 0.08));
+}
+.snake-lb-rank {
+  font-size: 20px;
+  min-width: 32px;
+  text-align: center;
+}
+.snake-lb-row[data-rank="4"] .snake-lb-rank,
+.snake-lb-row[data-rank="5"] .snake-lb-rank {
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0.65;
+}
+.snake-lb-score {
+  font-size: 1.05em;
+}
+@media (prefers-color-scheme: dark) {
+  .snake-lb-row { background: rgba(255, 255, 255, 0.07); }
+  .snake-lb-row[data-rank="1"] { background: linear-gradient(90deg, rgba(255, 215, 64, 0.28), rgba(255, 215, 64, 0.08)); }
+}
+
 </style>
 </head>
 
@@ -2016,6 +2078,11 @@ tr.best .opt-tag {
     </div>
 
     <div id="snakeView" class="snake-view" hidden>
+      <div class="snake-board-wrap" id="snakeBoardWrap">
+        <div class="snake-lb-title">🏆 Leaderboard</div>
+        <div class="snake-lb-sub">Top 5 — whole crew, one board</div>
+        <div class="snake-board" id="snakeBoard"></div>
+      </div>
       <div class="notes-card snake-card">
         <h2 class="notes-title">Snake</h2>
         <div class="snake-name-row">
@@ -2035,10 +2102,6 @@ tr.best .opt-tag {
           <button class="snake-dir snake-down" type="button" data-dir="down" aria-label="Down">▼</button>
           <button class="snake-dir snake-right" type="button" data-dir="right" aria-label="Right">▶</button>
         </div>
-      </div>
-      <div class="snake-board-wrap" id="snakeBoardWrap">
-        <div class="notes-feed-label">🏆 Leaderboard — Top 3</div>
-        <div class="snake-board" id="snakeBoard"></div>
       </div>
     </div>
   </section>
@@ -4102,6 +4165,7 @@ document.addEventListener("click", (e) => {
 
 
 
+
 // ---- Snake game (Snake tab) ----
 (function () {
   const canvas = document.getElementById("snakeCanvas");
@@ -4138,9 +4202,9 @@ document.addEventListener("click", (e) => {
       });
       if (!res.ok) throw new Error("HTTP " + res.status);
       let rows = await res.json();
-      if (rows.length > 3) {
-        const cutoff = rows[2].score;
-        rows = rows.filter((r, idx) => idx < 3 || r.score === cutoff);
+      if (rows.length > 5) {
+        const cutoff = rows[4].score;
+        rows = rows.filter((r, idx) => idx < 5 || r.score === cutoff);
       }
       boardEl.innerHTML = "";
       if (!rows.length) {
@@ -4154,9 +4218,10 @@ document.addEventListener("click", (e) => {
       rows.forEach((row, i) => {
         const div = document.createElement("div");
         div.className = "snake-lb-row";
+        div.dataset.rank = String(i + 1);
         const rank = document.createElement("span");
         rank.className = "snake-lb-rank";
-        rank.textContent = medals[i] || (i + 1) + ".";
+        rank.textContent = medals[i] || String(i + 1);
         const nm = document.createElement("span");
         nm.className = "snake-lb-name";
         nm.textContent = row.name;
