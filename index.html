@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261105-1600";
+const SITE_BUILD = "20261105-1615";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1767,7 +1767,7 @@ tr.best .opt-tag {
 #tetrisCanvas {
   display: block;
   margin: 0 auto;
-  width: min(240px, 62vw);
+  width: min(200px, 56vw);
   height: auto;
   aspect-ratio: 1 / 2;
   background: #10101e;
@@ -1783,6 +1783,29 @@ tr.best .opt-tag {
 }
 .tetris-drop {
   grid-column: 1 / -1;
+}
+.game-head {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  justify-content: center;
+  max-width: 340px;
+  margin: 0 auto 10px;
+}
+.game-head .snake-name-row {
+  flex: 1;
+  margin: 0;
+}
+.game-head .snake-start {
+  margin: 0;
+  white-space: nowrap;
+}
+.snake-msg:empty {
+  display: none;
+}
+.tetris-pad .snake-dir {
+  padding: 10px 0;
+  font-size: 20px;
 }
 @media (prefers-color-scheme: dark) {
   .games-pick-btn { background: rgba(255, 255, 255, 0.08); }
@@ -1856,7 +1879,7 @@ tr.best .opt-tag {
   font-size: 14px;
   white-space: nowrap;
 }
-#snakeName {
+#snakeName, #tetrisName {
   flex: 1;
   min-width: 0;
   padding: 9px 12px;
@@ -2166,17 +2189,19 @@ tr.best .opt-tag {
       </div>
       <div class="notes-card snake-card" id="snakeGame">
         <h2 class="notes-title">Snake</h2>
-        <div class="snake-name-row">
-          <label for="snakeName">Your name</label>
-          <input type="text" id="snakeName" maxlength="20" placeholder="Name for the leaderboard" autocomplete="off">
+        <div class="game-head">
+          <div class="snake-name-row">
+            <label for="snakeName">Your name</label>
+            <input type="text" id="snakeName" maxlength="20" placeholder="Name for the leaderboard" autocomplete="off">
+          </div>
+          <button class="tool-btn snake-start" id="snakeStart" type="button">▶ Start</button>
         </div>
         <div class="snake-score-row">
           <span>Score: <strong id="snakeScore">0</strong></span>
           <span>Best: <strong id="snakeBest">0</strong></span>
         </div>
         <canvas id="snakeCanvas" width="340" height="340" aria-label="Snake game board"></canvas>
-        <div class="snake-msg" id="snakeMsg">Put your name in, tap Start, then swipe, use arrow keys, or tap the pad.</div>
-        <button class="tool-btn snake-start" id="snakeStart" type="button">▶ Start</button>
+        <div class="snake-msg" id="snakeMsg"></div>
         <div class="snake-pad" aria-hidden="false">
           <button class="snake-dir snake-up" type="button" data-dir="up" aria-label="Up">▲</button>
           <button class="snake-dir snake-left" type="button" data-dir="left" aria-label="Left">◀</button>
@@ -2186,24 +2211,25 @@ tr.best .opt-tag {
       </div>
       <div class="notes-card snake-card" id="tetrisGame" hidden>
         <h2 class="notes-title">Tetris</h2>
-        <div class="snake-name-row">
-          <label for="tetrisName">Your name</label>
-          <input type="text" id="tetrisName" maxlength="20" placeholder="Name for the leaderboard" autocomplete="off">
+        <div class="game-head">
+          <div class="snake-name-row">
+            <label for="tetrisName">Your name</label>
+            <input type="text" id="tetrisName" maxlength="20" placeholder="Name for the leaderboard" autocomplete="off">
+          </div>
+          <button class="tool-btn snake-start" id="tetrisStart" type="button">▶ Start</button>
         </div>
         <div class="tetris-top">
           <div class="tetris-stats">
-            <div>Score: <strong id="tetrisScore">0</strong></div>
-            <div>Lines: <strong id="tetrisLines">0</strong> · Level: <strong id="tetrisLevel">1</strong></div>
-            <div>Best: <strong id="tetrisBest">0</strong></div>
+            <div>Score: <strong id="tetrisScore">0</strong> · Lines: <strong id="tetrisLines">0</strong></div>
+            <div>Level: <strong id="tetrisLevel">1</strong> · Best: <strong id="tetrisBest">0</strong></div>
           </div>
           <div>
             <div class="tetris-next-label">Next</div>
-            <canvas id="tetrisNext" width="72" height="72" aria-label="Next piece"></canvas>
+            <canvas id="tetrisNext" width="60" height="60" aria-label="Next piece"></canvas>
           </div>
         </div>
-        <canvas id="tetrisCanvas" width="240" height="480" aria-label="Tetris game board"></canvas>
-        <div class="snake-msg" id="tetrisMsg">Put your name in, tap Start, then use the pad, swipe, or arrow keys (↑ rotates, space drops).</div>
-        <button class="tool-btn snake-start" id="tetrisStart" type="button">▶ Start</button>
+        <canvas id="tetrisCanvas" width="200" height="400" aria-label="Tetris game board"></canvas>
+        <div class="snake-msg" id="tetrisMsg"></div>
         <div class="tetris-pad" aria-hidden="false">
           <button class="snake-dir" type="button" data-tbtn="left" aria-label="Move left">◀</button>
           <button class="snake-dir" type="button" data-tbtn="rotate" aria-label="Rotate">⟳</button>
@@ -4727,7 +4753,7 @@ document.addEventListener("click", (e) => {
   }
 
   // ---- Tetris core ----
-  const COLS = 10, ROWS = 20, CELL = 24;
+  const COLS = 10, ROWS = 20, CELL = 20;
   const SHAPES = {
     I: { color: "#37b6e8", cells: [[0, 1], [1, 1], [2, 1], [3, 1]] },
     O: { color: "#f5c542", cells: [[1, 0], [2, 0], [1, 1], [2, 1]] },
@@ -4788,13 +4814,13 @@ document.addEventListener("click", (e) => {
   function drawNext() {
     if (!nextCtx) return;
     nextCtx.fillStyle = "#10101e";
-    nextCtx.fillRect(0, 0, 72, 72);
+    nextCtx.fillRect(0, 0, 60, 60);
     const shape = SHAPES[nextType];
-    const c = 15;
+    const c = 13;
     shape.cells.forEach(cell => {
       nextCtx.fillStyle = shape.color;
       nextCtx.beginPath();
-      nextCtx.roundRect(6 + cell[0] * c + 1, 14 + cell[1] * c + 1, c - 2, c - 2, 3);
+      nextCtx.roundRect(3 + cell[0] * c + 1, 8 + cell[1] * c + 1, c - 2, c - 2, 3);
       nextCtx.fill();
     });
   }
