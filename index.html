@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261105-1730";
+const SITE_BUILD = "20261105-1800";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -2084,20 +2084,6 @@ tr.best .opt-tag {
         ><span class="tab-full">Draft Train Schedule</span><span class="tab-short">Trains</span></button>
         <button
           class="view-tab"
-          data-view="notes"
-          role="tab"
-          aria-selected="false"
-          type="button"
-        >Notes</button>
-        <button
-          class="view-tab"
-          data-view="photos"
-          role="tab"
-          aria-selected="false"
-          type="button"
-        >Photos</button>
-        <button
-          class="view-tab"
           data-view="snake"
           role="tab"
           aria-selected="false"
@@ -2156,35 +2142,6 @@ tr.best .opt-tag {
     </div>
 
     <div id="trainView" class="train-view" hidden></div>
-
-    <div id="notesView" class="notes-view" hidden>
-      <div class="notes-card">
-        <h2 class="notes-title">Notes</h2>
-        <form id="noteForm">
-          <textarea id="noteText" rows="5" maxlength="2000" placeholder="Write a note…" aria-label="Write a note"></textarea>
-          <input type="text" id="noteTrap" name="website" autocomplete="off" tabindex="-1" style="display:none" aria-hidden="true">
-          <br>
-          <button class="tool-btn notes-submit" id="noteSubmit" type="submit">Submit note</button>
-          <div class="notes-status" id="noteStatus" role="status" aria-live="polite"></div>
-        </form>
-      </div>
-      <div class="notes-feed-wrap" id="notesFeedWrap">
-        <div class="notes-feed-label">Submitted notes</div>
-        <div class="notes-feed" id="notesFeed"></div>
-      </div>
-    </div>
-
-    <div id="photosView" class="photos-view" hidden>
-      <div class="notes-card">
-        <h2 class="notes-title">Photos</h2>
-        <label class="tool-btn photo-add" for="photoInput">📷 Add photos or videos</label>
-        <input type="file" id="photoInput" accept="image/*,video/*" multiple hidden>
-        <div class="notes-status" id="photoStatus" role="status" aria-live="polite"></div>
-        <div class="upload-progress" id="uploadProgress" hidden><div class="upload-bar" id="uploadBar"></div></div>
-        <p class="notes-session-note" id="photoEmpty" hidden>No photos yet — add the first one.</p>
-      </div>
-      <div class="photo-grid" id="photoGrid"></div>
-    </div>
 
         <div id="snakeView" class="snake-view" hidden>
       <div class="games-pick" role="group" aria-label="Choose a game">
@@ -3444,9 +3401,6 @@ function renderTimeline() {
               </button>
 
 
-              <div class="day-actions">
-                <button class="add-notes-btn" type="button">＋ Add notes</button>
-              </div>
 
               <div class="events">
                 ${rows}
@@ -3973,10 +3927,6 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     if (controls) controls.hidden = view !== "timeline";
     document.getElementById("map").hidden = view !== "map";
     document.getElementById("trainView").hidden = view !== "trains";
-    document.getElementById("notesView").hidden = view !== "notes";
-    if (view === "notes") loadCrewNotes();
-    document.getElementById("photosView").hidden = view !== "photos";
-    if (view === "photos") loadCrewPhotos();
     const snakeViewEl = document.getElementById("snakeView");
     if (snakeViewEl) {
       snakeViewEl.hidden = view !== "snake";
@@ -3987,332 +3937,12 @@ document.querySelectorAll(".view-tab").forEach(tab => {
 });
 
 
-// ---- Crew notes: public insert-only via Supabase ----
+// ---- Supabase (shared by the Games leaderboards) ----
 
 const NOTES_CONFIG = {
   url: "https://ypntbpqjtcvbyjlepqvv.supabase.co",
   anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwbnRicHFqdGN2YnlqbGVwcXZ2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM2ODU5NzIsImV4cCI6MjEwOTI2MTk3Mn0.b2DtiO42sECoryq_mlqeUE0jQrAFPmQriM62hHGwlfo"
 };
-
-const noteForm = document.getElementById("noteForm");
-
-async function loadCrewNotes() {
-  const feed = document.getElementById("notesFeed");
-  const wrap = document.getElementById("notesFeedWrap");
-  if (!feed || !wrap) return;
-  try {
-    const res = await fetch(`${NOTES_CONFIG.url}/rest/v1/notes?select=note,created_at&order=created_at.desc&limit=200`, {
-      headers: {
-        "apikey": NOTES_CONFIG.anonKey,
-        "Authorization": `Bearer ${NOTES_CONFIG.anonKey}`
-      }
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const rows = await res.json();
-    feed.innerHTML = "";
-    if (!rows.length) {
-      const empty = document.createElement("p");
-      empty.className = "notes-session-note";
-      empty.textContent = "No notes yet — be the first to post.";
-      feed.appendChild(empty);
-    } else {
-      for (const row of rows) {
-        const card = document.createElement("div");
-        card.className = "note-card";
-        const head = document.createElement("button");
-        head.type = "button";
-        head.className = "note-card-head";
-        head.setAttribute("aria-expanded", "true");
-        const time = document.createElement("span");
-        time.textContent = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date(row.created_at));
-        const chev = document.createElement("span");
-        chev.className = "nf-chev";
-        chev.textContent = "▾";
-        head.append(time, chev);
-        const body = document.createElement("div");
-        body.className = "note-card-body";
-        const p = document.createElement("p");
-        p.className = "note-text";
-        p.textContent = row.note;
-        body.appendChild(p);
-        card.append(head, body);
-        feed.appendChild(card);
-      }
-    }
-  } catch (err) {
-    /* leave the current feed as-is on a load error */
-  }
-}
-
-loadCrewNotes();
-
-if (noteForm) {
-  const notesFeedEl = document.getElementById("notesFeed");
-  if (notesFeedEl) {
-    notesFeedEl.addEventListener("click", (e) => {
-      const head = e.target.closest(".note-card-head");
-      if (!head) return;
-      const body = head.nextElementSibling;
-      if (!body) return;
-      const collapsed = body.style.display === "none";
-      body.style.display = collapsed ? "" : "none";
-      const chev = head.querySelector(".nf-chev");
-      if (chev) chev.textContent = collapsed ? "▾" : "▸";
-      head.setAttribute("aria-expanded", String(collapsed));
-    });
-  }
-
-  noteForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const status = document.getElementById("noteStatus");
-    const button = document.getElementById("noteSubmit");
-    const textEl = document.getElementById("noteText");
-    const trap = document.getElementById("noteTrap");
-    const note = textEl.value.trim();
-
-    if (trap.value) return;
-    if (!note) {
-      status.textContent = "Write something first.";
-      return;
-    }
-
-    button.disabled = true;
-    status.textContent = "Sending…";
-
-    try {
-      const res = await fetch(`${NOTES_CONFIG.url}/rest/v1/notes`, {
-        method: "POST",
-        headers: {
-          "apikey": NOTES_CONFIG.anonKey,
-          "Authorization": `Bearer ${NOTES_CONFIG.anonKey}`,
-          "Content-Type": "application/json",
-          "Prefer": "return=minimal"
-        },
-        body: JSON.stringify({ note })
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      await loadCrewNotes();
-      textEl.value = "";
-      status.textContent = "✓ Note saved — thank you!";
-    } catch (err) {
-      status.textContent = "Could not send — check your connection and try again.";
-    } finally {
-      button.disabled = false;
-    }
-  });
-}
-
-// ---- Photos: public upload + gallery via Supabase Storage ----
-
-function photoPublicUrl(name) {
-  return NOTES_CONFIG.url + "/storage/v1/object/public/photos/" + encodeURIComponent(name);
-}
-
-async function loadCrewPhotos() {
-  const grid = document.getElementById("photoGrid");
-  const empty = document.getElementById("photoEmpty");
-  if (!grid) return;
-  try {
-    const res = await fetch(NOTES_CONFIG.url + "/storage/v1/object/list/photos", {
-      method: "POST",
-      headers: {
-        "apikey": NOTES_CONFIG.anonKey,
-        "Authorization": `Bearer ${NOTES_CONFIG.anonKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ prefix: "", limit: 200, sortBy: { column: "created_at", order: "desc" } })
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const MEDIA_EXTS = ["jpg", "jpeg", "png", "gif", "webp", "heic", "mp4", "mov", "webm", "m4v"];
-    const items = (await res.json()).filter(x => x.name && !x.name.startsWith(".") && MEDIA_EXTS.includes((x.name.split(".").pop() || "").toLowerCase()));
-    grid.innerHTML = "";
-    const VIDEO_EXTS = ["mp4", "mov", "webm", "m4v"];
-    for (const it of items) {
-      const fig = document.createElement("figure");
-      fig.dataset.name = it.name;
-      const ext = (it.name.split(".").pop() || "").toLowerCase();
-      if (VIDEO_EXTS.includes(ext)) {
-        const v = document.createElement("video");
-        v.src = photoPublicUrl(it.name);
-        v.muted = true;
-        v.playsInline = true;
-        v.preload = "metadata";
-        fig.appendChild(v);
-        const badge = document.createElement("span");
-        badge.className = "photo-play";
-        badge.textContent = "▶";
-        fig.appendChild(badge);
-      } else {
-        const img = document.createElement("img");
-        img.src = photoPublicUrl(it.name);
-        img.loading = "lazy";
-        img.alt = "Photo";
-        fig.appendChild(img);
-      }
-      grid.appendChild(fig);
-    }
-    if (empty) empty.hidden = items.length > 0;
-  } catch (err) {
-    /* leave the gallery as-is on a load error */
-  }
-}
-
-async function downscaleToJpeg(file) {
-  try {
-    let bmp;
-    try {
-      bmp = await createImageBitmap(file, { imageOrientation: "from-image" });
-    } catch (e) {
-      bmp = await createImageBitmap(file);
-    }
-    const max = 1600;
-    const scale = Math.min(1, max / Math.max(bmp.width, bmp.height));
-    const w = Math.max(1, Math.round(bmp.width * scale));
-    const h = Math.max(1, Math.round(bmp.height * scale));
-    const canvas = document.createElement("canvas");
-    canvas.width = w;
-    canvas.height = h;
-    canvas.getContext("2d").drawImage(bmp, 0, 0, w, h);
-    const blob = await new Promise(r => canvas.toBlob(r, "image/jpeg", 0.82));
-    if (blob) return { blob, ext: "jpg" };
-  } catch (e) {}
-  const m = (file.name || "").match(/\.([a-z0-9]+)$/i);
-  return { blob: file, ext: m ? m[1].toLowerCase() : "jpg" };
-}
-
-const photoInput = document.getElementById("photoInput");
-
-if (photoInput) {
-  photoInput.addEventListener("change", async () => {
-    const status = document.getElementById("photoStatus");
-    const files = Array.from(photoInput.files || []);
-    if (!files.length) return;
-    let done = 0;
-    let failed = 0;
-    const progress = document.getElementById("uploadProgress");
-    const bar = document.getElementById("uploadBar");
-    if (progress && bar) {
-      progress.hidden = false;
-      bar.style.width = "0%";
-    }
-    for (const file of files) {
-      status.textContent = `Uploading ${done + failed + 1} of ${files.length}…`;
-      try {
-        let prepared;
-        if ((file.type || "").startsWith("video/")) {
-          if (file.size > 45 * 1024 * 1024) throw new Error("Video too large");
-          const typeMap = { "video/mp4": "mp4", "video/quicktime": "mov", "video/webm": "webm" };
-          const m = (file.name || "").match(/\.([a-z0-9]+)$/i);
-          prepared = { blob: file, ext: typeMap[file.type] || (m ? m[1].toLowerCase() : "mp4") };
-        } else {
-          prepared = await downscaleToJpeg(file);
-        }
-        const { blob, ext } = prepared;
-        const name = Date.now() + "-" + Math.random().toString(36).slice(2, 8) + "." + ext;
-        const res = await fetch(NOTES_CONFIG.url + "/storage/v1/object/photos/" + name, {
-          method: "POST",
-          headers: {
-            "apikey": NOTES_CONFIG.anonKey,
-            "Authorization": `Bearer ${NOTES_CONFIG.anonKey}`,
-            "Content-Type": blob.type || "application/octet-stream"
-          },
-          body: blob
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        done++;
-      } catch (err) {
-        failed++;
-      }
-      if (bar) bar.style.width = Math.round(((done + failed) / files.length) * 100) + "%";
-    }
-    if (progress && bar) {
-      bar.style.width = "100%";
-      setTimeout(() => { progress.hidden = true; }, 700);
-    }
-    photoInput.value = "";
-    status.textContent = failed
-      ? `Added ${done} — ${failed} didn't go through (videos must be under ~45 MB). Check your connection and try again.`
-      : `✓ Added ${done} — thank you!`;
-    loadCrewPhotos();
-  });
-}
-
-// ---- Photo lightbox (in-page pop-up) + Add-notes jump ----
-
-const VIDEO_EXTS_LB = ["mp4", "mov", "webm", "m4v"];
-
-function openLightbox(name) {
-  const box = document.getElementById("lightbox");
-  const img = document.getElementById("lightboxImg");
-  const vid = document.getElementById("lightboxVideo");
-  if (!box || !img || !vid) return;
-  const ext = (name.split(".").pop() || "").toLowerCase();
-  const url = photoPublicUrl(name);
-  if (VIDEO_EXTS_LB.includes(ext)) {
-    img.hidden = true;
-    img.removeAttribute("src");
-    vid.hidden = false;
-    vid.src = url;
-    vid.play().catch(() => {});
-  } else {
-    vid.hidden = true;
-    vid.pause();
-    vid.removeAttribute("src");
-    img.hidden = false;
-    img.src = url;
-  }
-  box.hidden = false;
-  document.body.style.overflow = "hidden";
-}
-
-function closeLightbox() {
-  const box = document.getElementById("lightbox");
-  const vid = document.getElementById("lightboxVideo");
-  if (!box) return;
-  box.hidden = true;
-  if (vid) {
-    vid.pause();
-    vid.removeAttribute("src");
-    vid.load();
-  }
-  document.body.style.overflow = "";
-}
-
-const photoGridEl = document.getElementById("photoGrid");
-if (photoGridEl) {
-  photoGridEl.addEventListener("click", (e) => {
-    const fig = e.target.closest("figure[data-name]");
-    if (fig) openLightbox(fig.dataset.name);
-  });
-}
-
-document.addEventListener("click", (e) => {
-  if (e.target.closest && e.target.closest("#lightboxClose")) {
-    closeLightbox();
-    return;
-  }
-  const box = document.getElementById("lightbox");
-  if (box && e.target === box) closeLightbox();
-});
-
-document.addEventListener("keydown", (e) => {
-  const box = document.getElementById("lightbox");
-  if (e.key === "Escape" && box && !box.hidden) closeLightbox();
-});
-
-document.addEventListener("click", (e) => {
-  const btn = e.target.closest(".add-notes-btn");
-  if (!btn) return;
-  const tab = document.querySelector('.view-tab[data-view="notes"]');
-  if (tab) {
-    tab.click();
-    window.scrollTo({ top: 0 });
-  }
-});
-
-
-
 
 
 // ---- Snake game (Snake tab) ----
@@ -5074,12 +4704,6 @@ document.addEventListener("click", (e) => {
 })();
 
 </script>
-
-<div class="lightbox" id="lightbox" hidden>
-  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close" onclick="closeLightbox()">✕</button>
-  <img id="lightboxImg" alt="Photo" hidden>
-  <video id="lightboxVideo" controls playsinline hidden></video>
-</div>
 
 </body>
 </html>
