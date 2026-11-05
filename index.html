@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261105-1615";
+const SITE_BUILD = "20261105-1645";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1806,6 +1806,20 @@ tr.best .opt-tag {
 .tetris-pad .snake-dir {
   padding: 10px 0;
   font-size: 20px;
+}
+/* Games hardening: nothing in this view may push past the phone's edge */
+.snake-view {
+  overflow-x: hidden;
+}
+.snake-lb-row {
+  max-width: 100%;
+}
+.game-head .snake-start {
+  padding-left: 14px;
+  padding-right: 14px;
+}
+.tetris-top {
+  flex-wrap: wrap;
 }
 @media (prefers-color-scheme: dark) {
   .games-pick-btn { background: rgba(255, 255, 255, 0.08); }
@@ -4755,13 +4769,13 @@ document.addEventListener("click", (e) => {
   // ---- Tetris core ----
   const COLS = 10, ROWS = 20, CELL = 20;
   const SHAPES = {
-    I: { color: "#37b6e8", cells: [[0, 1], [1, 1], [2, 1], [3, 1]] },
-    O: { color: "#f5c542", cells: [[1, 0], [2, 0], [1, 1], [2, 1]] },
-    T: { color: "#a55eea", cells: [[1, 0], [0, 1], [1, 1], [2, 1]] },
+    I: { color: "#58c472", cells: [[0, 1], [1, 1], [2, 1], [3, 1]] },
+    O: { color: "#58c472", cells: [[1, 0], [2, 0], [1, 1], [2, 1]] },
+    T: { color: "#58c472", cells: [[1, 0], [0, 1], [1, 1], [2, 1]] },
     S: { color: "#58c472", cells: [[1, 0], [2, 0], [0, 1], [1, 1]] },
-    Z: { color: "#e5484d", cells: [[0, 0], [1, 0], [1, 1], [2, 1]] },
-    J: { color: "#3b6fe0", cells: [[0, 0], [0, 1], [1, 1], [2, 1]] },
-    L: { color: "#f28c28", cells: [[2, 0], [0, 1], [1, 1], [2, 1]] }
+    Z: { color: "#58c472", cells: [[0, 0], [1, 0], [1, 1], [2, 1]] },
+    J: { color: "#58c472", cells: [[0, 0], [0, 1], [1, 1], [2, 1]] },
+    L: { color: "#58c472", cells: [[2, 0], [0, 1], [1, 1], [2, 1]] }
   };
   const TYPES = Object.keys(SHAPES);
   const LINE_POINTS = [0, 100, 300, 500, 800];
