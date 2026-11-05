@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261103-1945";
+const SITE_BUILD = "20261105-1600";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1716,6 +1716,78 @@ tr.best .opt-tag {
 .snake-view[hidden] {
   display: none;
 }
+/* ---- Games tab: picker + Tetris (added Nov 5) ---- */
+.games-pick {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 0 auto 14px;
+  max-width: 340px;
+}
+.games-pick-btn {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 600;
+  padding: 12px 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  background: rgba(127, 127, 127, 0.12);
+  color: inherit;
+  cursor: pointer;
+}
+.games-pick-btn.active {
+  background: #2f7d46;
+  border-color: #2f7d46;
+  color: #fff;
+}
+.tetris-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  max-width: 300px;
+  margin: 0 auto 8px;
+}
+.tetris-stats {
+  text-align: left;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.tetris-next-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.7;
+  text-align: center;
+}
+#tetrisNext {
+  display: block;
+  background: #10101e;
+  border-radius: 8px;
+}
+#tetrisCanvas {
+  display: block;
+  margin: 0 auto;
+  width: min(240px, 62vw);
+  height: auto;
+  aspect-ratio: 1 / 2;
+  background: #10101e;
+  border-radius: 12px;
+  touch-action: none;
+}
+.tetris-pad {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(54px, 64px));
+  gap: 8px;
+  justify-content: center;
+  margin: 14px auto 4px;
+}
+.tetris-drop {
+  grid-column: 1 / -1;
+}
+@media (prefers-color-scheme: dark) {
+  .games-pick-btn { background: rgba(255, 255, 255, 0.08); }
+  .games-pick-btn.active { background: #2f7d46; }
+}
 .snake-card {
   text-align: center;
 }
@@ -1943,7 +2015,7 @@ tr.best .opt-tag {
       <div
         class="last-updated"
         id="lastUpdated"
-      >Last updated: November 3, 2026</div>
+      >Last updated: November 5, 2026</div>
 
     </div>
   </section>
@@ -1993,7 +2065,7 @@ tr.best .opt-tag {
           role="tab"
           aria-selected="false"
           type="button"
-        >Snake</button>
+        >Games</button>
       </div>
 
       <div class="toolbar-right">
@@ -2077,13 +2149,22 @@ tr.best .opt-tag {
       <div class="photo-grid" id="photoGrid"></div>
     </div>
 
-    <div id="snakeView" class="snake-view" hidden>
+        <div id="snakeView" class="snake-view" hidden>
+      <div class="games-pick" role="group" aria-label="Choose a game">
+        <button class="games-pick-btn active" id="pickSnake" type="button">🐍 Snake</button>
+        <button class="games-pick-btn" id="pickTetris" type="button">🧱 Tetris</button>
+      </div>
       <div class="snake-board-wrap" id="snakeBoardWrap">
         <div class="snake-lb-title">🏆 Leaderboard</div>
-        <div class="snake-lb-sub">Top 5 — whole crew, one board</div>
+        <div class="snake-lb-sub">Snake · Top 5 — whole crew, one board</div>
         <div class="snake-board" id="snakeBoard"></div>
       </div>
-      <div class="notes-card snake-card">
+      <div class="snake-board-wrap" id="tetrisBoardWrap" hidden>
+        <div class="snake-lb-title">🏆 Leaderboard</div>
+        <div class="snake-lb-sub">Tetris · Top 5 — whole crew, one board</div>
+        <div class="snake-board" id="tetrisBoard"></div>
+      </div>
+      <div class="notes-card snake-card" id="snakeGame">
         <h2 class="notes-title">Snake</h2>
         <div class="snake-name-row">
           <label for="snakeName">Your name</label>
@@ -2101,6 +2182,34 @@ tr.best .opt-tag {
           <button class="snake-dir snake-left" type="button" data-dir="left" aria-label="Left">◀</button>
           <button class="snake-dir snake-down" type="button" data-dir="down" aria-label="Down">▼</button>
           <button class="snake-dir snake-right" type="button" data-dir="right" aria-label="Right">▶</button>
+        </div>
+      </div>
+      <div class="notes-card snake-card" id="tetrisGame" hidden>
+        <h2 class="notes-title">Tetris</h2>
+        <div class="snake-name-row">
+          <label for="tetrisName">Your name</label>
+          <input type="text" id="tetrisName" maxlength="20" placeholder="Name for the leaderboard" autocomplete="off">
+        </div>
+        <div class="tetris-top">
+          <div class="tetris-stats">
+            <div>Score: <strong id="tetrisScore">0</strong></div>
+            <div>Lines: <strong id="tetrisLines">0</strong> · Level: <strong id="tetrisLevel">1</strong></div>
+            <div>Best: <strong id="tetrisBest">0</strong></div>
+          </div>
+          <div>
+            <div class="tetris-next-label">Next</div>
+            <canvas id="tetrisNext" width="72" height="72" aria-label="Next piece"></canvas>
+          </div>
+        </div>
+        <canvas id="tetrisCanvas" width="240" height="480" aria-label="Tetris game board"></canvas>
+        <div class="snake-msg" id="tetrisMsg">Put your name in, tap Start, then use the pad, swipe, or arrow keys (↑ rotates, space drops).</div>
+        <button class="tool-btn snake-start" id="tetrisStart" type="button">▶ Start</button>
+        <div class="tetris-pad" aria-hidden="false">
+          <button class="snake-dir" type="button" data-tbtn="left" aria-label="Move left">◀</button>
+          <button class="snake-dir" type="button" data-tbtn="rotate" aria-label="Rotate">⟳</button>
+          <button class="snake-dir" type="button" data-tbtn="down" aria-label="Move down">▼</button>
+          <button class="snake-dir" type="button" data-tbtn="right" aria-label="Move right">▶</button>
+          <button class="snake-dir tetris-drop" type="button" data-tbtn="drop" aria-label="Hard drop">DROP ⤓</button>
         </div>
       </div>
     </div>
@@ -4456,16 +4565,472 @@ document.addEventListener("click", (e) => {
 
   window.addEventListener("online", flushPending);
 
+  window.snakePauseQuiet = function () { pauseGame(true); };
   window.snakeOnShow = function () {
+    if (window.gamesApplyPick) window.gamesApplyPick();
     flushPending();
     loadSnakeBoard();
+    if (window.tetrisOnShow) window.tetrisOnShow();
     if (state === undefined) { state = "ready"; reset(); } else draw();
   };
-  window.snakeOnHide = function () { pauseGame(true); };
+  window.snakeOnHide = function () { pauseGame(true); if (window.tetrisOnHide) window.tetrisOnHide(); };
 
   state = "ready";
   reset();
   loadSnakeBoard();
+})();
+
+// ---- Games tab: picker + Tetris (added Nov 5) ----
+(function () {
+  const canvas = document.getElementById("tetrisCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const nextCanvas = document.getElementById("tetrisNext");
+  const nextCtx = nextCanvas ? nextCanvas.getContext("2d") : null;
+  const scoreEl = document.getElementById("tetrisScore");
+  const linesEl = document.getElementById("tetrisLines");
+  const levelEl = document.getElementById("tetrisLevel");
+  const bestEl = document.getElementById("tetrisBest");
+  const msgEl = document.getElementById("tetrisMsg");
+  const startBtn = document.getElementById("tetrisStart");
+  const nameInput = document.getElementById("tetrisName");
+  const boardEl = document.getElementById("tetrisBoard");
+
+  // ---- Game picker (Snake <-> Tetris) ----
+  const pickSnakeBtn = document.getElementById("pickSnake");
+  const pickTetrisBtn = document.getElementById("pickTetris");
+  const snakeWrap = document.getElementById("snakeBoardWrap");
+  const tetrisWrap = document.getElementById("tetrisBoardWrap");
+  const snakeGame = document.getElementById("snakeGame");
+  const tetrisGame = document.getElementById("tetrisGame");
+  const snakeNameInput = document.getElementById("snakeName");
+
+  function currentPick() {
+    try { return localStorage.getItem("gamesPick") === "tetris" ? "tetris" : "snake"; }
+    catch (e) { return "snake"; }
+  }
+  function syncNames() {
+    let nm = "";
+    try { nm = localStorage.getItem("snakeName") || ""; } catch (e) {}
+    if (document.activeElement !== nameInput) nameInput.value = nm;
+    if (snakeNameInput && document.activeElement !== snakeNameInput) snakeNameInput.value = nm;
+  }
+  window.gamesApplyPick = function () {
+    const pick = currentPick();
+    const isSnake = pick === "snake";
+    if (pickSnakeBtn) pickSnakeBtn.classList.toggle("active", isSnake);
+    if (pickTetrisBtn) pickTetrisBtn.classList.toggle("active", !isSnake);
+    if (snakeWrap) snakeWrap.hidden = !isSnake;
+    if (tetrisWrap) tetrisWrap.hidden = isSnake;
+    if (snakeGame) snakeGame.hidden = !isSnake;
+    if (tetrisGame) tetrisGame.hidden = isSnake;
+    syncNames();
+    if (isSnake) pauseTetris(true);
+    else if (window.snakePauseQuiet) window.snakePauseQuiet();
+    if (!isSnake) { loadTetrisBoard(); drawTetris(); }
+  };
+  function choosePick(p) {
+    try { localStorage.setItem("gamesPick", p); } catch (e) {}
+    window.gamesApplyPick();
+  }
+  if (pickSnakeBtn) pickSnakeBtn.addEventListener("click", () => choosePick("snake"));
+  if (pickTetrisBtn) pickTetrisBtn.addEventListener("click", () => choosePick("tetris"));
+
+  // ---- Shared name (same identity as Snake board) ----
+  try { nameInput.value = localStorage.getItem("snakeName") || ""; } catch (e) {}
+  nameInput.addEventListener("input", () => {
+    try { localStorage.setItem("snakeName", nameInput.value); } catch (e) {}
+    if (snakeNameInput && document.activeElement !== snakeNameInput) snakeNameInput.value = nameInput.value;
+  });
+  function playerName() { return nameInput.value.trim().slice(0, 20); }
+
+  // ---- Shared leaderboard (Supabase) ----
+  async function loadTetrisBoard() {
+    if (!boardEl || typeof NOTES_CONFIG === "undefined") return;
+    try {
+      const res = await fetch(NOTES_CONFIG.url + "/rest/v1/tetris_scores?select=name,score,created_at&order=score.desc,created_at.asc&limit=10", {
+        headers: { "apikey": NOTES_CONFIG.anonKey, "Authorization": "Bearer " + NOTES_CONFIG.anonKey }
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      let rows = await res.json();
+      if (rows.length > 5) {
+        const cutoff = rows[4].score;
+        rows = rows.filter((r, idx) => idx < 5 || r.score === cutoff);
+      }
+      boardEl.innerHTML = "";
+      if (!rows.length) {
+        const p = document.createElement("p");
+        p.className = "snake-lb-empty";
+        p.textContent = "No scores yet — set the first one.";
+        boardEl.appendChild(p);
+        return;
+      }
+      const medals = ["🥇", "🥈", "🥉"];
+      rows.forEach((row, i) => {
+        const div = document.createElement("div");
+        div.className = "snake-lb-row";
+        div.dataset.rank = String(i + 1);
+        const rank = document.createElement("span");
+        rank.className = "snake-lb-rank";
+        rank.textContent = medals[i] || String(i + 1);
+        const nm = document.createElement("span");
+        nm.className = "snake-lb-name";
+        nm.textContent = row.name;
+        const sc = document.createElement("span");
+        sc.className = "snake-lb-score";
+        sc.textContent = row.score;
+        div.append(rank, nm, sc);
+        boardEl.appendChild(div);
+      });
+    } catch (err) { /* keep current board on error */ }
+  }
+
+  async function submitTetrisScore(name, score) {
+    if (typeof NOTES_CONFIG === "undefined") return false;
+    try {
+      const res = await fetch(NOTES_CONFIG.url + "/rest/v1/tetris_scores", {
+        method: "POST",
+        headers: {
+          "apikey": NOTES_CONFIG.anonKey,
+          "Authorization": "Bearer " + NOTES_CONFIG.anonKey,
+          "Content-Type": "application/json",
+          "Prefer": "return=minimal"
+        },
+        body: JSON.stringify({ name: name, score: score })
+      });
+      return res.ok;
+    } catch (err) { return false; }
+  }
+
+  const PENDING_KEY = "tetrisPendingScores";
+  function loadPending() {
+    try { return JSON.parse(localStorage.getItem(PENDING_KEY) || "[]"); } catch (e) { return []; }
+  }
+  function savePending(q) {
+    try { localStorage.setItem(PENDING_KEY, JSON.stringify(q)); } catch (e) {}
+  }
+  function queuePending(name, score) {
+    const q = loadPending();
+    q.push({ name: name, score: score });
+    savePending(q);
+  }
+  async function flushPending() {
+    const q = loadPending();
+    if (!q.length) return;
+    const keep = [];
+    for (const item of q) {
+      const ok = await submitTetrisScore(item.name, item.score);
+      if (!ok) keep.push(item);
+    }
+    savePending(keep);
+    if (keep.length !== q.length) loadTetrisBoard();
+  }
+
+  // ---- Tetris core ----
+  const COLS = 10, ROWS = 20, CELL = 24;
+  const SHAPES = {
+    I: { color: "#37b6e8", cells: [[0, 1], [1, 1], [2, 1], [3, 1]] },
+    O: { color: "#f5c542", cells: [[1, 0], [2, 0], [1, 1], [2, 1]] },
+    T: { color: "#a55eea", cells: [[1, 0], [0, 1], [1, 1], [2, 1]] },
+    S: { color: "#58c472", cells: [[1, 0], [2, 0], [0, 1], [1, 1]] },
+    Z: { color: "#e5484d", cells: [[0, 0], [1, 0], [1, 1], [2, 1]] },
+    J: { color: "#3b6fe0", cells: [[0, 0], [0, 1], [1, 1], [2, 1]] },
+    L: { color: "#f28c28", cells: [[2, 0], [0, 1], [1, 1], [2, 1]] }
+  };
+  const TYPES = Object.keys(SHAPES);
+  const LINE_POINTS = [0, 100, 300, 500, 800];
+
+  let best = 0;
+  try { best = parseInt(localStorage.getItem("tetrisBest") || "0", 10) || 0; } catch (e) { best = 0; }
+  bestEl.textContent = best;
+
+  let grid, bag, current, nextType, score, lines, level, state, timer, softDrop, grounded, posted;
+
+  function newBag() {
+    const b = TYPES.slice();
+    for (let i = b.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = b[i]; b[i] = b[j]; b[j] = t;
+    }
+    return b;
+  }
+  function makePiece(type) {
+    return { type: type, cells: SHAPES[type].cells.map(c => [c[0], c[1]]), x: 3, y: 0 };
+  }
+  function collides(cells, px, py) {
+    for (const c of cells) {
+      const gx = px + c[0], gy = py + c[1];
+      if (gx < 0 || gx >= COLS || gy >= ROWS) return true;
+      if (gy >= 0 && grid[gy][gx]) return true;
+    }
+    return false;
+  }
+  function levelDelay() { return Math.max(70, Math.round(800 * Math.pow(0.82, level - 1))); }
+
+  function resetTetris() {
+    grid = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+    bag = newBag();
+    nextType = bag.pop();
+    score = 0; lines = 0; level = 1;
+    softDrop = false; grounded = 0; posted = false;
+    scoreEl.textContent = "0"; linesEl.textContent = "0"; levelEl.textContent = "1";
+    spawn();
+    drawTetris();
+  }
+  function spawn() {
+    current = makePiece(nextType);
+    if (!bag.length) bag = newBag();
+    nextType = bag.pop();
+    grounded = 0;
+    if (collides(current.cells, current.x, current.y)) { gameOverTetris(); }
+    drawNext();
+  }
+  function drawNext() {
+    if (!nextCtx) return;
+    nextCtx.fillStyle = "#10101e";
+    nextCtx.fillRect(0, 0, 72, 72);
+    const shape = SHAPES[nextType];
+    const c = 15;
+    shape.cells.forEach(cell => {
+      nextCtx.fillStyle = shape.color;
+      nextCtx.beginPath();
+      nextCtx.roundRect(6 + cell[0] * c + 1, 14 + cell[1] * c + 1, c - 2, c - 2, 3);
+      nextCtx.fill();
+    });
+  }
+  function drawTetris() {
+    ctx.fillStyle = "#10101e";
+    ctx.fillRect(0, 0, COLS * CELL, ROWS * CELL);
+    ctx.strokeStyle = "rgba(255,255,255,0.05)";
+    ctx.lineWidth = 1;
+    for (let i = 1; i < COLS; i++) { ctx.beginPath(); ctx.moveTo(i * CELL, 0); ctx.lineTo(i * CELL, ROWS * CELL); ctx.stroke(); }
+    for (let i = 1; i < ROWS; i++) { ctx.beginPath(); ctx.moveTo(0, i * CELL); ctx.lineTo(COLS * CELL, i * CELL); ctx.stroke(); }
+    for (let y = 0; y < ROWS; y++) {
+      for (let x = 0; x < COLS; x++) {
+        if (grid[y][x]) {
+          ctx.fillStyle = grid[y][x];
+          ctx.beginPath();
+          ctx.roundRect(x * CELL + 1, y * CELL + 1, CELL - 2, CELL - 2, 4);
+          ctx.fill();
+        }
+      }
+    }
+    if (current && state !== "over") {
+      ctx.fillStyle = SHAPES[current.type].color;
+      current.cells.forEach(cell => {
+        const gx = current.x + cell[0], gy = current.y + cell[1];
+        if (gy < 0) return;
+        ctx.beginPath();
+        ctx.roundRect(gx * CELL + 1, gy * CELL + 1, CELL - 2, CELL - 2, 4);
+        ctx.fill();
+      });
+    }
+  }
+  function schedule() {
+    if (timer) clearTimeout(timer);
+    if (state !== "running") { timer = null; return; }
+    timer = setTimeout(tick, softDrop ? 35 : levelDelay());
+  }
+  function tick() {
+    if (state !== "running") return;
+    if (!collides(current.cells, current.x, current.y + 1)) {
+      current.y += 1;
+      grounded = 0;
+      if (softDrop) addScore(1);
+    } else {
+      grounded += 1;
+      if (grounded >= 2) { lockPiece(); drawTetris(); schedule(); return; }
+    }
+    drawTetris();
+    schedule();
+  }
+  function lockPiece() {
+    current.cells.forEach(cell => {
+      const gx = current.x + cell[0], gy = current.y + cell[1];
+      if (gy >= 0 && gy < ROWS) grid[gy][gx] = SHAPES[current.type].color;
+    });
+    clearLines();
+    spawn();
+  }
+  function clearLines() {
+    let cleared = 0;
+    for (let y = ROWS - 1; y >= 0; y--) {
+      if (grid[y].every(c => c)) {
+        grid.splice(y, 1);
+        grid.unshift(Array(COLS).fill(null));
+        cleared += 1;
+        y += 1;
+      }
+    }
+    if (cleared) {
+      addScore(LINE_POINTS[cleared] * level);
+      lines += cleared;
+      linesEl.textContent = lines;
+      level = Math.floor(lines / 10) + 1;
+      levelEl.textContent = level;
+    }
+  }
+  function addScore(n) {
+    score += n;
+    scoreEl.textContent = score;
+  }
+  function move(dx) {
+    if (state !== "running") return;
+    if (!collides(current.cells, current.x + dx, current.y)) { current.x += dx; drawTetris(); }
+  }
+  function rotate() {
+    if (state !== "running") return;
+    if (current.type === "O") return;
+    const rotated = current.cells.map(c => [3 - c[1], c[0]]);
+    const kicks = [[0, 0], [-1, 0], [1, 0], [0, -1], [-2, 0], [2, 0]];
+    for (const k of kicks) {
+      if (!collides(rotated, current.x + k[0], current.y + k[1])) {
+        current.cells = rotated;
+        current.x += k[0];
+        current.y += k[1];
+        drawTetris();
+        return;
+      }
+    }
+  }
+  function hardDrop() {
+    if (state !== "running") return;
+    let dist = 0;
+    while (!collides(current.cells, current.x, current.y + 1)) { current.y += 1; dist += 1; }
+    addScore(dist * 2);
+    lockPiece();
+    drawTetris();
+    schedule();
+  }
+  function startTetris() {
+    if (!playerName()) {
+      msgEl.textContent = "Put your name in first — the leaderboard needs it.";
+      nameInput.focus();
+      return;
+    }
+    resetTetris();
+    state = "running";
+    msgEl.textContent = "Stack 'em up — clear lines to level up!";
+    startBtn.textContent = "⏸ Pause";
+    schedule();
+  }
+  function pauseTetris(quiet) {
+    if (state !== "running") return;
+    state = "paused";
+    if (timer) clearTimeout(timer);
+    timer = null;
+    startBtn.textContent = "▶ Resume";
+    if (!quiet) msgEl.textContent = "Paused.";
+  }
+  function gameOverTetris() {
+    state = "over";
+    if (timer) clearTimeout(timer);
+    timer = null;
+    if (score > best) {
+      best = score;
+      bestEl.textContent = best;
+      try { localStorage.setItem("tetrisBest", String(best)); } catch (e) {}
+    }
+    msgEl.textContent = "Game over — score " + score + ". Tap Start to play again.";
+    startBtn.textContent = "▶ Start";
+    drawTetris();
+    const nm = playerName();
+    if (score > 0 && nm && !posted) {
+      posted = true;
+      submitTetrisScore(nm, score).then(ok => {
+        if (ok) {
+          msgEl.textContent = "Game over — score " + score + ", posted to the leaderboard! 🏆";
+          loadTetrisBoard();
+        } else {
+          queuePending(nm, score);
+          msgEl.textContent = "Game over — score " + score + ". No connection, so it's saved on this phone and will post when you're back online.";
+        }
+      });
+    }
+  }
+
+  startBtn.addEventListener("click", () => {
+    if (state === "running") pauseTetris(false);
+    else if (state === "paused") {
+      state = "running";
+      msgEl.textContent = "Stack 'em up — clear lines to level up!";
+      startBtn.textContent = "⏸ Pause";
+      schedule();
+    } else startTetris();
+  });
+
+  document.querySelectorAll("[data-tbtn]").forEach(btn => {
+    const action = btn.dataset.tbtn;
+    const press = (e) => {
+      e.preventDefault();
+      if (action === "left") move(-1);
+      else if (action === "right") move(1);
+      else if (action === "rotate") rotate();
+      else if (action === "drop") hardDrop();
+      else if (action === "down") { softDrop = true; schedule(); }
+    };
+    const release = () => { if (action === "down") { softDrop = false; schedule(); } };
+    btn.addEventListener("touchstart", press, { passive: false });
+    btn.addEventListener("touchend", release);
+    btn.addEventListener("mousedown", press);
+    btn.addEventListener("mouseup", release);
+    btn.addEventListener("mouseleave", release);
+    btn.addEventListener("click", (e) => e.preventDefault());
+  });
+
+  document.addEventListener("keydown", (e) => {
+    const view = document.getElementById("snakeView");
+    if (!view || view.hidden) return;
+    if (!tetrisGame || tetrisGame.hidden) return;
+    if (document.activeElement === nameInput) return;
+    const k = e.key;
+    if (k === "ArrowLeft" || k === "a" || k === "A") { move(-1); e.preventDefault(); }
+    else if (k === "ArrowRight" || k === "d" || k === "D") { move(1); e.preventDefault(); }
+    else if (k === "ArrowDown" || k === "s" || k === "S") { if (!softDrop) { softDrop = true; schedule(); } e.preventDefault(); }
+    else if (k === "ArrowUp" || k === "x" || k === "X" || k === "w" || k === "W") { rotate(); e.preventDefault(); }
+    else if (k === " ") { hardDrop(); e.preventDefault(); }
+  });
+  document.addEventListener("keyup", (e) => {
+    if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") { softDrop = false; schedule(); }
+  });
+
+  let tStart = null, lastTX = 0;
+  canvas.addEventListener("touchstart", (e) => {
+    tStart = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
+    lastTX = tStart.x;
+  }, { passive: true });
+  canvas.addEventListener("touchmove", (e) => {
+    e.preventDefault();
+    if (!tStart || state !== "running") return;
+    const x = e.touches[0].clientX, y = e.touches[0].clientY;
+    const dx = x - lastTX;
+    if (Math.abs(dx) >= 24) { move(dx > 0 ? 1 : -1); lastTX = x; }
+    if (y - tStart.y > 70) { softDrop = true; schedule(); }
+  }, { passive: false });
+  canvas.addEventListener("touchend", (e) => {
+    if (!tStart) return;
+    const dy = e.changedTouches[0].clientY - tStart.y;
+    const dt = Date.now() - tStart.t;
+    if (dt < 250 && Math.abs(e.changedTouches[0].clientX - tStart.x) < 12 && dy < 30) rotate();
+    if (softDrop) { softDrop = false; schedule(); }
+    tStart = null;
+  });
+
+  document.addEventListener("visibilitychange", () => { if (document.hidden) pauseTetris(true); });
+  window.addEventListener("online", flushPending);
+
+  window.tetrisOnShow = function () {
+    flushPending();
+    loadTetrisBoard();
+  };
+  window.tetrisOnHide = function () { pauseTetris(true); };
+
+  state = "ready";
+  resetTetris();
+  state = "ready";
+  if (timer) { clearTimeout(timer); timer = null; }
+  loadTetrisBoard();
+  window.gamesApplyPick();
 })();
 
 </script>
