@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261105-1845";
+const SITE_BUILD = "20261105-1915";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -4836,16 +4836,57 @@ const NOTES_CONFIG = {
     return w;
   }
 
-  function loadWorld() {
+  function validWorld(w) {
+    return Array.isArray(w) && w.length === ROWS && w.every(r => Array.isArray(r) && r.length === COLS);
+  }
+  function loadCache() {
     try {
       const w = JSON.parse(localStorage.getItem(SAVE_KEY) || "null");
-      if (Array.isArray(w) && w.length === ROWS && w.every(r => Array.isArray(r) && r.length === COLS)) return w;
+      if (validWorld(w)) return w;
     } catch (e) {}
     return null;
   }
-  let world = loadWorld() || genWorld();
-  function saveWorld() {
+  let world = loadCache() || genWorld();
+  function saveCache() {
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(world)); } catch (e) {}
+  }
+
+  // ---- Shared crew world (Supabase): one world for everyone ----
+  function sbHeaders(extra) {
+    return Object.assign({
+      "apikey": NOTES_CONFIG.anonKey,
+      "Authorization": "Bearer " + NOTES_CONFIG.anonKey
+    }, extra || {});
+  }
+  async function pullWorld() {
+    if (typeof NOTES_CONFIG === "undefined") return;
+    try {
+      const res = await fetch(NOTES_CONFIG.url + "/rest/v1/craft_world?select=cells&id=eq.1", { headers: sbHeaders() });
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (rows.length && validWorld(rows[0].cells)) {
+        world = rows[0].cells;
+        saveCache();
+        drawCraft();
+      }
+    } catch (e) {}
+  }
+  let pushTimer = null;
+  function pushWorld(immediate) {
+    saveCache();
+    if (typeof NOTES_CONFIG === "undefined") return;
+    const send = async () => {
+      try {
+        await fetch(NOTES_CONFIG.url + "/rest/v1/craft_world?id=eq.1", {
+          method: "PATCH",
+          headers: sbHeaders({ "Content-Type": "application/json", "Prefer": "return=minimal" }),
+          body: JSON.stringify({ cells: world, updated_at: new Date().toISOString() })
+        });
+      } catch (e) {}
+    };
+    if (immediate) { send(); return; }
+    if (pushTimer) clearTimeout(pushTimer);
+    pushTimer = setTimeout(send, 600);
   }
 
   function msg(text) {
@@ -4918,7 +4959,7 @@ const NOTES_CONFIG = {
     if (id === BEDROCK) { msg("Bedrock is unbreakable."); return; }
     if (id !== EMPTY) {
       world[gy][gx] = EMPTY;
-      saveWorld();
+      pushWorld();
       drawCraft();
       return;
     }
@@ -4928,7 +4969,7 @@ const NOTES_CONFIG = {
     });
     if (!near) return;
     world[gy][gx] = selected;
-    saveWorld();
+    pushWorld();
     drawCraft();
   }
 
@@ -4979,7 +5020,7 @@ const NOTES_CONFIG = {
   resetBtn.addEventListener("click", () => {
     if (!resetArmed) {
       resetArmed = true;
-      resetBtn.textContent = "Tap again to reset";
+      resetBtn.textContent = "Tap again — resets for everyone";
       resetTimer = setTimeout(() => { resetArmed = false; resetBtn.textContent = "↺ Reset world"; }, 3000);
       return;
     }
@@ -4987,14 +5028,16 @@ const NOTES_CONFIG = {
     resetArmed = false;
     resetBtn.textContent = "↺ Reset world";
     world = genWorld();
-    saveWorld();
+    pushWorld(true);
     drawCraft();
-    msg("Fresh world generated.");
+    msg("Fresh world — for the whole crew.");
   });
 
-  window.craftOnShow = function () { drawCraft(); };
+  window.craftOnShow = function () { pullWorld(); drawCraft(); };
   drawCraft();
+  pullWorld();
 })();
+
 
 </script>
 
