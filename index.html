@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261105-1645";
+const SITE_BUILD = "20261105-1730";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -4769,12 +4769,12 @@ document.addEventListener("click", (e) => {
   // ---- Tetris core ----
   const COLS = 10, ROWS = 20, CELL = 20;
   const SHAPES = {
-    I: { color: "#58c472", cells: [[0, 1], [1, 1], [2, 1], [3, 1]] },
-    O: { color: "#58c472", cells: [[1, 0], [2, 0], [1, 1], [2, 1]] },
+    I: { color: "#3b82c4", cells: [[0, 1], [1, 1], [2, 1], [3, 1]] },
+    O: { color: "#e8a33d", cells: [[1, 0], [2, 0], [1, 1], [2, 1]] },
     T: { color: "#58c472", cells: [[1, 0], [0, 1], [1, 1], [2, 1]] },
     S: { color: "#58c472", cells: [[1, 0], [2, 0], [0, 1], [1, 1]] },
-    Z: { color: "#58c472", cells: [[0, 0], [1, 0], [1, 1], [2, 1]] },
-    J: { color: "#58c472", cells: [[0, 0], [0, 1], [1, 1], [2, 1]] },
+    Z: { color: "#e8a33d", cells: [[0, 0], [1, 0], [1, 1], [2, 1]] },
+    J: { color: "#3b82c4", cells: [[0, 0], [0, 1], [1, 1], [2, 1]] },
     L: { color: "#58c472", cells: [[2, 0], [0, 1], [1, 1], [2, 1]] }
   };
   const TYPES = Object.keys(SHAPES);
