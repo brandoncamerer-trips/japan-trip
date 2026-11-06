@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261105-1915";
+const SITE_BUILD = "20261106-1525";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -2102,7 +2102,7 @@ tr.best .opt-tag {
       <div
         class="last-updated"
         id="lastUpdated"
-      >Last updated: November 5, 2026</div>
+      >Last updated: November 6, 2026</div>
 
     </div>
   </section>
@@ -2618,7 +2618,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Rail",
     "Shinkansen to Kyoto",
-    "Leave Yugawara ~8:30–9 AM · Via Odawara, Shinkansen to Kyoto · Arrive Kyoto ~11:34 AM–12:12 PM (earliest 10:12 AM on Hikari 633 — leave ~7:40 AM)",
+    "Leave ryokan ~6:45–7:00 AM · Yugawara 07:19 local → Odawara · Hikari 633 ~08:10 → Kyoto · Arrive Kyoto ~10:13 AM · Buy + reserve 5 seats at Odawara",
     "",
     "",
     "morning"
@@ -3822,9 +3822,9 @@ const TRAIN_LEGS = [
     service: "Shinkansen Hikari (via Odawara)",
     chips: ["~2h Shinkansen", "Local hop to Odawara first", "Reserve seats"],
     fare: "Confirm at booking",
-    alert: "⚠️ Verified Nov 1: the earliest Kyoto arrival needs Hikari 633 from Odawara at 08:11 (→ Kyoto 10:12) — that means leaving Yugawara around 7:40 AM. Leaving at 8:30–9 AM lands Kyoto at 11:34–12:12, compressing the Nijo Castle + Golden Pavilion tour.",
+    alert: "✅ DECIDED Nov 6: taking Hikari 633 — the fast one. Out of the ryokan ~6:45–7:00 AM, Yugawara 07:19 local → Odawara, buy + reserve 5 seats at the JR ticket office, Hikari 633 ~08:10 → Kyoto ~10:13 AM. (The 07:36 local is the last-chance fallback — too tight if the ticket line is long.)",
     options: [
-      { tag: "A", best: true, cols: ["~7:40", "Odawara → Hikari 633 (08:11)", "10:12", "TBC"], note: "Earliest arrival — full Kyoto day, but an early start from Uohan." },
+      { tag: "A", best: true, cols: ["07:19 local", "Odawara → Hikari 633 (~08:10)", "10:13", "TBC"], note: "CHOSEN Nov 6 — the fast one. Leave the ryokan ~6:45–7:00 AM; full Kyoto day." },
       { tag: "B", best: false, cols: ["~8:00", "Odawara → Kodama 807 (08:35)", "11:34", "TBC"], note: "Slower all-stops Kodama, but no rushing and still a workable Kyoto afternoon." },
       { tag: "C", best: false, cols: ["~9:30", "Odawara → Hikari 637 (10:11)", "12:12", "TBC"], note: "Latest sensible option — Kyoto tour gets tight; prioritize Nijo Castle if time is short." },
     ],
