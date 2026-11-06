@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261106-1525";
+const SITE_BUILD = "20261106-1930";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -2618,7 +2618,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Rail",
     "Shinkansen to Kyoto",
-    "Leave ryokan ~6:45–7:00 AM · Yugawara 07:19 local → Odawara · Hikari 633 ~08:10 → Kyoto · Arrive Kyoto ~10:13 AM · Buy + reserve 5 seats at Odawara",
+    "Sleep in + last soak · Bus 09:12 from Mitsukechō (right outside the ryokan) → Yugawara Station · 09:31 local → Odawara 09:47 · Hikari 637 10:11 → Kyoto · Arrive Kyoto ~12:13 PM · Buy + reserve 5 seats at Odawara",
     "",
     "",
     "morning"
@@ -2629,7 +2629,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Visit",
     "Kyoto — Nijo Castle",
-    "11:35 AM–12:50 PM · Ninomaru Palace (nightingale floors) + castle grounds · Subway from Kyoto Station ~20 min: Karasuma Line to Karasuma-Oike, Tozai Line to Nijojo-mae",
+    "~1:00–2:15 PM · Ninomaru Palace (nightingale floors) + castle grounds · Subway from Kyoto Station ~20 min: Karasuma Line to Karasuma-Oike, Tozai Line to Nijojo-mae",
     "https://en.wikipedia.org/wiki/Nij%C5%8D_Castle",
     "",
     "midday"
@@ -2640,7 +2640,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Visit",
     "Kyoto — Golden Pavilion (Kinkakuji)",
-    "1:20–2:05 PM · Bus 12 from Nijojo-mae (stop B) ~21 min to Kinkakuji-michi, short walk",
+    "~2:45–3:30 PM · Bus 12 from Nijojo-mae (stop B) ~21 min to Kinkakuji-michi, short walk",
     "https://en.wikipedia.org/wiki/Kinkaku-ji",
     "",
     "midday"
@@ -2651,7 +2651,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Visit",
     "Ninenzaka & Sannenzaka",
-    "2:30–3:30 PM · Taxi from Kinkakuji ~15–25 min (bus 205 takes ~1 hr) · Stroll downhill Sannenzaka → Ninenzaka, stone lanes + machiya shops · Then walk ~10 min to Gojo-zaka, bus 206 to Kyoto Station ~30 min, back ~4:15 PM",
+    "~4:00–4:45 PM · Taxi from Kinkakuji ~15–25 min (bus 205 takes ~1 hr) · Stroll downhill Sannenzaka → Ninenzaka, stone lanes + machiya shops · Then walk ~10 min to Gojo-zaka, bus 206 to Kyoto Station ~30 min, back ~5:30 PM · First stop to drop if the day runs long",
     "",
     "",
     "midday"
@@ -2662,7 +2662,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Rail",
     "Train Kyoto → Nara",
-    "Depart Kyoto ~5 PM (group back at Kyoto Station by ~4:15 PM) · JR Miyakoji Rapid ~45 min ¥720 or Kintetsu Limited Express ~35 min ¥1,280 · Arrive hotel ~6–7 PM",
+    "Depart Kyoto ~5:45–6:00 PM (group back at Kyoto Station by ~5:30 PM) · JR Miyakoji Rapid ~45 min ¥720 or Kintetsu Limited Express ~35 min ¥1,280 · Arrive hotel ~6:45–7:30 PM",
     "",
     "",
     "evening"
@@ -2673,7 +2673,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Stay",
     "APA Hotel Kintetsu Nara Ekimae",
-    "Kamisanjomachi 29-1, Nara · 3 rooms, 2 nights · Check-in from 3 PM · Arrive ~6–7 PM Nov 7, out Nov 9 by 10 AM · Conf 6988012294",
+    "Kamisanjomachi 29-1, Nara · 3 rooms, 2 nights · Check-in from 3 PM · Arrive ~6:45–7:30 PM Nov 7, out Nov 9 by 10 AM · Conf 6988012294",
     "https://www.google.com/maps/search/?api=1&query=APA+Hotel+Kintetsu+Nara+Ekimae+Kamisanjomachi+29-1+Nara+Japan",
     "",
     "evening"
@@ -3822,11 +3822,11 @@ const TRAIN_LEGS = [
     service: "Shinkansen Hikari (via Odawara)",
     chips: ["~2h Shinkansen", "Local hop to Odawara first", "Reserve seats"],
     fare: "Confirm at booking",
-    alert: "✅ DECIDED Nov 6: taking Hikari 633 — the fast one. Out of the ryokan ~6:45–7:00 AM, Yugawara 07:19 local → Odawara, buy + reserve 5 seats at the JR ticket office, Hikari 633 ~08:10 → Kyoto ~10:13 AM. (The 07:36 local is the last-chance fallback — too tight if the ticket line is long.)",
+    alert: "✅ DECIDED Nov 6 (evening): taking Hikari 637 — the 10:11. Sleep in + last soak, bus 09:12 from Mitsukechō (right outside the ryokan), Yugawara 09:31 local → Odawara 09:47, buy + reserve 5 seats at the JR ticket office, Hikari 637 10:11 → Kyoto ~12:13 PM. Kyoto day shifts later: Nijo ~1:00 PM, Golden Pavilion ~2:45 PM, Ninenzaka squeezed or dropped.",
     options: [
-      { tag: "A", best: true, cols: ["07:19 local", "Odawara → Hikari 633 (~08:10)", "10:13", "TBC"], note: "CHOSEN Nov 6 — the fast one. Leave the ryokan ~6:45–7:00 AM; full Kyoto day." },
+      { tag: "A", best: false, cols: ["07:19 local", "Odawara → Hikari 633 (~08:11)", "10:13", "TBC"], note: "The fast one — full Kyoto day, but out of the ryokan ~6:45 AM. Not taken — the crew picked the sleep-in." },
       { tag: "B", best: false, cols: ["~8:00", "Odawara → Kodama 807 (08:35)", "11:34", "TBC"], note: "Slower all-stops Kodama, but no rushing and still a workable Kyoto afternoon." },
-      { tag: "C", best: false, cols: ["~9:30", "Odawara → Hikari 637 (10:11)", "12:12", "TBC"], note: "Latest sensible option — Kyoto tour gets tight; prioritize Nijo Castle if time is short." },
+      { tag: "C", best: true, cols: ["09:31 local", "Odawara → Hikari 637 (10:11)", "12:13", "TBC"], note: "CHOSEN Nov 6 (evening) — sleep in, last soak, bus 09:12 from Mitsukechō. Shorter Kyoto day; Ninenzaka is the first drop if time runs short." },
     ],
     optHeaders: ["Leave Yugawara", "Route", "Arrive Kyoto", "Fare"],
     note: "Why Hikari, not Nozomi: slightly cheaper for a ~15 min difference, and the group skipped JR Passes so you pay full fare either way. With 5 people's bags, reserve seats via SmartEX or a JR ticket office. Bags over 160 cm (H+W+D) need an oversized-baggage seat."
@@ -3836,7 +3836,7 @@ const TRAIN_LEGS = [
     date: "Sat Nov 7",
     route: "Kyoto → Nara",
     service: "JR Miyakoji Rapid or Kintetsu Limited Express",
-    chips: ["JR ~45 min, ¥720", "Kintetsu Ltd Exp ~35 min, ¥1,280", "Arrive Nara hotel ~6–7 PM"],
+    chips: ["JR ~45 min, ¥720", "Kintetsu Ltd Exp ~35 min, ¥1,280", "Arrive Nara hotel ~6:45–7:30 PM"],
     fare: "¥720 / ¥1,280",
     alert: "",
     options: [
