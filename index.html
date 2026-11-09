@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261110-0630";
+const SITE_BUILD = "20261110-0642";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1293,6 +1293,46 @@ html[data-theme="dark"] .day-head {
   opacity: .7;
 }
 
+.people-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+
+.person-add-btn {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--navy);
+  background: var(--navy);
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.person-form {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+
+.person-form .person-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+}
+
+
 
 .view-tabs {
   display: flex;
@@ -2314,17 +2354,37 @@ tr.best .opt-tag {
     </div>
 
     <div id="peopleView" class="people-view" hidden>
+      <div class="people-toolbar">
+        <button class="person-add-btn" id="addPersonBtn" type="button">+ Add connection</button>
+      </div>
+      <div class="person-form" id="personForm" hidden>
+        <input class="person-input" id="pfName" type="text" placeholder="Name" autocomplete="off">
+        <select class="person-input" id="pfLoc">
+          <option value="team">The Team</option>
+          <option value="nara">Nara</option>
+          <option value="nagoya">Nagoya</option>
+          <option value="toyohashi-gamagori">Toyohashi &amp; Gamagori</option>
+          <option value="saitama-tokyo">Saitama &amp; Tokyo</option>
+          <option value="more">More Connections</option>
+        </select>
+        <textarea class="person-text" id="pfBlurb" rows="3" placeholder="Description"></textarea>
+        <div class="person-actions">
+          <button class="person-save" id="pfSave" type="button">Save</button>
+          <button class="person-cancel" id="pfCancel" type="button">Cancel</button>
+          <span class="person-status" id="pfStatus"></span>
+        </div>
+      </div>
       <div class="people-group">The Team</div>
-      <div class="people-grid">
+      <div class="people-grid" data-group="team">
         <div class="person-card" data-person="paul-holritz"><div class="person-head"><div class="person-name">Paul Holritz</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Missionary with Biblical Ministries Worldwide (BMW) and a TWR board member. Traveling with the team — its JR Pass holder and forwarding point for half the plan.</div></div>
       </div>
       <div class="people-group">Nara</div>
-      <div class="people-grid">
+      <div class="people-grid" data-group="nara">
         <div class="person-card" data-person="shuji-kondo"><div class="person-head"><div class="person-name">Pastor Shuji Kondo</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Pastor of Shirakashi Christ Church in Kashihara. Hosted the team at the Nov 8 service and personally mapped their train route to the church. He also serves on the boards of TWR Japan and Concise Bible. His son joins the crew in Nagoya.</div></div>
         <div class="person-card" data-person="joo"><div class="person-head"><div class="person-name">Joo</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Member of the congregation at Shirakashi Christ Church, Pastor Kondo’s church.</div></div>
       </div>
       <div class="people-group">Nagoya</div>
-      <div class="people-grid">
+      <div class="people-grid" data-group="nagoya">
         <div class="person-card" data-person="andy-overly"><div class="person-head"><div class="person-name">Andy Overly</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Biblical Ministries Worldwide’s Chief Global Engagement Officer. Stitched together the combined Japan vision trip and hosts the Nov 10 gathering at CBI.</div></div>
         <div class="person-card" data-person="carla-overly"><div class="person-head"><div class="person-name">Carla Overly</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Andy’s wife and co-host for the Nagoya gathering.</div></div>
         <div class="person-card" data-person="brett-rayl"><div class="person-head"><div class="person-name">Brett Rayl</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Executive Director of Christ Bible Institute (CBI), which trains Japanese pastors through Christ Bible Seminary in Nagoya.</div></div>
@@ -2335,12 +2395,12 @@ tr.best .opt-tag {
         <div class="person-card" data-person="zane-bloom"><div class="person-head"><div class="person-name">Zane Bloom</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Mobilization Chief with Biblical Ministries Worldwide (BMW); part of the hosting team in Nagoya.</div></div>
       </div>
       <div class="people-group">Toyohashi &amp; Gamagori</div>
-      <div class="people-grid">
+      <div class="people-grid" data-group="toyohashi-gamagori">
         <div class="person-card" data-person="takuji-yamazaki"><div class="person-head"><div class="person-name">Pastor Takuji Yamazaki</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Pastor of Toyohashi Grace Baptist Church; the team visits on Nov 11.</div></div>
         <div class="person-card" data-person="akira-asada"><div class="person-head"><div class="person-name">Pastor Akira Asada</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Pastor of Gamagori Baptist Church; the team visits on Nov 11, including the Wednesday evening service.</div></div>
       </div>
       <div class="people-group">Saitama &amp; Tokyo</div>
-      <div class="people-grid">
+      <div class="people-grid" data-group="saitama-tokyo">
         <div class="person-card" data-person="mita"><div class="person-head"><div class="person-name">Pastor Mita &amp; Nobuko Mita</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Iwatsuki, Saitama. Nobuko sent the team their step-by-step train directions from Tokyo for the Nov 12 visit.</div></div>
         <div class="person-card" data-person="deverna"><div class="person-head"><div class="person-name">Daniel &amp; Karen DeVerna</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Friends the team meets near Wakaba Station on Nov 12.</div></div>
         <div class="person-card" data-person="romulo"><div class="person-head"><div class="person-name">The Romulo family</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Ministry friends on the Nov 12 route north of Tokyo.</div></div>
@@ -2348,7 +2408,7 @@ tr.best .opt-tag {
         <div class="person-card" data-person="lenartz"><div class="person-head"><div class="person-name">The Lenartz family</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Missionaries to Japan, based in Osaka. Their day-in-the-life videos encouraged Brandon and his wife long before this trip. Not yet met in person.</div></div>
       </div>
       <div class="people-group">More Connections</div>
-      <div class="people-grid">
+      <div class="people-grid" data-group="more">
         <div class="person-card" data-person="yo-aimi"><div class="person-head"><div class="person-name">Yo Aimi</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Regional Director of Concise Bible, the ministry behind concise.bible.</div></div>
       </div>
     </div>
@@ -4163,14 +4223,24 @@ document.querySelectorAll(".view-tab").forEach(tab => {
 
 
 
-// ---- Connections tab: shared editable blurbs (Supabase) ----
+
+// ---- Connections tab: shared editable blurbs + added people (Supabase) ----
 window.peopleOnShow = function () {};
 (function () {
   const view = document.getElementById("peopleView");
   if (!view) return;
   const CACHE_KEY = "peopleBlurbsV1";
   let overrides = {};
-  try { overrides = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}") || {}; } catch (e) { overrides = {}; }
+  let addedList = [];
+  try {
+    const raw = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}") || {};
+    if (raw && typeof raw === "object" && ("blurbs" in raw || "added" in raw)) {
+      overrides = raw.blurbs || {};
+      addedList = Array.isArray(raw.added) ? raw.added : [];
+    } else if (raw && typeof raw === "object") {
+      overrides = raw;
+    }
+  } catch (e) { overrides = {}; addedList = []; }
 
   function headers(extra) {
     return Object.assign({
@@ -4179,7 +4249,7 @@ window.peopleOnShow = function () {};
     }, extra || {});
   }
   function saveCache() {
-    try { localStorage.setItem(CACHE_KEY, JSON.stringify(overrides)); } catch (e) {}
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify({ blurbs: overrides, added: addedList })); } catch (e) {}
   }
   function applyAll() {
     view.querySelectorAll(".person-card").forEach(card => {
@@ -4192,17 +4262,60 @@ window.peopleOnShow = function () {};
       }
     });
   }
+  function makeCard(person) {
+    const card = document.createElement("div");
+    card.className = "person-card";
+    card.setAttribute("data-person", person.id);
+    const head = document.createElement("div");
+    head.className = "person-head";
+    const name = document.createElement("div");
+    name.className = "person-name";
+    name.textContent = person.name;
+    const btn = document.createElement("button");
+    btn.className = "person-edit";
+    btn.type = "button";
+    btn.setAttribute("data-edit", "");
+    btn.setAttribute("aria-label", "Edit description");
+    btn.title = "Edit description";
+    btn.textContent = "\u270f\ufe0f";
+    head.appendChild(name);
+    head.appendChild(btn);
+    const blurb = document.createElement("div");
+    blurb.className = "person-blurb";
+    blurb.textContent = Object.prototype.hasOwnProperty.call(overrides, person.id) ? overrides[person.id] : (person.blurb || "");
+    card.appendChild(head);
+    card.appendChild(blurb);
+    return card;
+  }
+  function renderAdded() {
+    addedList.forEach(person => {
+      if (!person || !person.id) return;
+      if (view.querySelector('.person-card[data-person="' + person.id + '"]')) return;
+      const grid = view.querySelector('.people-grid[data-group="' + person.loc + '"]') ||
+                   view.querySelector('.people-grid[data-group="more"]');
+      if (grid) grid.appendChild(makeCard(person));
+    });
+  }
   async function pull() {
     if (typeof NOTES_CONFIG === "undefined") return;
     try {
-      const res = await fetch(NOTES_CONFIG.url + "/rest/v1/connections_edits?select=blurbs&id=eq.1", { headers: headers() });
+      const res = await fetch(NOTES_CONFIG.url + "/rest/v1/connections_edits?select=blurbs,added&id=eq.1", { headers: headers() });
       if (!res.ok) return;
       const rows = await res.json();
-      if (rows.length && rows[0].blurbs && typeof rows[0].blurbs === "object") {
-        overrides = Object.assign({}, overrides, rows[0].blurbs);
-        saveCache();
-        applyAll();
+      if (!rows.length) return;
+      const row = rows[0];
+      if (row.blurbs && typeof row.blurbs === "object") {
+        overrides = Object.assign({}, overrides, row.blurbs);
       }
+      if (Array.isArray(row.added)) {
+        const byId = {};
+        addedList.forEach(p => { if (p && p.id) byId[p.id] = p; });
+        row.added.forEach(p => { if (p && p.id) byId[p.id] = p; });
+        addedList = Object.keys(byId).map(k => byId[k]);
+      }
+      saveCache();
+      renderAdded();
+      applyAll();
     } catch (e) {}
   }
   async function push() {
@@ -4211,7 +4324,7 @@ window.peopleOnShow = function () {};
       const res = await fetch(NOTES_CONFIG.url + "/rest/v1/connections_edits?id=eq.1", {
         method: "PATCH",
         headers: headers({ "Content-Type": "application/json", "Prefer": "return=minimal" }),
-        body: JSON.stringify({ blurbs: overrides, updated_at: new Date().toISOString() })
+        body: JSON.stringify({ blurbs: overrides, added: addedList, updated_at: new Date().toISOString() })
       });
       return res.ok;
     } catch (e) { return false; }
@@ -4265,7 +4378,50 @@ window.peopleOnShow = function () {};
     if (ev.target.closest("[data-cancel]")) { closeEditor(card); return; }
   });
 
-  setTimeout(() => { applyAll(); pull(); }, 0);
+  // ---- Add a connection ----
+  const addBtn = document.getElementById("addPersonBtn");
+  const form = document.getElementById("personForm");
+  const pfName = document.getElementById("pfName");
+  const pfLoc = document.getElementById("pfLoc");
+  const pfBlurb = document.getElementById("pfBlurb");
+  const pfStatus = document.getElementById("pfStatus");
+  function closeForm() {
+    if (form) form.hidden = true;
+    if (pfName) pfName.value = "";
+    if (pfBlurb) pfBlurb.value = "";
+    if (pfStatus) pfStatus.textContent = "";
+  }
+  if (addBtn && form) {
+    addBtn.addEventListener("click", () => {
+      form.hidden = !form.hidden;
+      if (!form.hidden && pfName) pfName.focus();
+    });
+  }
+  const pfCancel = document.getElementById("pfCancel");
+  if (pfCancel) pfCancel.addEventListener("click", closeForm);
+  const pfSave = document.getElementById("pfSave");
+  if (pfSave) {
+    pfSave.addEventListener("click", async () => {
+      const name = (pfName.value || "").trim();
+      const blurb = (pfBlurb.value || "").trim();
+      const loc = pfLoc.value || "more";
+      if (!name || !blurb) {
+        if (pfStatus) pfStatus.textContent = "Add a name and a description first";
+        return;
+      }
+      const person = { id: "x" + Date.now().toString(36), name: name, loc: loc, blurb: blurb };
+      addedList.push(person);
+      saveCache();
+      renderAdded();
+      applyAll();
+      if (pfStatus) pfStatus.textContent = "Saving\u2026";
+      const ok = await push();
+      if (pfStatus) pfStatus.textContent = ok ? "Saved \u2713" : "Saved on this phone \u2014 will sync when back online";
+      setTimeout(closeForm, ok ? 400 : 1200);
+    });
+  }
+
+  setTimeout(() => { renderAdded(); applyAll(); pull(); }, 0);
 })();
 
 // ---- Supabase (shared by the Games leaderboards) ----
