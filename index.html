@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261110-0614";
+const SITE_BUILD = "20261110-0630";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1223,6 +1223,77 @@ html[data-theme="dark"] .day-head {
   opacity: .85;
 }
 
+.person-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.person-edit {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.person-editor {
+  margin-top: 8px;
+}
+
+.person-text {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 84px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.person-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.person-save, .person-cancel {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.person-save {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+.person-status {
+  font-size: 12px;
+  opacity: .7;
+}
+
+
 .view-tabs {
   display: flex;
   gap: 10px;
@@ -2245,40 +2316,40 @@ tr.best .opt-tag {
     <div id="peopleView" class="people-view" hidden>
       <div class="people-group">The Team</div>
       <div class="people-grid">
-        <div class="person-card"><div class="person-name">Paul Holritz</div><div class="person-blurb">Missionary with Biblical Ministries Worldwide (BMW) and a TWR board member. Traveling with the team — its JR Pass holder and forwarding point for half the plan.</div></div>
+        <div class="person-card" data-person="paul-holritz"><div class="person-head"><div class="person-name">Paul Holritz</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Missionary with Biblical Ministries Worldwide (BMW) and a TWR board member. Traveling with the team — its JR Pass holder and forwarding point for half the plan.</div></div>
       </div>
       <div class="people-group">Nara</div>
       <div class="people-grid">
-        <div class="person-card"><div class="person-name">Pastor Shuji Kondo</div><div class="person-blurb">Pastor of Shirakashi Christ Church in Kashihara. Hosted the team at the Nov 8 service and personally mapped their train route to the church. He also serves on the boards of TWR Japan and Concise Bible. His son joins the crew in Nagoya.</div></div>
-        <div class="person-card"><div class="person-name">Joo</div><div class="person-blurb">Member of the congregation at Shirakashi Christ Church, Pastor Kondo’s church.</div></div>
+        <div class="person-card" data-person="shuji-kondo"><div class="person-head"><div class="person-name">Pastor Shuji Kondo</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Pastor of Shirakashi Christ Church in Kashihara. Hosted the team at the Nov 8 service and personally mapped their train route to the church. He also serves on the boards of TWR Japan and Concise Bible. His son joins the crew in Nagoya.</div></div>
+        <div class="person-card" data-person="joo"><div class="person-head"><div class="person-name">Joo</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Member of the congregation at Shirakashi Christ Church, Pastor Kondo’s church.</div></div>
       </div>
       <div class="people-group">Nagoya</div>
       <div class="people-grid">
-        <div class="person-card"><div class="person-name">Andy Overly</div><div class="person-blurb">Biblical Ministries Worldwide’s Chief Global Engagement Officer. Stitched together the combined Japan vision trip and hosts the Nov 10 gathering at CBI.</div></div>
-        <div class="person-card"><div class="person-name">Carla Overly</div><div class="person-blurb">Andy’s wife and co-host for the Nagoya gathering.</div></div>
-        <div class="person-card"><div class="person-name">Brett Rayl</div><div class="person-blurb">Executive Director of Christ Bible Institute (CBI), which trains Japanese pastors through Christ Bible Seminary in Nagoya.</div></div>
-        <div class="person-card"><div class="person-name">Dr. Rich McLaughlin</div><div class="person-blurb">With CBI; set up the original Nov 10 lunch meeting.</div></div>
-        <div class="person-card"><div class="person-name">Joe Hansen</div><div class="person-blurb">Biblical Ministries Worldwide EVP; part of the CBI lunch group.</div></div>
-        <div class="person-card"><div class="person-name">Seichi &amp; Ruthanne Kamimura</div><div class="person-blurb">Nagoya-area ministry friends; part of the Nov 10 full-field gathering.</div></div>
-        <div class="person-card"><div class="person-name">Alessandro “Chino” Gonzalez &amp; family</div><div class="person-blurb">Missionary family in the Nagoya area; part of the Nov 10 gathering.</div></div>
-        <div class="person-card"><div class="person-name">Zane Bloom</div><div class="person-blurb">Mobilization Chief with Biblical Ministries Worldwide (BMW); part of the hosting team in Nagoya.</div></div>
+        <div class="person-card" data-person="andy-overly"><div class="person-head"><div class="person-name">Andy Overly</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Biblical Ministries Worldwide’s Chief Global Engagement Officer. Stitched together the combined Japan vision trip and hosts the Nov 10 gathering at CBI.</div></div>
+        <div class="person-card" data-person="carla-overly"><div class="person-head"><div class="person-name">Carla Overly</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Andy’s wife and co-host for the Nagoya gathering.</div></div>
+        <div class="person-card" data-person="brett-rayl"><div class="person-head"><div class="person-name">Brett Rayl</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Executive Director of Christ Bible Institute (CBI), which trains Japanese pastors through Christ Bible Seminary in Nagoya.</div></div>
+        <div class="person-card" data-person="rich-mclaughlin"><div class="person-head"><div class="person-name">Dr. Rich McLaughlin</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">With CBI; set up the original Nov 10 lunch meeting.</div></div>
+        <div class="person-card" data-person="joe-hansen"><div class="person-head"><div class="person-name">Joe Hansen</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Biblical Ministries Worldwide EVP; part of the CBI lunch group.</div></div>
+        <div class="person-card" data-person="kamimura"><div class="person-head"><div class="person-name">Seichi &amp; Ruthanne Kamimura</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Nagoya-area ministry friends; part of the Nov 10 full-field gathering.</div></div>
+        <div class="person-card" data-person="gonzalez"><div class="person-head"><div class="person-name">Alessandro “Chino” Gonzalez &amp; family</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Missionary family in the Nagoya area; part of the Nov 10 gathering.</div></div>
+        <div class="person-card" data-person="zane-bloom"><div class="person-head"><div class="person-name">Zane Bloom</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Mobilization Chief with Biblical Ministries Worldwide (BMW); part of the hosting team in Nagoya.</div></div>
       </div>
       <div class="people-group">Toyohashi &amp; Gamagori</div>
       <div class="people-grid">
-        <div class="person-card"><div class="person-name">Pastor Takuji Yamazaki</div><div class="person-blurb">Pastor of Toyohashi Grace Baptist Church; the team visits on Nov 11.</div></div>
-        <div class="person-card"><div class="person-name">Pastor Akira Asada</div><div class="person-blurb">Pastor of Gamagori Baptist Church; the team visits on Nov 11, including the Wednesday evening service.</div></div>
+        <div class="person-card" data-person="takuji-yamazaki"><div class="person-head"><div class="person-name">Pastor Takuji Yamazaki</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Pastor of Toyohashi Grace Baptist Church; the team visits on Nov 11.</div></div>
+        <div class="person-card" data-person="akira-asada"><div class="person-head"><div class="person-name">Pastor Akira Asada</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Pastor of Gamagori Baptist Church; the team visits on Nov 11, including the Wednesday evening service.</div></div>
       </div>
       <div class="people-group">Saitama &amp; Tokyo</div>
       <div class="people-grid">
-        <div class="person-card"><div class="person-name">Pastor Mita &amp; Nobuko Mita</div><div class="person-blurb">Iwatsuki, Saitama. Nobuko sent the team their step-by-step train directions from Tokyo for the Nov 12 visit.</div></div>
-        <div class="person-card"><div class="person-name">Daniel &amp; Karen DeVerna</div><div class="person-blurb">Friends the team meets near Wakaba Station on Nov 12.</div></div>
-        <div class="person-card"><div class="person-name">The Romulo family</div><div class="person-blurb">Ministry friends on the Nov 12 route north of Tokyo.</div></div>
-        <div class="person-card"><div class="person-name">Levi &amp; Shiloh Ewing</div><div class="person-blurb">Reliant missionaries serving in Tokyo, near Higashi-Koganei Station. Known to the team; not yet met in person.</div></div>
-        <div class="person-card"><div class="person-name">The Lenartz family</div><div class="person-blurb">Missionaries to Japan, based in Osaka. Their day-in-the-life videos encouraged Brandon and his wife long before this trip. Not yet met in person.</div></div>
+        <div class="person-card" data-person="mita"><div class="person-head"><div class="person-name">Pastor Mita &amp; Nobuko Mita</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Iwatsuki, Saitama. Nobuko sent the team their step-by-step train directions from Tokyo for the Nov 12 visit.</div></div>
+        <div class="person-card" data-person="deverna"><div class="person-head"><div class="person-name">Daniel &amp; Karen DeVerna</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Friends the team meets near Wakaba Station on Nov 12.</div></div>
+        <div class="person-card" data-person="romulo"><div class="person-head"><div class="person-name">The Romulo family</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Ministry friends on the Nov 12 route north of Tokyo.</div></div>
+        <div class="person-card" data-person="ewing"><div class="person-head"><div class="person-name">Levi &amp; Shiloh Ewing</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Reliant missionaries serving in Tokyo, near Higashi-Koganei Station. Known to the team; not yet met in person.</div></div>
+        <div class="person-card" data-person="lenartz"><div class="person-head"><div class="person-name">The Lenartz family</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Missionaries to Japan, based in Osaka. Their day-in-the-life videos encouraged Brandon and his wife long before this trip. Not yet met in person.</div></div>
       </div>
       <div class="people-group">More Connections</div>
       <div class="people-grid">
-        <div class="person-card"><div class="person-name">Yo Aimi</div><div class="person-blurb">Regional Director of Concise Bible, the ministry behind concise.bible.</div></div>
+        <div class="person-card" data-person="yo-aimi"><div class="person-head"><div class="person-name">Yo Aimi</div><button class="person-edit" type="button" data-edit aria-label="Edit description" title="Edit description">✏️</button></div><div class="person-blurb">Regional Director of Concise Bible, the ministry behind concise.bible.</div></div>
       </div>
     </div>
 
@@ -4086,9 +4157,116 @@ document.querySelectorAll(".view-tab").forEach(tab => {
       if (view === "snake" && window.snakeOnShow) snakeOnShow();
       if (view !== "snake" && window.snakeOnHide) snakeOnHide();
     }
+    if (view === "people" && window.peopleOnShow) peopleOnShow();
   });
 });
 
+
+
+// ---- Connections tab: shared editable blurbs (Supabase) ----
+window.peopleOnShow = function () {};
+(function () {
+  const view = document.getElementById("peopleView");
+  if (!view) return;
+  const CACHE_KEY = "peopleBlurbsV1";
+  let overrides = {};
+  try { overrides = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}") || {}; } catch (e) { overrides = {}; }
+
+  function headers(extra) {
+    return Object.assign({
+      "apikey": NOTES_CONFIG.anonKey,
+      "Authorization": "Bearer " + NOTES_CONFIG.anonKey
+    }, extra || {});
+  }
+  function saveCache() {
+    try { localStorage.setItem(CACHE_KEY, JSON.stringify(overrides)); } catch (e) {}
+  }
+  function applyAll() {
+    view.querySelectorAll(".person-card").forEach(card => {
+      const id = card.getAttribute("data-person");
+      if (!id) return;
+      const blurbEl = card.querySelector(".person-blurb");
+      if (!blurbEl) return;
+      if (Object.prototype.hasOwnProperty.call(overrides, id)) {
+        blurbEl.textContent = overrides[id];
+      }
+    });
+  }
+  async function pull() {
+    if (typeof NOTES_CONFIG === "undefined") return;
+    try {
+      const res = await fetch(NOTES_CONFIG.url + "/rest/v1/connections_edits?select=blurbs&id=eq.1", { headers: headers() });
+      if (!res.ok) return;
+      const rows = await res.json();
+      if (rows.length && rows[0].blurbs && typeof rows[0].blurbs === "object") {
+        overrides = Object.assign({}, overrides, rows[0].blurbs);
+        saveCache();
+        applyAll();
+      }
+    } catch (e) {}
+  }
+  async function push() {
+    if (typeof NOTES_CONFIG === "undefined") return false;
+    try {
+      const res = await fetch(NOTES_CONFIG.url + "/rest/v1/connections_edits?id=eq.1", {
+        method: "PATCH",
+        headers: headers({ "Content-Type": "application/json", "Prefer": "return=minimal" }),
+        body: JSON.stringify({ blurbs: overrides, updated_at: new Date().toISOString() })
+      });
+      return res.ok;
+    } catch (e) { return false; }
+  }
+  window.peopleOnShow = function () { pull(); };
+
+  function openEditor(card) {
+    if (card.querySelector(".person-editor")) return;
+    const blurbEl = card.querySelector(".person-blurb");
+    if (!blurbEl) return;
+    const editor = document.createElement("div");
+    editor.className = "person-editor";
+    editor.innerHTML = '<textarea class="person-text" rows="4"></textarea>' +
+      '<div class="person-actions"><button class="person-save" type="button" data-save>Save</button>' +
+      '<button class="person-cancel" type="button" data-cancel>Cancel</button>' +
+      '<span class="person-status"></span></div>';
+    editor.querySelector(".person-text").value = blurbEl.textContent;
+    blurbEl.style.display = "none";
+    card.appendChild(editor);
+    const ta = editor.querySelector(".person-text");
+    ta.focus();
+    try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (e) {}
+  }
+  function closeEditor(card) {
+    const editor = card.querySelector(".person-editor");
+    if (editor) editor.remove();
+    const blurbEl = card.querySelector(".person-blurb");
+    if (blurbEl) blurbEl.style.display = "";
+  }
+  async function saveEditor(card) {
+    const id = card.getAttribute("data-person");
+    const editor = card.querySelector(".person-editor");
+    if (!id || !editor) return;
+    const text = editor.querySelector(".person-text").value.trim();
+    if (!text) { closeEditor(card); return; }
+    const status = editor.querySelector(".person-status");
+    overrides[id] = text;
+    saveCache();
+    applyAll();
+    if (status) status.textContent = "Saving\u2026";
+    const ok = await push();
+    if (status) status.textContent = ok ? "Saved \u2713" : "Saved on this phone \u2014 will sync when back online";
+    setTimeout(() => closeEditor(card), ok ? 350 : 1200);
+  }
+
+  view.addEventListener("click", (ev) => {
+    const card = ev.target.closest(".person-card");
+    if (!card) return;
+    if (ev.target.closest("[data-edit]")) { openEditor(card); return; }
+    if (ev.target.closest("[data-save]")) { saveEditor(card); return; }
+    if (ev.target.closest("[data-cancel]")) { closeEditor(card); return; }
+  });
+
+  setTimeout(() => { applyAll(); pull(); }, 0);
+})();
 
 // ---- Supabase (shared by the Games leaderboards) ----
 
