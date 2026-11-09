@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261110-0542";
+const SITE_BUILD = "20261110-0552";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1179,6 +1179,50 @@ html[data-theme="dark"] .day-head {
   }
 }
 
+
+/* ---- Connections view ---- */
+.people-view {
+  padding: 4px 0 30px;
+}
+
+.people-group {
+  margin: 24px 0 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  opacity: .6;
+}
+
+.people-group:first-child {
+  margin-top: 6px;
+}
+
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 10px;
+}
+
+.person-card {
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+
+.person-name {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.person-blurb {
+  font-size: 14px;
+  line-height: 1.45;
+  opacity: .85;
+}
+
 .view-tabs {
   display: flex;
   gap: 10px;
@@ -2139,6 +2183,13 @@ tr.best .opt-tag {
           aria-selected="false"
           type="button"
         >Games</button>
+        <button
+          class="view-tab"
+          data-view="people"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        >Connections</button>
       </div>
 
       <div class="toolbar-right">
@@ -2189,6 +2240,47 @@ tr.best .opt-tag {
         referrerpolicy="no-referrer-when-downgrade"
         title="Japan trip map"
       ></iframe>
+    </div>
+
+    <div id="peopleView" class="people-view" hidden>
+      <div class="people-group">The Team</div>
+      <div class="people-grid">
+        <div class="person-card"><div class="person-name">Brandon Camerer</div><div class="person-blurb">Team lead, from Sequim Bible Church in Sequim, WA.</div></div>
+        <div class="person-card"><div class="person-name">Paul Holritz</div><div class="person-blurb">Fellow traveler; the team’s JR Pass holder and forwarding point for half the plan.</div></div>
+      </div>
+      <div class="people-group">Nara</div>
+      <div class="people-grid">
+        <div class="person-card"><div class="person-name">Pastor Shuji Kondo</div><div class="person-blurb">Pastor of Shirakashi Christ Church in Kashihara. Hosted the team at the Nov 8 service and personally mapped their train route to the church. His son joins the crew in Nagoya.</div></div>
+        <div class="person-card"><div class="person-name">Joo</div><div class="person-blurb">Member of the congregation at Shirakashi Christ Church, Pastor Kondo’s church.</div></div>
+      </div>
+      <div class="people-group">Nagoya</div>
+      <div class="people-grid">
+        <div class="person-card"><div class="person-name">Andy Overly</div><div class="person-blurb">Biblical Ministries Worldwide’s Chief Global Engagement Officer. Stitched together the combined Japan vision trip and hosts the Nov 10 gathering at CBI.</div></div>
+        <div class="person-card"><div class="person-name">Carla Overly</div><div class="person-blurb">Andy’s wife and co-host for the Nagoya gathering.</div></div>
+        <div class="person-card"><div class="person-name">Brett Rayl</div><div class="person-blurb">Executive Director of Christ Bible Institute (CBI), which trains Japanese pastors through Christ Bible Seminary in Nagoya.</div></div>
+        <div class="person-card"><div class="person-name">Dr. Rich McLaughlin</div><div class="person-blurb">With CBI; set up the original Nov 10 lunch meeting.</div></div>
+        <div class="person-card"><div class="person-name">Joe Hansen</div><div class="person-blurb">Biblical Ministries Worldwide EVP; part of the CBI lunch group.</div></div>
+        <div class="person-card"><div class="person-name">Seichi &amp; Ruthanne Kamimura</div><div class="person-blurb">Nagoya-area ministry friends; part of the Nov 10 full-field gathering.</div></div>
+        <div class="person-card"><div class="person-name">Alessandro “Chino” Gonzalez &amp; family</div><div class="person-blurb">Missionary family in the Nagoya area; part of the Nov 10 gathering.</div></div>
+        <div class="person-card"><div class="person-name">Zane Bloom</div><div class="person-blurb">Mobilization Chief with Biblical Ministries Worldwide (BMW); part of the hosting team in Nagoya.</div></div>
+      </div>
+      <div class="people-group">Toyohashi &amp; Gamagori</div>
+      <div class="people-grid">
+        <div class="person-card"><div class="person-name">Pastor Takuji Yamazaki</div><div class="person-blurb">Pastor of Toyohashi Grace Baptist Church; the team visits on Nov 11.</div></div>
+        <div class="person-card"><div class="person-name">Pastor Akira Asada</div><div class="person-blurb">Pastor of Gamagori Baptist Church; the team visits on Nov 11, including the Wednesday evening service.</div></div>
+      </div>
+      <div class="people-group">Saitama &amp; Tokyo</div>
+      <div class="people-grid">
+        <div class="person-card"><div class="person-name">Pastor Mita &amp; Nobuko Mita</div><div class="person-blurb">Iwatsuki, Saitama. Nobuko sent the team their step-by-step train directions from Tokyo for the Nov 12 visit.</div></div>
+        <div class="person-card"><div class="person-name">Daniel &amp; Karen DeVerna</div><div class="person-blurb">Friends the team meets near Wakaba Station on Nov 12.</div></div>
+        <div class="person-card"><div class="person-name">The Romulo family</div><div class="person-blurb">Ministry friends on the Nov 12 route north of Tokyo.</div></div>
+        <div class="person-card"><div class="person-name">Levi &amp; Shiloh Ewing</div><div class="person-blurb">Reliant missionaries serving in Tokyo, near Higashi-Koganei Station. Known to the team; not yet met in person.</div></div>
+        <div class="person-card"><div class="person-name">The Lenartz family</div><div class="person-blurb">Missionaries to Japan, based in Osaka. Their day-in-the-life videos encouraged Brandon and his wife long before this trip. Not yet met in person.</div></div>
+      </div>
+      <div class="people-group">More Connections</div>
+      <div class="people-grid">
+        <div class="person-card"><div class="person-name">Yo Aimi</div><div class="person-blurb">Regional Director of Concise Bible, the ministry behind concise.bible.</div></div>
+      </div>
     </div>
 
     <div id="trainView" class="train-view" hidden></div>
@@ -3988,6 +4080,7 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     if (controls) controls.hidden = view !== "timeline";
     document.getElementById("map").hidden = view !== "map";
     document.getElementById("trainView").hidden = view !== "trains";
+    document.getElementById("peopleView").hidden = view !== "people";
     const snakeViewEl = document.getElementById("snakeView");
     if (snakeViewEl) {
       snakeViewEl.hidden = view !== "snake";
