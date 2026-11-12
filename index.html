@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261110-0642";
+const SITE_BUILD = "20261113-0515";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1395,6 +1395,86 @@ a.view-tab {
   }
 }
 
+/* ---- Archive dropdown (added Nov 13) ---- */
+.archive-wrap {
+  position: relative;
+}
+
+.archive-toggle {
+  padding: 9px 26px;
+  border: 1px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 999px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+}
+
+.archive-toggle.active {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+.archive-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 200px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 6px;
+  z-index: 50;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.archive-menu.open {
+  display: flex;
+}
+
+.archive-item {
+  border: none;
+  border-radius: 8px;
+  padding: 9px 12px;
+  text-align: left;
+  background: transparent;
+  flex: none;
+}
+
+.archive-item:hover {
+  background: var(--line);
+}
+
+.archive-item.active {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+@media (max-width: 650px) {
+  .archive-wrap {
+    flex: 1 1 0;
+  }
+
+  .archive-toggle {
+    width: 100%;
+    padding: 7px 2px;
+    font-size: 13px;
+    line-height: 1.15;
+    text-align: center;
+  }
+
+  .archive-item {
+    padding: 9px 12px;
+    font-size: 14px;
+  }
+}
+
 .map-view {
   height: 70vh;
   min-height: 420px;
@@ -2257,7 +2337,7 @@ tr.best .opt-tag {
       <div
         class="last-updated"
         id="lastUpdated"
-      >Last updated: November 10, 2026</div>
+      >Last updated: November 13, 2026</div>
 
     </div>
   </section>
@@ -2267,40 +2347,51 @@ tr.best .opt-tag {
     <div class="views-row">
       <div class="view-tabs" role="tablist" aria-label="Itinerary views">
         <button
-          class="view-tab active"
-          data-view="timeline"
-          role="tab"
-          aria-selected="true"
-          type="button"
-        >Timeline</button>
-        <button
-          class="view-tab"
-          data-view="map"
-          role="tab"
-          aria-selected="false"
-          type="button"
-        >Map</button>
-        <button
-          class="view-tab"
-          data-view="trains"
-          role="tab"
-          aria-selected="false"
-          type="button"
-        ><span class="tab-full">Draft Train Schedule</span><span class="tab-short">Trains</span></button>
-        <button
-          class="view-tab"
-          data-view="snake"
-          role="tab"
-          aria-selected="false"
-          type="button"
-        >Games</button>
-        <button
           class="view-tab"
           data-view="people"
           role="tab"
           aria-selected="false"
           type="button"
         >Connections</button>
+        <div class="archive-wrap">
+          <button
+            class="archive-toggle active"
+            id="archiveToggle"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >Archive ▾</button>
+          <div class="archive-menu" id="archiveMenu" role="menu">
+            <button
+              class="view-tab archive-item active"
+              data-view="timeline"
+              role="tab"
+              aria-selected="true"
+              type="button"
+            >Timeline</button>
+            <button
+              class="view-tab archive-item"
+              data-view="map"
+              role="tab"
+              aria-selected="false"
+              type="button"
+            >Map</button>
+            <button
+              class="view-tab archive-item"
+              data-view="trains"
+              role="tab"
+              aria-selected="false"
+              type="button"
+            ><span class="tab-full">Draft Train Schedule</span><span class="tab-short">Trains</span></button>
+            <button
+              class="view-tab archive-item"
+              data-view="snake"
+              role="tab"
+              aria-selected="false"
+              type="button"
+            >Games</button>
+          </div>
+        </div>
       </div>
 
       <div class="toolbar-right">
@@ -4205,6 +4296,11 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     tab.setAttribute("aria-selected", "true");
 
     const view = tab.dataset.view;
+    // Archive dropdown: highlight the Archive tab when an archived view is
+    // showing, and close the menu after a selection.
+    const archiveToggle = document.getElementById("archiveToggle");
+    if (archiveToggle) archiveToggle.classList.toggle("active", view !== "people");
+    closeArchiveMenu();
     document.getElementById("timeline").hidden = view !== "timeline";
     const controls = document.querySelector(".controls");
     if (controls) controls.hidden = view !== "timeline";
@@ -4222,6 +4318,30 @@ document.querySelectorAll(".view-tab").forEach(tab => {
 });
 
 
+// ---- Archive dropdown (added Nov 13) ----
+function closeArchiveMenu() {
+  const menu = document.getElementById("archiveMenu");
+  const toggle = document.getElementById("archiveToggle");
+  if (menu) menu.classList.remove("open");
+  if (toggle) toggle.setAttribute("aria-expanded", "false");
+}
+
+(function initArchiveMenu() {
+  const toggle = document.getElementById("archiveToggle");
+  const menu = document.getElementById("archiveMenu");
+  if (!toggle || !menu) return;
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const open = menu.classList.toggle("open");
+    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  });
+  document.addEventListener("click", (e) => {
+    if (!menu.contains(e.target) && e.target !== toggle) closeArchiveMenu();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeArchiveMenu();
+  });
+})();
 
 
 // ---- Connections tab: shared editable blurbs + added people (Supabase) ----
