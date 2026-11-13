@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261113-1510";
+const SITE_BUILD = "20261113-1525";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1491,9 +1491,10 @@ a.view-tab {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 10px 28px;
-  padding: 14px 16px 12px;
+  gap: 12px 36px;
+  padding: 16px 20px 14px;
   background: var(--card);
+  border-top: 3px solid var(--red);
   border-bottom: 1px solid var(--line);
   flex: none;
 }
@@ -1506,7 +1507,7 @@ a.view-tab {
 }
 
 .map-stat-num {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 800;
   color: var(--navy);
 }
@@ -2474,13 +2475,11 @@ tr.best .opt-tag {
 
     <div id="map" class="map-view" hidden>
       <div class="map-stats">
-        <div class="map-stat"><span class="map-stat-num">31</span><span class="map-stat-label">places</span></div>
-        <div class="map-stat"><span class="map-stat-num">14</span><span class="map-stat-label">towns &amp; cities</span></div>
+        <div class="map-stat"><span class="map-stat-num">14</span><span class="map-stat-label">cities</span></div>
         <div class="map-stat"><span class="map-stat-num">40+</span><span class="map-stat-label">trains</span></div>
         <div class="map-stat"><span class="map-stat-num">4</span><span class="map-stat-label">Shinkansen rides</span></div>
         <div class="map-stat"><span class="map-stat-num">1,000+</span><span class="map-stat-label">miles traveled</span></div>
         <div class="map-stat"><span class="map-stat-num">50+</span><span class="map-stat-label">miles walked</span></div>
-        <div class="map-stat"><span class="map-stat-num">5</span><span class="map-stat-label">travelers</span></div>
       </div>
       <iframe
         id="gmapFrame"
