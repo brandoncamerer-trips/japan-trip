@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261113-1525";
+const SITE_BUILD = "20261113-1830";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -320,6 +320,10 @@ input:focus-visible {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.toolbar-right[hidden] {
+  display: none;
 }
 
 .search-box {
@@ -4349,8 +4353,8 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     if (archiveToggle) archiveToggle.classList.toggle("active", view !== "people");
     closeArchiveMenu();
     document.getElementById("timeline").hidden = view !== "timeline";
-    const controls = document.querySelector(".controls");
-    if (controls) controls.hidden = view !== "timeline";
+    const toolbarRight = document.querySelector(".toolbar-right");
+    if (toolbarRight) toolbarRight.hidden = view !== "timeline";
     document.getElementById("map").hidden = view !== "map";
     document.getElementById("trainView").hidden = view !== "trains";
     document.getElementById("peopleView").hidden = view !== "people";
