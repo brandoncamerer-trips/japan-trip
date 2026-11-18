@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261118-1320";
+const SITE_BUILD = "20261118-1325";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1274,10 +1274,18 @@ html[data-theme="dark"] .day-head {
 }
 
 .person-contact {
-  margin-top: 6px;
+  margin-top: 8px;
   font-size: 13px;
   line-height: 1.45;
   opacity: .85;
+}
+.person-contact-label {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: .7;
+  margin-bottom: 2px;
+}
+.person-contact-row {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -5067,17 +5075,30 @@ window.peopleOnShow = function () {};
       }
       const contactVal = Object.prototype.hasOwnProperty.call(overrides, "contact:" + id) ? overrides["contact:" + id] : "";
       let contactEl = card.querySelector(".person-contact");
-      if (contactVal) {
-        if (contactEl && contactEl.getAttribute("data-value") === contactVal) {
-          // Already rendered for this value; leave it alone (preserves copy-button state).
-        } else {
-          if (!contactEl) {
-            contactEl = document.createElement("div");
-            contactEl.className = "person-contact";
-            card.appendChild(contactEl);
-          }
-          contactEl.setAttribute("data-value", contactVal);
-          contactEl.innerHTML = "";
+      if (!contactEl) {
+        contactEl = document.createElement("div");
+        contactEl.className = "person-contact";
+        card.appendChild(contactEl);
+      }
+      if (contactEl.getAttribute("data-value") !== contactVal) {
+        // Rebuild only when the value changed (preserves copy-button state).
+        contactEl.setAttribute("data-value", contactVal);
+        contactEl.innerHTML = "";
+        const label = document.createElement("div");
+        label.className = "person-contact-label";
+        label.textContent = "Contact";
+        contactEl.appendChild(label);
+        const row = document.createElement("div");
+        row.className = "person-contact-row";
+        if (contactVal) {
+          const copyBtn = document.createElement("button");
+          copyBtn.className = "person-copy";
+          copyBtn.type = "button";
+          copyBtn.setAttribute("aria-label", "Copy contact");
+          copyBtn.title = "Copy contact";
+          copyBtn.innerHTML = COPY_ICON;
+          copyBtn.addEventListener("click", () => copyContact(contactVal, copyBtn));
+          row.appendChild(copyBtn);
           const textWrap = document.createElement("span");
           textWrap.className = "person-contact-text";
           if (/^\S+@\S+\.\S+$/.test(contactVal)) {
@@ -5088,18 +5109,11 @@ window.peopleOnShow = function () {};
           } else {
             textWrap.textContent = contactVal;
           }
-          contactEl.appendChild(textWrap);
-          const copyBtn = document.createElement("button");
-          copyBtn.className = "person-copy";
-          copyBtn.type = "button";
-          copyBtn.setAttribute("aria-label", "Copy contact");
-          copyBtn.title = "Copy contact";
-          copyBtn.innerHTML = COPY_ICON;
-          copyBtn.addEventListener("click", () => copyContact(contactVal, copyBtn));
-          contactEl.appendChild(copyBtn);
+          row.appendChild(textWrap);
+        } else {
+          row.textContent = "---";
         }
-      } else if (contactEl) {
-        contactEl.remove();
+        contactEl.appendChild(row);
       }
     });
   }
