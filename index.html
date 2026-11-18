@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261118-1325";
+const SITE_BUILD = "20261118-1340";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -5006,6 +5006,10 @@ window.peopleOnShow = function () {};
   const CACHE_KEY = "peopleBlurbsV1";
   let overrides = {};
   let addedList = [];
+  // Contact keys cleared locally since the last successful push. push() merges
+  // with the server row first, so without this a cleared contact would be
+  // resurrected from the server's copy.
+  let deletedContactKeys = new Set();
   try {
     const raw = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}") || {};
     if (raw && typeof raw === "object" && ("blurbs" in raw || "added" in raw)) {
@@ -5176,11 +5180,45 @@ window.peopleOnShow = function () {};
   async function push() {
     if (typeof NOTES_CONFIG === "undefined") return false;
     try {
+      // Merge with the server row first: a stale tab saving must not wipe
+      // changes made from another tab or device (people added, contacts set).
+      // Local edits win per key / per person; server-only entries survive.
+      let blurbs = overrides;
+      let added = addedList;
+      try {
+        const getRes = await fetch(NOTES_CONFIG.url + "/rest/v1/connections_edits?select=blurbs,added&id=eq.1", { headers: headers() });
+        if (getRes.ok) {
+          const rows = await getRes.json();
+          if (rows.length) {
+            const row = rows[0];
+            if (row.blurbs && typeof row.blurbs === "object") {
+              blurbs = Object.assign({}, row.blurbs, overrides);
+              deletedContactKeys.forEach(k => { delete blurbs[k]; });
+            }
+            if (Array.isArray(row.added)) {
+              const byId = {};
+              row.added.forEach(p => { if (p && p.id) byId[p.id] = p; });
+              addedList.forEach(p => { if (p && p.id) byId[p.id] = p; });
+              added = Object.keys(byId).map(k => byId[k]);
+            }
+          }
+        }
+      } catch (e) { /* GET failed: fall back to pushing local state */ }
       const res = await fetch(NOTES_CONFIG.url + "/rest/v1/connections_edits?id=eq.1", {
         method: "PATCH",
         headers: headers({ "Content-Type": "application/json", "Prefer": "return=minimal" }),
-        body: JSON.stringify({ blurbs: overrides, added: addedList, updated_at: new Date().toISOString() })
+        body: JSON.stringify({ blurbs: blurbs, added: added, updated_at: new Date().toISOString() })
       });
+      if (res.ok) {
+        // Keep this tab in step with what was pushed, so the next save starts
+        // from the merged state and people added elsewhere show up here.
+        overrides = blurbs;
+        addedList = added;
+        deletedContactKeys.clear();
+        saveCache();
+        renderAdded();
+        applyAll();
+      }
       return res.ok;
     } catch (e) { return false; }
   }
@@ -5236,8 +5274,13 @@ window.peopleOnShow = function () {};
     overrides["loc:" + id] = locVal;
     if (text) overrides[id] = text;
     const contactVal = (editor.querySelector(".person-contact-input").value || "").trim();
-    if (contactVal) overrides["contact:" + id] = contactVal;
-    else delete overrides["contact:" + id];
+    if (contactVal) {
+      overrides["contact:" + id] = contactVal;
+      deletedContactKeys.delete("contact:" + id);
+    } else {
+      delete overrides["contact:" + id];
+      deletedContactKeys.add("contact:" + id);
+    }
     saveCache();
     applyAll();
     if (status) status.textContent = "Saving\u2026";
