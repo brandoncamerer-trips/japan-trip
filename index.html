@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261114-0106";
+const SITE_BUILD = "20261117-2335";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1336,6 +1336,99 @@ html[data-theme="dark"] .day-head {
   font-size: 14px;
 }
 
+/* ---- Ministry Notes view ---- */
+.ministry-view {
+  padding: 4px 0 30px;
+  max-width: 760px;
+}
+
+.ministry-title {
+  margin: 6px 0 6px;
+  font-size: 22px;
+}
+
+.ministry-intro {
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: .8;
+  margin: 0 0 14px;
+}
+
+.ministry-toc {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+}
+
+.ministry-toc summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ministry-toc ol {
+  margin: 10px 0 2px;
+  padding-left: 22px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.ministry-toc a {
+  color: inherit;
+}
+
+.ministry-notes h2 {
+  margin: 28px 0 8px;
+  font-size: 19px;
+  scroll-margin-top: 12px;
+}
+
+.ministry-notes h3 {
+  margin: 20px 0 6px;
+  font-size: 16px;
+}
+
+.ministry-notes h4 {
+  margin: 16px 0 4px;
+  font-size: 15px;
+}
+
+.ministry-notes p {
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0 0 10px;
+}
+
+.ministry-notes ul,
+.ministry-notes ol {
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0 0 12px;
+  padding-left: 22px;
+}
+
+.ministry-notes li {
+  margin-bottom: 4px;
+}
+
+.ministry-notes hr {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 24px 0;
+}
+
+.ministry-notes blockquote {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-left: 3px solid var(--navy);
+  background: var(--card);
+  border-radius: 0 10px 10px 0;
+  font-size: 14px;
+  line-height: 1.55;
+  font-style: italic;
+}
+
 
 
 .view-tabs {
@@ -2379,7 +2472,7 @@ tr.best .opt-tag {
       <div
         class="last-updated"
         id="lastUpdated"
-      >Last updated: November 13, 2026</div>
+      >Last updated: November 17, 2026</div>
 
     </div>
   </section>
@@ -2395,6 +2488,13 @@ tr.best .opt-tag {
           aria-selected="false"
           type="button"
         >Connections</button>
+        <button
+          class="view-tab"
+          data-view="ministry"
+          role="tab"
+          aria-selected="false"
+          type="button"
+        >Ministry Notes</button>
         <div class="archive-wrap">
           <button
             class="archive-toggle active"
@@ -2553,6 +2653,433 @@ tr.best .opt-tag {
       </div>
     </div>
 
+<div id="ministryView" class="ministry-view" hidden>
+      <h2 class="ministry-title">Potential Ministry Notes</h2>
+      <p class="ministry-intro">From Brandon&rsquo;s Nov 14 email to Shane, Josh &amp; Matt &mdash; the full outline of the transcribed ministry meeting.</p>
+      <details class="ministry-toc" open>
+        <summary>Contents</summary>
+        <ol>
+          <li><a href="#mn-1-purpose-and-framing">1. Purpose and framing</a></li>
+          <li><a href="#mn-2-u-s-organizational-structure">2. U.S. organizational structure</a></li>
+          <li><a href="#mn-3-independent-u-s-501-c-3-model">3. Independent U.S. 501(c)(3) model</a></li>
+          <li><a href="#mn-4-two-different-nonprofit-funding-models">4. Two different nonprofit funding models</a></li>
+          <li><a href="#mn-5-using-an-established-missions-organization">5. Using an established missions organization</a></li>
+          <li><a href="#mn-6-building-on-existing-japanese-ministries-instead-of-inventing-something-new">6. Building on existing Japanese ministries instead of inventing something new</a></li>
+          <li><a href="#mn-7-core-ministry-principle-serve-japanese-churches">7. Core ministry principle: serve Japanese churches</a></li>
+          <li><a href="#mn-8-direct-financial-support-for-japanese-pastoral-candidates">8. Direct financial support for Japanese pastoral candidates</a></li>
+          <li><a href="#mn-9-business-based-route-in-japan">9. Business-based route in Japan</a></li>
+          <li><a href="#mn-10-hybrid-model">10. Hybrid model</a></li>
+          <li><a href="#mn-11-visa-discussion">11. Visa discussion</a></li>
+          <li><a href="#mn-12-fundraising-strategy">12. Fundraising strategy</a></li>
+          <li><a href="#mn-13-your-personal-role">13. Your personal role</a></li>
+          <li><a href="#mn-14-family-considerations">14. Family considerations</a></li>
+          <li><a href="#mn-15-long-term-missionary-pastoral-role">15. Long-term missionary/pastoral role</a></li>
+          <li><a href="#mn-16-information-still-needed">16. Information still needed</a></li>
+          <li><a href="#mn-17-concrete-deliverables-agreed-upon">17. Concrete deliverables agreed upon</a></li>
+          <li><a href="#mn-18-separate-communication-for-japanese-pastors">18. Separate communication for Japanese pastors</a></li>
+          <li><a href="#mn-19-potential-immediate-action-independent-of-the-larger-plan">19. Potential immediate action independent of the larger plan</a></li>
+          <li><a href="#mn-20-meeting-close-and-practical-next-steps">20. Meeting close and practical next steps</a></li>
+        </ol>
+      </details>
+      <div class="ministry-notes">
+        <p>Here’s a detailed outline of the transcribed Ministry meeting. The discussion moved from U.S. organizational structure, to possible Japan ministry models, to visas and funding, and finally toward concrete next steps.</p>
+        <h2 id="mn-1-purpose-and-framing">1. Purpose and framing</h2>
+        <h4>A. Why the conversation was happening</h4>
+        <ul>
+        <li>The group was trying to turn observations from the Japan trip into viable ministry models rather than jumping immediately into one solution.</li>
+        <li>A recurring goal was to determine how to <strong>serve existing Japanese churches and pastors</strong>, rather than arriving with an American model and assuming it was better.</li>
+        <li>You brought nonprofit experience from your family background, particularly around donors, capital campaigns, foundations, grants, and organizational structure.</li>
+        </ul>
+        <h4>B. Major questions underneath the discussion</h4>
+        <ol>
+        <li>What organization should actually conduct the ministry?</li>
+        <li>How should it be funded?</li>
+        <li>What should the ministry actually do in Japan?</li>
+        <li>How would missionaries legally live and work there?</li>
+        <li>Should the long-term solution rely on American missionaries and dollars, or increasingly become Japanese-led and locally sustainable?</li>
+        <li>What does this mean for you and your family personally?</li>
+        </ol>
+        <hr>
+        <h2 id="mn-2-u-s-organizational-structure">2. U.S. organizational structure</h2>
+        <h3>Option A: Ministry entirely under Sequim Bible Church</h3>
+        <p>The simplest organizational route discussed was keeping everything inside Sequim Bible Church:</p>
+        <ul>
+        <li>church oversight</li>
+        <li>elder oversight</li>
+        <li>church funding</li>
+        <li>a designated missions/ministry account</li>
+        <li>ultimately sending missionaries through the church, potentially in conjunction with an established missions organization.</li>
+        </ul>
+        <h4>Advantages</h4>
+        <ul>
+        <li>Could begin sooner.</li>
+        <li>Existing church infrastructure could be used.</li>
+        <li>A designated Japan fund could potentially begin receiving contributions while the larger strategy is still developing.</li>
+        <li>Keeps a strong relationship between the sending church and the missionary/ministry.</li>
+        </ul>
+        <h4>Concerns</h4>
+        <ul>
+        <li>Other churches may perceive it primarily as &quot;Sequim Bible Church&#x27;s ministry.&quot;</li>
+        <li>That could make multi-church fundraising and partnerships more difficult.</li>
+        <li>Greater dependence on the church&#x27;s existing organizational and financial structures.</li>
+        </ul>
+        <hr>
+        <h2 id="mn-3-independent-u-s-501-c-3-model">3. Independent U.S. 501(c)(3) model</h2>
+        <p>The second major structure was establishing a separate U.S. nonprofit.</p>
+        <h3>A. Governance</h3>
+        <p>The idea was that trusted ministry leaders could control the board while the organization remained legally distinct from the church.</p>
+        <h3>B. Why this was attractive</h3>
+        <p>A separate organization was seen as potentially making it easier to:</p>
+        <ul>
+        <li>involve multiple churches;</li>
+        <li>involve foundations;</li>
+        <li>solicit grants;</li>
+        <li>build a broad donor base;</li>
+        <li>support multiple missionaries and ministries;</li>
+        <li>avoid making the entire work appear to belong to one local church.</li>
+        </ul>
+        <h3>C. Transitional concept</h3>
+        <p>The discussion raised the possibility of beginning through a church-designated fund and later transitioning the work into the independent nonprofit once it was established.</p>
+        <p>An approximate six-month establishment timeline was discussed, although that was an estimate made during the conversation rather than a verified legal timeline.</p>
+        <hr>
+        <h2 id="mn-4-two-different-nonprofit-funding-models">4. Two different nonprofit funding models</h2>
+        <p>You identified an important fork <em>inside</em> the nonprofit concept.</p>
+        <h3>Model 1A: Central operating-budget model</h3>
+        <p>The organization raises money toward one overall operating budget.</p>
+        <p>That budget could fund:</p>
+        <ul>
+        <li>salaries;</li>
+        <li>health insurance;</li>
+        <li>retirement;</li>
+        <li>administrative costs;</li>
+        <li>ministry expenses;</li>
+        <li>overseas activities.</li>
+        </ul>
+        <p>The board would establish and approve the budget.</p>
+        <h3>Model 1B: Missionary support-raising model</h3>
+        <p>Rather than putting every staff salary into one general fundraising goal, individual missionaries/staff could raise their own support.</p>
+        <p>For example, an individual support package could account for:</p>
+        <ul>
+        <li>salary/living expenses;</li>
+        <li>transportation;</li>
+        <li>relocation or initial Japan costs;</li>
+        <li>insurance;</li>
+        <li>retirement;</li>
+        <li>ministry expenses.</li>
+        </ul>
+        <h4>Why this model appealed</h4>
+        <p>The group noted that support raising does more than produce money. Individual supporters can become a prayer and relational network around the missionary.</p>
+        <h4>Governance</h4>
+        <p>The board would still have oversight by establishing appropriate budgets/support targets.</p>
+        <hr>
+        <h2 id="mn-5-using-an-established-missions-organization">5. Using an established missions organization</h2>
+        <p>Another path was the more traditional model:</p>
+        <p><strong>Sequim Bible Church → established missions organization → missionary in Japan.</strong></p>
+        <p>Organizations discussed included FIM, BMW and Reaching &amp; Teaching.</p>
+        <h3>Advantages discussed</h3>
+        <ul>
+        <li>Existing administrative structure.</li>
+        <li>Existing missionary systems.</li>
+        <li>Experience with overseas ministry.</li>
+        <li>Less need to invent everything from scratch.</li>
+        <li>Established institutional knowledge concerning missionaries, visas, donor support and field operations.</li>
+        </ul>
+        <h3>Main concern: control</h3>
+        <p>The recurring concern was that joining an established organization puts missionaries underneath somebody else&#x27;s organizational leadership, policies and future decisions.</p>
+        <p>The group discussed situations where:</p>
+        <ul>
+        <li>leadership changes;</li>
+        <li>doctrine changes;</li>
+        <li>field leadership provides unwanted direction;</li>
+        <li>organizational priorities change;</li>
+        <li>missionaries eventually need to move their donor relationships elsewhere.</li>
+        </ul>
+        <p>FIM seemed personally attractive to you because of your relationship with its executive director and your perception that its structure could allow substantial entrepreneurial freedom in Japan.</p>
+        <p>At the same time, the group recognized that impressions of organizational leadership aren&#x27;t enough. One proposed next step was interviewing actual missionaries about how much autonomy they really experience.</p>
+        <hr>
+        <h2 id="mn-6-building-on-existing-japanese-ministries-instead-of-inventing-something-new">6. Building on existing Japanese ministries instead of inventing something new</h2>
+        <p>This became one of the most important philosophical discussions.</p>
+        <h3>A. Christ Bible Institute</h3>
+        <p>The group corrected earlier terminology and clarified that <strong>CBI meant Christ Bible Institute</strong>, not &quot;Concise Bible Institute.&quot;</p>
+        <p>The central question became:</p>
+        <blockquote>Is the ministry trying to create something genuinely different, or expand/support something Japanese ministries are already trying to accomplish?</blockquote>
+        <p>One possibility was effectively creating a sister organization:</p>
+        <ul>
+        <li>same or complementary mission;</li>
+        <li>separate governance;</li>
+        <li>strong relationship;</li>
+        <li>potentially serving a different geographic region.</li>
+        </ul>
+        <h3>B. Local leader training</h3>
+        <p>One important ministry component could be Bible/pastoral training for Japanese Christians who might eventually lead Japanese churches.</p>
+        <p>The goal would not necessarily be to establish a formal seminary immediately. An institute-level model could start with practical biblical and ministry preparation.</p>
+        <hr>
+        <h2 id="mn-7-core-ministry-principle-serve-japanese-churches">7. Core ministry principle: serve Japanese churches</h2>
+        <p>A strong theological and strategic principle emerged:</p>
+        <p><strong>The goal should be to strengthen Japanese churches and pastors, not import an American ministry because Americans believe they know the answer.</strong></p>
+        <p>That changed how several options were evaluated.</p>
+        <p>The long-term vision discussed was something increasingly:</p>
+        <ul>
+        <li>operated by Japanese Christians;</li>
+        <li>informed by Japanese pastors;</li>
+        <li>connected to Japanese churches;</li>
+        <li>supported by Japanese businesspeople and donors;</li>
+        <li>less dependent on American funding over time.</li>
+        </ul>
+        <p>The group specifically identified indefinite dependency on U.S. dollars as something to avoid.</p>
+        <hr>
+        <h2 id="mn-8-direct-financial-support-for-japanese-pastoral-candidates">8. Direct financial support for Japanese pastoral candidates</h2>
+        <p>This became one of the clearest and potentially quickest ministry opportunities discussed.</p>
+        <h3>Basic model</h3>
+        <p>If a pastor identifies someone who could become a future pastor:</p>
+        <ol>
+        <li>identify the candidate;</li>
+        <li>provide financial support;</li>
+        <li>allow that person to reduce or leave secular employment;</li>
+        <li>give them time for biblical education and ministry training;</li>
+        <li>place them alongside an existing pastor/church;</li>
+        <li>gradually reduce outside financial support as local sustainability increases.</li>
+        </ol>
+        <h3>Why the group found this compelling</h3>
+        <p>Rather than waiting until an entire new ministry apparatus exists, Sequim Bible Church could potentially support a specific Japanese pastoral candidate relatively quickly.</p>
+        <p>The phrase <strong>&quot;fastest path to value&quot;</strong> was used for this idea.</p>
+        <h3>Diminishing-support model</h3>
+        <p>A possible model discussed was:</p>
+        <ul>
+        <li>initially fund most or all of the person&#x27;s needs;</li>
+        <li>subsequently decrease American support;</li>
+        <li>develop church support, employment or a small business alongside that reduction;</li>
+        <li>eventually reach a locally sustainable arrangement.</li>
+        </ul>
+        <p>The desired outcome would be a <strong>repeatable/replicable pipeline</strong> for raising up Japanese pastors.</p>
+        <hr>
+        <h2 id="mn-9-business-based-route-in-japan">9. Business-based route in Japan</h2>
+        <p>The third major organizational/ministry approach was establishing an actual Japanese business.</p>
+        <p>An English-language/cultural school or café-like ministry was the main example discussed.</p>
+        <h3>Possible components</h3>
+        <ul>
+        <li>English instruction;</li>
+        <li>Japanese instruction for foreigners;</li>
+        <li>Japanese language/cultural integration;</li>
+        <li>community interaction;</li>
+        <li>possibly a café component;</li>
+        <li>eventually ministry or Bible-training activities alongside it.</li>
+        </ul>
+        <h3>Why English education was interesting</h3>
+        <p>The group knows existing missionaries who have used English instruction as a relational bridge into Japanese communities and churches. One model discussed had apparently produced a Japanese Christian who subsequently entered ministry.</p>
+        <h3>Benefits</h3>
+        <p>A real business could:</p>
+        <ul>
+        <li>provide community presence;</li>
+        <li>generate revenue;</li>
+        <li>create employment;</li>
+        <li>establish relationships;</li>
+        <li>potentially support visa options;</li>
+        <li>reduce complete dependence on donated U.S. funds.</li>
+        </ul>
+        <h3>Risks</h3>
+        <p>The group was very conscious of the downsides:</p>
+        <ul>
+        <li>substantial capital;</li>
+        <li>operational complexity;</li>
+        <li>financial risk;</li>
+        <li>distraction from gospel ministry;</li>
+        <li>split attention between business metrics and actual ministry objectives.</li>
+        </ul>
+        <p>One repeated concern was that even a useful business can consume so much attention that running it becomes the mission.</p>
+        <hr>
+        <h2 id="mn-10-hybrid-model">10. Hybrid model</h2>
+        <p>The group realized these approaches do not necessarily have to be mutually exclusive.</p>
+        <p>A hybrid could involve:</p>
+        <ul>
+        <li>a U.S. nonprofit raising funds;</li>
+        <li>church partnerships in Japan;</li>
+        <li>missionaries living in Japan;</li>
+        <li>a Japanese business providing community presence;</li>
+        <li>direct support for Japanese pastoral candidates;</li>
+        <li>eventual Bible/ministry training.</li>
+        </ul>
+        <p>The obvious downside is complexity. You described it as effectively requiring a <strong>&quot;split brain&quot;</strong> because the U.S. nonprofit and Japanese business would need to operate simultaneously.</p>
+        <hr>
+        <h2 id="mn-11-visa-discussion">11. Visa discussion</h2>
+        <p>Visa strategy was treated as a major practical constraint.</p>
+        <p>The meeting discussed four principal routes:</p>
+        <ol>
+        <li>Religious visa.</li>
+        <li>Business manager visa.</li>
+        <li>Work visa.</li>
+        <li>Tourist status for shorter stays.</li>
+        </ol>
+        <p>A startup visa was also mentioned as a possible but more milestone-driven business option.</p>
+        <h3>Religious visa</h3>
+        <p>The group saw church partnership as particularly attractive because an established Japanese church could potentially sponsor missionaries while simultaneously creating a deeper church relationship.</p>
+        <h3>Business manager route</h3>
+        <p>The group discussed a substantial capital commitment and establishment of a legitimate Japanese business as the alternative path.</p>
+        <p>Several precise immigration requirements and capital figures were discussed, but these were conversational claims rather than independently verified legal advice.</p>
+        <h3>Key takeaway</h3>
+        <p>There was broad agreement that visas remain uncertain regardless of which structure is selected. The team viewed immigration status as a persistent missionary risk that cannot be completely eliminated through planning.</p>
+        <hr>
+        <h2 id="mn-12-fundraising-strategy">12. Fundraising strategy</h2>
+        <p>Several distinct funding sources were discussed.</p>
+        <h3>A. Individual monthly donors</h3>
+        <p>Traditional missionary support raising:</p>
+        <ul>
+        <li>recurring monthly commitments;</li>
+        <li>potentially stable long-term donors;</li>
+        <li>associated prayer/support network.</li>
+        </ul>
+        <h3>B. Churches</h3>
+        <p>Churches could provide larger recurring support amounts.</p>
+        <p>The conversation illustrated how a larger annual ministry budget could require support from many churches rather than a handful of major donors.</p>
+        <h3>C. Fundraising events</h3>
+        <p>Examples from your prior experience included:</p>
+        <ul>
+        <li>benefit dinners;</li>
+        <li>golf tournaments;</li>
+        <li>testimony-driven fundraising events.</li>
+        </ul>
+        <h3>D. Foundations and grants</h3>
+        <p>Faith-based foundations were considered especially relevant to the nonprofit route.</p>
+        <p>The discussion emphasized that grant success often depends not simply on writing an application but on:</p>
+        <ul>
+        <li>relationships;</li>
+        <li>understanding the foundation;</li>
+        <li>understanding its requirements;</li>
+        <li>tailoring the proposal accordingly.</li>
+        </ul>
+        <hr>
+        <h2 id="mn-13-your-personal-role">13. Your personal role</h2>
+        <p>This was an important part of the meeting rather than merely an organizational question.</p>
+        <p>You described a genuine tension between:</p>
+        <h4>Option A: U.S.-based leadership</h4>
+        <p>Remain primarily in America and:</p>
+        <ul>
+        <li>lead the nonprofit;</li>
+        <li>fundraise;</li>
+        <li>cultivate churches/donors;</li>
+        <li>build organizational systems;</li>
+        <li>potentially raise much more money for Japanese ministry.</li>
+        </ul>
+        <h4>Option B: Boots on the ground</h4>
+        <p>Move to Japan and:</p>
+        <ul>
+        <li>learn Japanese;</li>
+        <li>build relationships;</li>
+        <li>live in the community;</li>
+        <li>understand the culture deeply;</li>
+        <li>participate directly in ministry.</li>
+        </ul>
+        <h4>Option C: Hybrid</h4>
+        <p>Maintain a U.S. base while spending significant blocks of time in Japan.</p>
+        <p>You expressed the strongest personal passion for being <strong>boots on the ground</strong>, while remaining open-handed about whether that ultimately proves to be the most effective role.</p>
+        <hr>
+        <h2 id="mn-14-family-considerations">14. Family considerations</h2>
+        <p>The discussion explicitly recognized that this isn&#x27;t merely a ministry-optimization decision.</p>
+        <p>Your wife&#x27;s need for greater stability was discussed alongside:</p>
+        <ul>
+        <li>the uncertainty of moving;</li>
+        <li>constantly changing plans;</li>
+        <li>housing;</li>
+        <li>family support;</li>
+        <li>raising three children;</li>
+        <li>your full-time job;</li>
+        <li>the demands of building something substantial on the side.</li>
+        </ul>
+        <p>Housing in Washington was discussed as a possible stabilizing fallback, although you also explained why your family&#x27;s previous housing and mold experiences make another property decision emotionally and financially complicated.</p>
+        <hr>
+        <h2 id="mn-15-long-term-missionary-pastoral-role">15. Long-term missionary/pastoral role</h2>
+        <p>Another possible route remains the conventional missionary path:</p>
+        <ol>
+        <li>Sequim Bible Church sends you.</li>
+        <li>You join an established missions organization.</li>
+        <li>You move to Japan.</li>
+        <li>You devote substantial time to language acquisition.</li>
+        <li>You work closely with Japanese churches.</li>
+        <li>Eventually you could potentially fill pastoral/ministry gaps while intentionally training Japanese successors.</li>
+        </ol>
+        <p>The group acknowledged that becoming sufficiently fluent linguistically and culturally to pastor Japanese people would likely be an extremely long-term undertaking.</p>
+        <hr>
+        <h2 id="mn-16-information-still-needed">16. Information still needed</h2>
+        <p>The meeting repeatedly came back to the fact that the group now has <strong>more options, not fewer</strong>.</p>
+        <p>Important unresolved questions included:</p>
+        <h4>Japanese pastors</h4>
+        <ul>
+        <li>What do they believe their churches actually need?</li>
+        <li>Are your observations from the trip accurate?</li>
+        <li>Would financial support for pastoral candidates help?</li>
+        <li>Would training help?</li>
+        <li>Would a business/community model help?</li>
+        <li>What approaches would create cultural friction?</li>
+        </ul>
+        <h4>Existing missionaries</h4>
+        <p>Questions suggested for missionaries included:</p>
+        <ul>
+        <li>How much freedom do you actually have under your sending organization?</li>
+        <li>Can field leadership relocate or redirect you?</li>
+        <li>How burdensome is reporting?</li>
+        <li>What happens if your calling/direction diverges from organizational leadership?</li>
+        <li>How effectively do business or English-school models actually create ministry opportunities?</li>
+        </ul>
+        <h4>Existing organizations</h4>
+        <p>The team wants to draw on relationships with established missions organizations rather than treating prior conversations as wasted effort. Their systems can provide useful models even if you ultimately form something independent.</p>
+        <hr>
+        <h2 id="mn-17-concrete-deliverables-agreed-upon">17. Concrete deliverables agreed upon</h2>
+        <p>The closing portion of the meeting produced a clearer next step.</p>
+        <h3>You would prepare proposals for church leadership</h3>
+        <p>The proposal set evolved into roughly:</p>
+        <h4>Proposal 1A</h4>
+        <p><strong>Independent nonprofit with a centralized operating budget.</strong></p>
+        <h4>Proposal 1B</h4>
+        <p><strong>Independent nonprofit with missionary-specific support raising.</strong></p>
+        <h4>Proposal 2</h4>
+        <p><strong>Business-oriented Japan model</strong>, potentially incorporating an English/language/community concept.</p>
+        <h4>Proposal 3</h4>
+        <p><strong>Traditional church-integrated missionary model</strong>, using Sequim Bible Church as the sending church and partnering with an established organization such as FIM/BMW/Reaching &amp; Teaching.</p>
+        <p>Those materials would be written primarily for church leadership and finance-oriented stakeholders.</p>
+        <hr>
+        <h2 id="mn-18-separate-communication-for-japanese-pastors">18. Separate communication for Japanese pastors</h2>
+        <p>The group concluded that Japanese pastors <strong>do not need all the U.S. structural detail</strong> about 501(c)(3)s, designated funds, etc.</p>
+        <p>Instead, communication with them should focus on <strong>ministry outcomes</strong>:</p>
+        <ul>
+        <li>needs you observed;</li>
+        <li>possible approaches;</li>
+        <li>whether those observations are accurate;</li>
+        <li>obstacles you may be overlooking;</li>
+        <li>what would genuinely help their churches.</li>
+        </ul>
+        <p>That represents an important distinction:</p>
+        <p><strong>Church leadership needs organizational proposals. Japanese pastors need ministry questions.</strong></p>
+        <hr>
+        <h2 id="mn-19-potential-immediate-action-independent-of-the-larger-plan">19. Potential immediate action independent of the larger plan</h2>
+        <p>One especially important idea emerged near the end:</p>
+        <p><strong>Sequim Bible Church may not need to wait for the entire Japan strategy before helping an individual Japanese pastor or pastoral candidate.</strong></p>
+        <p>The church could potentially identify:</p>
+        <ul>
+        <li>a pastor with a credible successor;</li>
+        <li>a disciple who needs theological preparation;</li>
+        <li>someone whose secular employment prevents sufficient ministry training;</li>
+        </ul>
+        <p>and fund that person directly for an appropriate period.</p>
+        <p>That could run in parallel with the broader organizational discernment rather than waiting for the final nonprofit/business/mission-agency decision.</p>
+        <hr>
+        <h2 id="mn-20-meeting-close-and-practical-next-steps">20. Meeting close and practical next steps</h2>
+        <p>The meeting ended with the following direction:</p>
+        <ol>
+        <li><strong>Turn the discussion into clearer written proposals.</strong></li>
+        <li><strong>Send an email summarizing the options to appropriate church leaders.</strong></li>
+        <li>Potentially include finance leadership because designated funds and church finances are part of the discussion.</li>
+        <li>Consider assembling a <strong>hand-picked group of church leaders</strong>, potentially the beginning of a missions committee.</li>
+        <li><strong>Pray over the alternatives rather than prematurely selecting one.</strong></li>
+        <li>Once there is alignment, <strong>pick a direction and &quot;double click&quot; into detailed planning.</strong></li>
+        <li>Develop a separate set of questions for Japanese pastors and missionaries to test assumptions before making major commitments.</li>
+        </ol>
+        <h3>Bottom line</h3>
+        <p>The meeting did <strong>not</strong> choose a final model. Instead, it turned what had been a fairly open-ended idea of &quot;ministry in Japan&quot; into a set of concrete strategic choices:</p>
+        <p><strong>Who owns it → how it&#x27;s funded → what happens in Japan → how people get there → how Japanese leaders eventually own it.</strong></p>
+        <p>The most actionable outcome was to convert those choices into <strong>four leadership-facing proposals (1A, 1B, 2, and 3)</strong> while separately gathering feedback from Japanese pastors and missionaries. At the same time, direct support for a promising Japanese pastoral candidate emerged as a potentially valuable action that may not need to wait for the larger organizational decision.</p>
+      </div>
+    </div>
+
     <div id="trainView" class="train-view" hidden></div>
 
         <div id="snakeView" class="snake-view" hidden>
@@ -2685,7 +3212,9 @@ tr.best .opt-tag {
       <li>Each person scans their card and boards the Monorail.
         <ul>
           <li>Use the “Local Train”. The “Haneda Express” and “Rapid Train” do not stop at Tenkūbashi Station.</li>
+          <li>After passing through the ticket gate, follow the Hamamatsuchō-bound platform — Platform 2 at Terminal 3, the right-hand board in the photo below. Platform 1 goes to the domestic terminals (Terminal 1 · 2), not to Tenkūbashi.</li>
         </ul>
+        <img src="arrival-platform-boards.png" alt="Departure boards after the Monorail ticket gate: Platform 1 to the domestic terminals on the left, Platform 2 to Hamamatsucho on the right">
       </li>
       <li>Get off at the first stop (2 minute ride) — Tenkūbashi Station.</li>
       <li>Walk directly to the hotel.
@@ -2980,7 +3509,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Rail",
     "Shinkansen to Kyoto",
-    "Sleep in + last soak · Bus 08:52 from Mitsukechō (right outside the ryokan) → Yugawara Station 09:08 · 09:31 local → Odawara 09:47 · Hikari 637 10:11 → Kyoto · Arrive Kyoto ~12:13 PM · Buy + reserve 5 seats at Odawara",
+    "Changed at Yugawara Station — via Atami · Local 10:22 Yugawara → Atami · Hikari 707 10:40 → Kyoto · Arrive Kyoto 12:37 PM · Reserved seats booked at Yugawara Station, Car 12",
     "",
     "",
     "morning"
@@ -2991,7 +3520,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Visit",
     "Kyoto — Nijo Castle",
-    "~1:00–2:15 PM · Ninomaru Palace (nightingale floors) + castle grounds · Subway from Kyoto Station ~20 min: Karasuma Line to Karasuma-Oike, Tozai Line to Nijojo-mae",
+    "~1:20–2:35 PM · Ninomaru Palace (nightingale floors) + castle grounds · Subway from Kyoto Station ~20 min: Karasuma Line to Karasuma-Oike, Tozai Line to Nijojo-mae",
     "https://en.wikipedia.org/wiki/Nij%C5%8D_Castle",
     "",
     "midday"
@@ -3002,7 +3531,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Visit",
     "Kyoto — Golden Pavilion (Kinkakuji)",
-    "~2:45–3:30 PM · Bus 12 from Nijojo-mae (stop B) ~21 min to Kinkakuji-michi, short walk",
+    "~3:05–3:50 PM · Bus 12 from Nijojo-mae (stop B) ~21 min to Kinkakuji-michi, short walk",
     "https://en.wikipedia.org/wiki/Kinkaku-ji",
     "",
     "midday"
@@ -3013,7 +3542,7 @@ const events = [
     "Yugawara → Kyoto → Nara",
     "Visit",
     "Ninenzaka & Sannenzaka",
-    "~4:00–4:45 PM · Taxi from Kinkakuji ~15–25 min (bus 205 takes ~1 hr) · Stroll downhill Sannenzaka → Ninenzaka, stone lanes + machiya shops · Then walk ~10 min to Gojo-zaka, bus 206 to Kyoto Station ~30 min, back ~5:30 PM · First stop to drop if the day runs long",
+    "~4:15–5:00 PM · Taxi from Kinkakuji ~15–25 min (bus 205 takes ~1 hr) · Stroll downhill Sannenzaka → Ninenzaka, stone lanes + machiya shops · Then walk ~10 min to Gojo-zaka, bus 206 to Kyoto Station ~30 min, back ~5:30 PM · First stop to drop if the day runs long",
     "",
     "",
     "midday"
@@ -4180,15 +4709,15 @@ const TRAIN_LEGS = [
   {
     leg: 3,
     date: "Sat Nov 7",
-    route: "Yugawara → Odawara → Kyoto",
+    route: "Yugawara → Atami → Kyoto",
     service: "Shinkansen Hikari (via Odawara)",
-    chips: ["~2h Shinkansen", "Local hop to Odawara first", "Reserve seats"],
+    chips: ["~2h Shinkansen", "Local hop to Atami first", "Reserve seats"],
     fare: "Confirm at booking",
-    alert: "✅ DECIDED Nov 6 (evening): taking Hikari 637 — the 10:11. Sleep in + last soak, bus 08:52 from Mitsukechō (right outside the ryokan; the 09:12 bus gets in 09:28 — only a 3-min hop to the train), Yugawara 09:31 local → Odawara 09:47, buy + reserve 5 seats at the JR ticket office, Hikari 637 10:11 → Kyoto ~12:13 PM. Kyoto day shifts later: Nijo ~1:00 PM, Golden Pavilion ~2:45 PM, Ninenzaka squeezed or dropped.",
+    alert: "✅ CHANGED + BOOKED at Yugawara Station, Nov 7 morning: station staff routed the crew via Atami instead of Odawara. Local 10:22 Yugawara → Atami, Hikari 707 10:40 → Kyoto 12:37, reserved seats in Car 12. Arrives 24 min later than the Odawara plan; Kyoto day: matcha stop off the train, Nijo ~1:20 PM, Golden Pavilion ~3:05 PM, Ninenzaka squeezed or dropped.",
     options: [
       { tag: "A", best: false, cols: ["07:19 local", "Odawara → Hikari 633 (~08:11)", "10:13", "TBC"], note: "The fast one — full Kyoto day, but out of the ryokan ~6:45 AM. Not taken — the crew picked the sleep-in." },
       { tag: "B", best: false, cols: ["~8:00", "Odawara → Kodama 807 (08:35)", "11:34", "TBC"], note: "Slower all-stops Kodama, but no rushing and still a workable Kyoto afternoon." },
-      { tag: "C", best: true, cols: ["09:31 local", "Odawara → Hikari 637 (10:11)", "12:13", "TBC"], note: "CHOSEN Nov 6 (evening) — sleep in, last soak, bus 08:52 from Mitsukechō. Shorter Kyoto day; Ninenzaka is the first drop if time runs short." },
+      { tag: "C", best: true, cols: ["10:22 local", "Atami → Hikari 707 (10:40)", "12:37", "Booked"], note: "TAKEN — booked at Yugawara Station Nov 7. Via Atami, reserved seats in Car 12. Shorter Kyoto day; Ninenzaka is the first drop if time runs short." },
     ],
     optHeaders: ["Leave Yugawara", "Route", "Arrive Kyoto", "Fare"],
     note: "Why Hikari, not Nozomi: slightly cheaper for a ~15 min difference, and the group skipped JR Passes so you pay full fare either way. With 5 people's bags, reserve seats via SmartEX or a JR ticket office. Bags over 160 cm (H+W+D) need an oversized-baggage seat."
@@ -4348,7 +4877,7 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     // Archive dropdown: highlight the Archive tab when an archived view is
     // showing, and close the menu after a selection.
     const archiveToggle = document.getElementById("archiveToggle");
-    if (archiveToggle) archiveToggle.classList.toggle("active", view !== "people");
+    if (archiveToggle) archiveToggle.classList.toggle("active", view !== "people" && view !== "ministry");
     closeArchiveMenu();
     document.getElementById("timeline").hidden = view !== "timeline";
     const toolbarRight = document.querySelector(".toolbar-right");
@@ -4356,6 +4885,7 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     document.getElementById("map").hidden = view !== "map";
     document.getElementById("trainView").hidden = view !== "trains";
     document.getElementById("peopleView").hidden = view !== "people";
+    document.getElementById("ministryView").hidden = view !== "ministry";
     const snakeViewEl = document.getElementById("snakeView");
     if (snakeViewEl) {
       snakeViewEl.hidden = view !== "snake";
