@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261118-1248";
+const SITE_BUILD = "20261118-1310";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1271,6 +1271,17 @@ html[data-theme="dark"] .day-head {
   font-weight: 600;
   opacity: .7;
   margin: 0 0 4px;
+}
+
+.person-contact {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: .85;
+  word-break: break-word;
+}
+.person-contact a {
+  color: inherit;
 }
 
 .person-text {
@@ -2629,6 +2640,7 @@ tr.best .opt-tag {
           <option value="more">More Connections</option>
         </select>
         <textarea class="person-text" id="pfBlurb" rows="3" placeholder="Description"></textarea>
+        <input class="person-input" id="pfContact" type="text" placeholder="Contact (email or phone)" autocomplete="off">
         <div class="person-actions">
           <button class="person-save" id="pfSave" type="button">Save</button>
           <button class="person-cancel" id="pfCancel" type="button">Cancel</button>
@@ -2650,7 +2662,7 @@ tr.best .opt-tag {
         <div class="person-card" data-person="carla-overly"><div class="person-head"><div class="person-name">Carla Overly</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Andy’s wife and co-host for the Nagoya gathering.</div></div>
         <div class="person-card" data-person="brett-rayl"><div class="person-head"><div class="person-name">Brett Rayl</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Executive Director of Christ Bible Institute (CBI), which trains Japanese pastors through Christ Bible Seminary in Nagoya.</div></div>
         <div class="person-card" data-person="rich-mclaughlin"><div class="person-head"><div class="person-name">Dr. Rich McLaughlin</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">With CBI; set up the original Nov 10 lunch meeting.</div></div>
-        <div class="person-card" data-person="joe-hansen"><div class="person-head"><div class="person-name">Joe Hansen</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Biblical Ministries Worldwide EVP; part of the CBI lunch group.</div></div>
+        <div class="person-card" data-person="joe-hansen"><div class="person-head"><div class="person-name">Joe Henson III</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Biblical Ministries Worldwide EVP; part of the CBI lunch group.</div></div>
         <div class="person-card" data-person="kamimura"><div class="person-head"><div class="person-name">Seichi &amp; Ruthanne Kamimura</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Nagoya-area ministry friends; part of the Nov 10 full-field gathering.</div></div>
         <div class="person-card" data-person="gonzalez"><div class="person-head"><div class="person-name">Alessandro “Chino” Gonzalez &amp; family</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Missionary family in the Nagoya area; part of the Nov 10 gathering.</div></div>
         <div class="person-card" data-person="zane-bloom"><div class="person-head"><div class="person-name">Zane Bloom</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Mobilization Chief with Biblical Ministries Worldwide (BMW); part of the hosting team in Nagoya.</div></div>
@@ -4944,9 +4956,9 @@ function closeArchiveMenu() {
 })();
 
 
-// ---- Connections tab: shared editable names, categories, blurbs + added people (Supabase) ----
-// Name/category edits ride in the same `blurbs` object as namespaced keys
-// ("name:<id>" / "loc:<id>") so no Supabase schema change is needed.
+// ---- Connections tab: shared editable names, categories, blurbs, contacts + added people (Supabase) ----
+// Name/category/contact edits ride in the same `blurbs` object as namespaced keys
+// ("name:<id>" / "loc:<id>" / "contact:<id>") so no Supabase schema change is needed.
 window.peopleOnShow = function () {};
 (function () {
   const view = document.getElementById("peopleView");
@@ -4989,6 +5001,26 @@ window.peopleOnShow = function () {};
         const grid = view.querySelector('.people-grid[data-group="' + overrides["loc:" + id] + '"]') ||
                      view.querySelector('.people-grid[data-group="more"]');
         if (grid && card.parentNode !== grid) grid.appendChild(card);
+      }
+      const contactVal = Object.prototype.hasOwnProperty.call(overrides, "contact:" + id) ? overrides["contact:" + id] : "";
+      let contactEl = card.querySelector(".person-contact");
+      if (contactVal) {
+        if (!contactEl) {
+          contactEl = document.createElement("div");
+          contactEl.className = "person-contact";
+          card.appendChild(contactEl);
+        }
+        if (/^\S+@\S+\.\S+$/.test(contactVal)) {
+          contactEl.innerHTML = "";
+          const link = document.createElement("a");
+          link.href = "mailto:" + contactVal;
+          link.textContent = contactVal;
+          contactEl.appendChild(link);
+        } else {
+          contactEl.textContent = contactVal;
+        }
+      } else if (contactEl) {
+        contactEl.remove();
       }
     });
   }
@@ -5068,10 +5100,12 @@ window.peopleOnShow = function () {};
     const nameEl = card.querySelector(".person-name");
     const grid = card.closest(".people-grid");
     const curLoc = grid ? grid.getAttribute("data-group") : "more";
+    const id = card.getAttribute("data-person");
     const editor = document.createElement("div");
     editor.className = "person-editor";
     editor.innerHTML = '<label>Name</label><input class="person-input person-name-input" type="text" autocomplete="off">' +
       '<label>Category</label><select class="person-input person-loc-select"></select>' +
+      '<label>Contact</label><input class="person-input person-contact-input" type="text" autocomplete="off">' +
       '<label>Description</label><textarea class="person-text" rows="4"></textarea>' +
       '<div class="person-actions"><button class="person-save" type="button" data-save>Save</button>' +
       '<button class="person-cancel" type="button" data-cancel>Cancel</button>' +
@@ -5083,6 +5117,7 @@ window.peopleOnShow = function () {};
     if (pfLocEl) sel.innerHTML = pfLocEl.innerHTML;
     sel.value = curLoc;
     editor.querySelector(".person-text").value = blurbEl.textContent;
+    editor.querySelector(".person-contact-input").value = (id && Object.prototype.hasOwnProperty.call(overrides, "contact:" + id)) ? overrides["contact:" + id] : "";
     blurbEl.style.display = "none";
     card.appendChild(editor);
     nameInput.focus();
@@ -5107,6 +5142,9 @@ window.peopleOnShow = function () {};
     else if (nameEl) overrides["name:" + id] = nameEl.textContent;
     overrides["loc:" + id] = locVal;
     if (text) overrides[id] = text;
+    const contactVal = (editor.querySelector(".person-contact-input").value || "").trim();
+    if (contactVal) overrides["contact:" + id] = contactVal;
+    else delete overrides["contact:" + id];
     saveCache();
     applyAll();
     if (status) status.textContent = "Saving\u2026";
@@ -5129,11 +5167,13 @@ window.peopleOnShow = function () {};
   const pfName = document.getElementById("pfName");
   const pfLoc = document.getElementById("pfLoc");
   const pfBlurb = document.getElementById("pfBlurb");
+  const pfContact = document.getElementById("pfContact");
   const pfStatus = document.getElementById("pfStatus");
   function closeForm() {
     if (form) form.hidden = true;
     if (pfName) pfName.value = "";
     if (pfBlurb) pfBlurb.value = "";
+    if (pfContact) pfContact.value = "";
     if (pfStatus) pfStatus.textContent = "";
   }
   if (addBtn && form) {
@@ -5150,12 +5190,14 @@ window.peopleOnShow = function () {};
       const name = (pfName.value || "").trim();
       const blurb = (pfBlurb.value || "").trim();
       const loc = pfLoc.value || "more";
+      const contact = (pfContact && pfContact.value || "").trim();
       if (!name || !blurb) {
         if (pfStatus) pfStatus.textContent = "Add a name and a description first";
         return;
       }
       const person = { id: "x" + Date.now().toString(36), name: name, loc: loc, blurb: blurb };
       addedList.push(person);
+      if (contact) overrides["contact:" + person.id] = contact;
       saveCache();
       renderAdded();
       applyAll();
