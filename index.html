@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261118-1310";
+const SITE_BUILD = "20261118-1320";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1278,10 +1278,42 @@ html[data-theme="dark"] .day-head {
   font-size: 13px;
   line-height: 1.45;
   opacity: .85;
-  word-break: break-word;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 .person-contact a {
   color: inherit;
+}
+.person-contact-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  word-break: break-word;
+}
+.person-copy {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  line-height: 1;
+}
+.person-copy svg {
+  width: 13px;
+  height: 13px;
+  display: block;
+}
+.person-copy.copied {
+  color: #1a9e4b;
+  border-color: #1a9e4b;
 }
 
 .person-text {
@@ -4985,6 +5017,37 @@ window.peopleOnShow = function () {};
   function saveCache() {
     try { localStorage.setItem(CACHE_KEY, JSON.stringify({ blurbs: overrides, added: addedList })); } catch (e) {}
   }
+  const COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  function copyContact(text, btn) {
+    function done() {
+      btn.classList.add("copied");
+      btn.textContent = "\u2713";
+      setTimeout(() => {
+        btn.classList.remove("copied");
+        btn.innerHTML = COPY_ICON;
+      }, 1500);
+    }
+    function fallback() {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try { if (document.execCommand) document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      done();
+    }
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else {
+        fallback();
+      }
+    } catch (e) {
+      fallback();
+    }
+  }
   function applyAll() {
     view.querySelectorAll(".person-card").forEach(card => {
       const id = card.getAttribute("data-person");
@@ -5005,19 +5068,35 @@ window.peopleOnShow = function () {};
       const contactVal = Object.prototype.hasOwnProperty.call(overrides, "contact:" + id) ? overrides["contact:" + id] : "";
       let contactEl = card.querySelector(".person-contact");
       if (contactVal) {
-        if (!contactEl) {
-          contactEl = document.createElement("div");
-          contactEl.className = "person-contact";
-          card.appendChild(contactEl);
-        }
-        if (/^\S+@\S+\.\S+$/.test(contactVal)) {
-          contactEl.innerHTML = "";
-          const link = document.createElement("a");
-          link.href = "mailto:" + contactVal;
-          link.textContent = contactVal;
-          contactEl.appendChild(link);
+        if (contactEl && contactEl.getAttribute("data-value") === contactVal) {
+          // Already rendered for this value; leave it alone (preserves copy-button state).
         } else {
-          contactEl.textContent = contactVal;
+          if (!contactEl) {
+            contactEl = document.createElement("div");
+            contactEl.className = "person-contact";
+            card.appendChild(contactEl);
+          }
+          contactEl.setAttribute("data-value", contactVal);
+          contactEl.innerHTML = "";
+          const textWrap = document.createElement("span");
+          textWrap.className = "person-contact-text";
+          if (/^\S+@\S+\.\S+$/.test(contactVal)) {
+            const link = document.createElement("a");
+            link.href = "mailto:" + contactVal;
+            link.textContent = contactVal;
+            textWrap.appendChild(link);
+          } else {
+            textWrap.textContent = contactVal;
+          }
+          contactEl.appendChild(textWrap);
+          const copyBtn = document.createElement("button");
+          copyBtn.className = "person-copy";
+          copyBtn.type = "button";
+          copyBtn.setAttribute("aria-label", "Copy contact");
+          copyBtn.title = "Copy contact";
+          copyBtn.innerHTML = COPY_ICON;
+          copyBtn.addEventListener("click", () => copyContact(contactVal, copyBtn));
+          contactEl.appendChild(copyBtn);
         }
       } else if (contactEl) {
         contactEl.remove();
