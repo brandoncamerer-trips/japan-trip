@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261118-1340";
+const SITE_BUILD = "20261118-1425";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1371,8 +1371,25 @@ html[data-theme="dark"] .day-head {
 
 .people-toolbar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 4px;
+}
+
+.people-search {
+  flex: 1 1 auto;
+  max-width: 320px;
+}
+
+.people-empty {
+  padding: 18px 4px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.people-empty[hidden] {
+  display: none;
 }
 
 .person-add-btn {
@@ -2667,6 +2684,7 @@ tr.best .opt-tag {
 
     <div id="peopleView" class="people-view" hidden>
       <div class="people-toolbar">
+        <input type="search" id="peopleSearch" class="search-box people-search" placeholder="Search connections…" aria-label="Search connections" autocomplete="off">
         <button class="person-add-btn" id="addPersonBtn" type="button">+ Add connection</button>
       </div>
       <div class="person-form" id="personForm" hidden>
@@ -2724,6 +2742,7 @@ tr.best .opt-tag {
       <div class="people-grid" data-group="more">
         <div class="person-card" data-person="yo-aimi"><div class="person-head"><div class="person-name">Yo Aimi</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Regional Director of Concise Bible, the ministry behind concise.bible.</div></div>
       </div>
+      <div class="people-empty" id="peopleNoMatch" hidden>No connections match your search.</div>
     </div>
 
 <div id="ministryView" class="ministry-view" hidden>
@@ -5120,6 +5139,7 @@ window.peopleOnShow = function () {};
         contactEl.appendChild(row);
       }
     });
+    filterPeople();
   }
   function makeCard(person) {
     const card = document.createElement("div");
@@ -5154,7 +5174,31 @@ window.peopleOnShow = function () {};
                    view.querySelector('.people-grid[data-group="more"]');
       if (grid) grid.appendChild(makeCard(person));
     });
+    filterPeople();
   }
+
+  // ---- Search connections ----
+  const searchInput = document.getElementById("peopleSearch");
+  const noMatchEl = document.getElementById("peopleNoMatch");
+  function filterPeople() {
+    const q = searchInput ? (searchInput.value || "").trim().toLowerCase() : "";
+    let visible = 0;
+    view.querySelectorAll(".person-card").forEach(card => {
+      const show = !q || (card.textContent || "").toLowerCase().indexOf(q) !== -1;
+      card.style.display = show ? "" : "none";
+      if (show) visible++;
+    });
+    view.querySelectorAll(".people-grid").forEach(grid => {
+      let anyVisible = false;
+      grid.querySelectorAll(".person-card").forEach(c => { if (c.style.display !== "none") anyVisible = true; });
+      grid.style.display = anyVisible ? "" : "none";
+      const header = grid.previousElementSibling;
+      if (header && header.classList.contains("people-group")) header.style.display = anyVisible ? "" : "none";
+    });
+    if (noMatchEl) noMatchEl.hidden = !(q && visible === 0);
+  }
+  if (searchInput) searchInput.addEventListener("input", filterPeople);
+
   async function pull() {
     if (typeof NOTES_CONFIG === "undefined") return;
     try {
