@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261118-1635";
+const SITE_BUILD = "20261119-0945";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1525,6 +1525,72 @@ html[data-theme="dark"] .day-head {
   font-style: italic;
 }
 
+/* ---- Current Plan view ---- */
+.plan-view {
+  padding: 4px 0 30px;
+  max-width: 760px;
+}
+
+.plan-title {
+  margin: 6px 0 6px;
+  font-size: 22px;
+}
+
+.plan-intro {
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: .8;
+  margin: 0 0 14px;
+}
+
+.plan-status {
+  border: 1px solid var(--line);
+  background: var(--card);
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.plan-status p:last-child {
+  margin-bottom: 0;
+}
+
+.plan-view h2 {
+  margin: 24px 0 8px;
+  font-size: 19px;
+}
+
+.plan-view p {
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0 0 10px;
+}
+
+.plan-view ul {
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0 0 12px;
+  padding-left: 22px;
+}
+
+.plan-view li {
+  margin-bottom: 4px;
+}
+
+.plan-budget td:last-child,
+.plan-budget th:last-child {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.plan-budget tr.total td {
+  font-weight: 700;
+  border-top: 2px solid var(--line);
+  border-bottom: none;
+}
+
 
 
 .view-tabs {
@@ -2568,7 +2634,7 @@ tr.best .opt-tag {
       <div
         class="last-updated"
         id="lastUpdated"
-      >Last updated: November 18, 2026</div>
+      >Last updated: November 19, 2026</div>
 
     </div>
   </section>
@@ -2586,11 +2652,11 @@ tr.best .opt-tag {
         >Connections</button>
         <button
           class="view-tab"
-          data-view="ministry"
+          data-view="plan"
           role="tab"
           aria-selected="false"
           type="button"
-        >Ministry Notes</button>
+        >Current Plan</button>
         <div class="archive-wrap">
           <button
             class="archive-toggle active"
@@ -2628,6 +2694,13 @@ tr.best .opt-tag {
               aria-selected="false"
               type="button"
             >Games</button>
+            <button
+              class="view-tab archive-item"
+              data-view="ministry"
+              role="tab"
+              aria-selected="false"
+              type="button"
+            >Ministry Notes</button>
           </div>
         </div>
       </div>
@@ -3177,6 +3250,52 @@ tr.best .opt-tag {
         <p><strong>Who owns it → how it&#x27;s funded → what happens in Japan → how people get there → how Japanese leaders eventually own it.</strong></p>
         <p>The most actionable outcome was to convert those choices into <strong>four leadership-facing proposals (1A, 1B, 2, and 3)</strong> while separately gathering feedback from Japanese pastors and missionaries. At the same time, direct support for a promising Japanese pastoral candidate emerged as a potentially valuable action that may not need to wait for the larger organizational decision.</p>
       </div>
+    </div>
+
+<div id="planView" class="plan-view" hidden>
+      <h2 class="plan-title">Current Plan</h2>
+      <p class="plan-intro">The 90-day family trip to Toyohashi &mdash; trialing life in ministry, centered on Toyohashi Grace Baptist Church and Gamagori Baptist Church. Exploring &mdash; nothing booked yet.</p>
+      <div class="plan-status">
+        <p><strong>Where things stand (Nov 19):</strong></p>
+        <p>Paul has broached the January stay with Pastor Asada &mdash; Asada was surprised but said it would not be a problem at all. He is talking it over with his wife, Ben and his wife, and Pastor Yamazaki and his wife before answering. We are waiting silently until they get back to us on their schedule.</p>
+        <p>Pastor Yamazaki&rsquo;s surgery was successful &mdash; he was discharged from the hospital Nov 18 and is recovering.</p>
+        <p>Brandon told his boss about the Japan intentions Nov 18 &mdash; it went well, and the company is exploring options.</p>
+      </div>
+      <h2>The trip</h2>
+      <ul>
+        <li><strong>Dates:</strong> out Fri Jan 8, 2027 &mdash; home Thu Apr 8, 2027. 90 days on the visa waiver.</li>
+        <li><strong>Flights:</strong> ANA NH117 out (3:45 PM SeaTac &rarr; Haneda 7:15 PM), NH118 back (9:15 PM &rarr; 2:25 PM). Five seats, nonstop, ~$5,119. Faye gets her own seat &mdash; book by phone, 1-800-235-9262.</li>
+        <li><strong>Base:</strong> Toyohashi. Gamagori is 12 minutes by train.</li>
+        <li><strong>Lodging:</strong> station house (2-minute walk from Toyohashi Station) Jan 10&ndash;Mar 28, five gap nights at Hotel Associa, Apr 2&ndash;8 tail &mdash; $11,019.73 for all 88 nights. Yagyubashi house is the alternative: $14,211.75, one booking, no move.</li>
+        <li><strong>Getting around:</strong> rental car (~$3,000 for 3 months) + trains. International Driving Permit from AAA ($20) before leaving.</li>
+        <li><strong>Insurance:</strong> IMG Patriot Platinum, $852 &mdash; $1M medical, $1M evacuation.</li>
+      </ul>
+      <h2>Budget &mdash; $26,681.27</h2>
+      <div style="overflow-x:auto"><table class="train-opts plan-budget">
+        <thead><tr><th>Category</th><th>Estimate</th></tr></thead>
+        <tbody>
+          <tr><td>Flights &mdash; ANA nonstop, 5 seats, round trip</td><td>$5,119</td></tr>
+          <tr><td>Lodging &mdash; 88 nights, station house</td><td>$11,019.73</td></tr>
+          <tr><td>Travel medical insurance &mdash; IMG Platinum</td><td>$852</td></tr>
+          <tr><td>Rental car &mdash; 3 months</td><td>$3,000</td></tr>
+          <tr><td>Gas</td><td>$400</td></tr>
+          <tr><td>Food &mdash; 3 months</td><td>$3,000</td></tr>
+          <tr><td>Trains &mdash; Haneda &harr; Toyohashi, both ways</td><td>$1,000</td></tr>
+          <tr><td>International Driving Permit</td><td>$20</td></tr>
+          <tr><td>Misc &mdash; data, tolls, local transit, activities</td><td>$1,000</td></tr>
+          <tr><td>Subtotal</td><td>$25,410.73</td></tr>
+          <tr><td>Contingency (5%)</td><td>$1,270.54</td></tr>
+          <tr class="total"><td>Total</td><td>$26,681.27</td></tr>
+        </tbody>
+      </table></div>
+      <h2>Funding</h2>
+      <p>Sequim Bible Church designated Japan mission fund &mdash; board approval needed &mdash; with friends-and-family giving toward the $26,681 trip budget. A draft letter is ready for Brandon&rsquo;s review.</p>
+      <h2>Key dates</h2>
+      <ul>
+        <li><strong>Dec 11, 2026:</strong> Yagyubashi free cancellation deadline (if that house is chosen).</li>
+        <li><strong>Mid-Dec 2026:</strong> giving deadline for the trip fund, so flights and housing can be booked.</li>
+        <li><strong>Jan 8, 2027:</strong> fly out (ANA NH117).</li>
+      </ul>
     </div>
 
     <div id="trainView" class="train-view" hidden></div>
@@ -4976,7 +5095,7 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     // Archive dropdown: highlight the Archive tab when an archived view is
     // showing, and close the menu after a selection.
     const archiveToggle = document.getElementById("archiveToggle");
-    if (archiveToggle) archiveToggle.classList.toggle("active", view !== "people" && view !== "ministry");
+    if (archiveToggle) archiveToggle.classList.toggle("active", view !== "people" && view !== "plan");
     closeArchiveMenu();
     document.getElementById("timeline").hidden = view !== "timeline";
     const toolbarRight = document.querySelector(".toolbar-right");
@@ -4985,6 +5104,7 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     document.getElementById("trainView").hidden = view !== "trains";
     document.getElementById("peopleView").hidden = view !== "people";
     document.getElementById("ministryView").hidden = view !== "ministry";
+    document.getElementById("planView").hidden = view !== "plan";
     const snakeViewEl = document.getElementById("snakeView");
     if (snakeViewEl) {
       snakeViewEl.hidden = view !== "snake";
