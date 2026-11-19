@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261118-1425";
+const SITE_BUILD = "20261118-1615";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1390,6 +1390,13 @@ html[data-theme="dark"] .day-head {
 
 .people-empty[hidden] {
   display: none;
+}
+
+.person-hl {
+  background: #ffe08a;
+  color: #1a1a1a;
+  border-radius: 2px;
+  padding: 0 1px;
 }
 
 .person-add-btn {
@@ -5180,6 +5187,42 @@ window.peopleOnShow = function () {};
   // ---- Search connections ----
   const searchInput = document.getElementById("peopleSearch");
   const noMatchEl = document.getElementById("peopleNoMatch");
+  function highlightIn(el, q) {
+    // Unwrap any previous highlights first.
+    el.querySelectorAll("mark.person-hl").forEach(m => {
+      const parent = m.parentNode;
+      while (m.firstChild) parent.insertBefore(m.firstChild, m);
+      parent.removeChild(m);
+      parent.normalize();
+    });
+    if (!q) return;
+    const nodes = [];
+    (function walk(node) {
+      node.childNodes.forEach(child => {
+        if (child.nodeType === 3) nodes.push(child);
+        else if (child.nodeType === 1) walk(child);
+      });
+    })(el);
+    nodes.forEach(node => {
+      const text = node.nodeValue;
+      const lower = text.toLowerCase();
+      let idx = lower.indexOf(q);
+      if (idx === -1) return;
+      const frag = document.createDocumentFragment();
+      let last = 0;
+      while (idx !== -1) {
+        if (idx > last) frag.appendChild(document.createTextNode(text.slice(last, idx)));
+        const mark = document.createElement("mark");
+        mark.className = "person-hl";
+        mark.textContent = text.slice(idx, idx + q.length);
+        frag.appendChild(mark);
+        last = idx + q.length;
+        idx = lower.indexOf(q, last);
+      }
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
   function filterPeople() {
     const q = searchInput ? (searchInput.value || "").trim().toLowerCase() : "";
     let visible = 0;
@@ -5187,6 +5230,10 @@ window.peopleOnShow = function () {};
       const show = !q || (card.textContent || "").toLowerCase().indexOf(q) !== -1;
       card.style.display = show ? "" : "none";
       if (show) visible++;
+      ["person-name", "person-blurb", "person-contact-text"].forEach(cls => {
+        const el = card.querySelector("." + cls);
+        if (el) highlightIn(el, show ? q : "");
+      });
     });
     view.querySelectorAll(".people-grid").forEach(grid => {
       let anyVisible = false;
