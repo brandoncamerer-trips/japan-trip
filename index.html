@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261118-1615";
+const SITE_BUILD = "20261118-1635";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -5227,7 +5227,14 @@ window.peopleOnShow = function () {};
     const q = searchInput ? (searchInput.value || "").trim().toLowerCase() : "";
     let visible = 0;
     view.querySelectorAll(".person-card").forEach(card => {
-      const show = !q || (card.textContent || "").toLowerCase().indexOf(q) !== -1;
+      // Match per field, not on the whole card's text: textContent joins the
+      // "Contact" label and the contact value with no separator, so "TM"
+      // falsely matched "ContacT + Matthew" while nothing could highlight.
+      const fields = ["person-name", "person-blurb", "person-contact-text"].map(cls => {
+        const el = card.querySelector("." + cls);
+        return el ? (el.textContent || "") : "";
+      });
+      const show = !q || fields.some(t => t.toLowerCase().indexOf(q) !== -1);
       card.style.display = show ? "" : "none";
       if (show) visible++;
       ["person-name", "person-blurb", "person-contact-text"].forEach(cls => {
