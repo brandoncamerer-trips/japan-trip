@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261119-0955";
+const SITE_BUILD = "20261119-0950";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -2644,10 +2644,10 @@ tr.best .opt-tag {
     <div class="views-row">
       <div class="view-tabs" role="tablist" aria-label="Itinerary views">
         <button
-          class="view-tab"
+          class="view-tab active"
           data-view="plan"
           role="tab"
-          aria-selected="false"
+          aria-selected="true"
           type="button"
         >Current Plan</button>
         <button
@@ -2667,10 +2667,10 @@ tr.best .opt-tag {
           >Archive ▾</button>
           <div class="archive-menu" id="archiveMenu" role="menu">
             <button
-              class="view-tab archive-item active"
+              class="view-tab archive-item"
               data-view="timeline"
               role="tab"
-              aria-selected="true"
+              aria-selected="false"
               type="button"
             >Timeline</button>
             <button
@@ -2705,7 +2705,7 @@ tr.best .opt-tag {
         </div>
       </div>
 
-      <div class="toolbar-right">
+      <div class="toolbar-right" hidden>
         <button
           class="tool-btn"
           id="expandAll"
@@ -2742,7 +2742,7 @@ tr.best .opt-tag {
       </div>
     </div>
 
-    <div class="timeline" id="timeline"></div>
+    <div class="timeline" id="timeline" hidden></div>
 
     <div id="map" class="map-view" hidden>
       <div class="map-stats">
@@ -3252,7 +3252,7 @@ tr.best .opt-tag {
       </div>
     </div>
 
-<div id="planView" class="plan-view" hidden>
+<div id="planView" class="plan-view">
       <h2 class="plan-title">Current Plan</h2>
       <p class="plan-intro">The 90-day family trip to Toyohashi &mdash; trialing life in ministry, centered on Toyohashi Grace Baptist Church and Gamagori Baptist Church. Exploring &mdash; nothing booked yet.</p>
       <div class="plan-status">
