@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261120-0820";
+const SITE_BUILD = "20261120-0830";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1196,6 +1196,18 @@ html[data-theme="dark"] .day-head {
   letter-spacing: .14em;
   text-transform: uppercase;
   opacity: .6;
+  cursor: pointer;
+  user-select: none;
+}
+
+.people-group::before {
+  content: "\25be";
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.people-group.collapsed::before {
+  content: "\25b8";
 }
 
 .people-group:first-child {
@@ -2811,7 +2823,8 @@ tr.best .opt-tag {
           <option value="team">The Team</option>
           <option value="nara">Nara</option>
           <option value="nagoya">Nagoya</option>
-          <option value="toyohashi-gamagori">Toyohashi &amp; Gamagori</option>
+          <option value="toyohashi">Toyohashi</option>
+          <option value="gamagori">Gamagori</option>
           <option value="saitama-tokyo">Saitama &amp; Tokyo</option>
           <option value="more">More Connections</option>
         </select>
@@ -2843,9 +2856,12 @@ tr.best .opt-tag {
         <div class="person-card" data-person="gonzalez"><div class="person-head"><div class="person-name">Alessandro “Chino” Gonzalez &amp; family</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Missionary family in the Nagoya area; part of the Nov 10 gathering.</div></div>
         <div class="person-card" data-person="zane-bloom"><div class="person-head"><div class="person-name">Zane Bloom</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Mobilization Chief with Biblical Ministries Worldwide (BMW); part of the hosting team in Nagoya.</div></div>
       </div>
-      <div class="people-group">Toyohashi &amp; Gamagori</div>
-      <div class="people-grid" data-group="toyohashi-gamagori">
+      <div class="people-group">Toyohashi</div>
+      <div class="people-grid" data-group="toyohashi">
         <div class="person-card" data-person="takuji-yamazaki"><div class="person-head"><div class="person-name">Pastor Takuji Yamazaki</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Pastor of Toyohashi Grace Baptist Church; the team visits on Nov 11.</div></div>
+      </div>
+      <div class="people-group">Gamagori</div>
+      <div class="people-grid" data-group="gamagori">
         <div class="person-card" data-person="akira-asada"><div class="person-head"><div class="person-name">Pastor Akira Asada</div><button class="person-edit" type="button" data-edit aria-label="Edit connection" title="Edit connection">✏️</button></div><div class="person-blurb">Pastor of Gamagori Baptist Church; the team visits on Nov 11, including the Wednesday evening service.</div></div>
       </div>
       <div class="people-group">Saitama &amp; Tokyo</div>
@@ -5276,6 +5292,15 @@ window.peopleOnShow = function () {};
       fallback();
     }
   }
+  // The old combined "toyohashi-gamagori" group was split into Toyohashi and
+  // Gamagori on Nov 20, 2026. A stale cache or server row can still carry the
+  // old key, so resolve it per person instead of dropping them in More.
+  const LEGACY_LOC = { xmwe043g0: "gamagori", xmwe05371: "gamagori", xmwe09j2l: "gamagori", xmwe0amu9: "gamagori", xmwe0eg8e: "toyohashi", "akira-asada": "gamagori" };
+  function gridFor(loc, id) {
+    if (loc === "toyohashi-gamagori" && LEGACY_LOC[id]) loc = LEGACY_LOC[id];
+    return view.querySelector('.people-grid[data-group="' + loc + '"]') ||
+           view.querySelector('.people-grid[data-group="more"]');
+  }
   function applyAll() {
     view.querySelectorAll(".person-card").forEach(card => {
       const id = card.getAttribute("data-person");
@@ -5289,8 +5314,7 @@ window.peopleOnShow = function () {};
         nameEl.textContent = overrides["name:" + id];
       }
       if (Object.prototype.hasOwnProperty.call(overrides, "loc:" + id)) {
-        const grid = view.querySelector('.people-grid[data-group="' + overrides["loc:" + id] + '"]') ||
-                     view.querySelector('.people-grid[data-group="more"]');
+        const grid = gridFor(overrides["loc:" + id], id);
         if (grid && card.parentNode !== grid) grid.appendChild(card);
       }
       const contactVal = Object.prototype.hasOwnProperty.call(overrides, "contact:" + id) ? overrides["contact:" + id] : "";
@@ -5367,8 +5391,7 @@ window.peopleOnShow = function () {};
     addedList.forEach(person => {
       if (!person || !person.id) return;
       if (view.querySelector('.person-card[data-person="' + person.id + '"]')) return;
-      const grid = view.querySelector('.people-grid[data-group="' + person.loc + '"]') ||
-                   view.querySelector('.people-grid[data-group="more"]');
+      const grid = gridFor(person.loc, person.id);
       if (grid) grid.appendChild(makeCard(person));
     });
     filterPeople();
@@ -5435,13 +5458,48 @@ window.peopleOnShow = function () {};
     view.querySelectorAll(".people-grid").forEach(grid => {
       let anyVisible = false;
       grid.querySelectorAll(".person-card").forEach(c => { if (c.style.display !== "none") anyVisible = true; });
-      grid.style.display = anyVisible ? "" : "none";
+      // A collapsed group stays hidden, except while searching — a search
+      // should always reveal its matches.
+      const collapsed = !q && collapsedGroups.has(grid.dataset.group);
+      grid.style.display = (anyVisible && !collapsed) ? "" : "none";
       const header = grid.previousElementSibling;
       if (header && header.classList.contains("people-group")) header.style.display = anyVisible ? "" : "none";
     });
     if (noMatchEl) noMatchEl.hidden = !(q && visible === 0);
   }
   if (searchInput) searchInput.addEventListener("input", filterPeople);
+
+  // ---- Collapsible group sections ----
+  // Tap a group header to collapse or expand it; the choice is remembered
+  // on this device.
+  const COLLAPSED_KEY = "peopleCollapsedV1";
+  let collapsedGroups = new Set();
+  try {
+    const saved = JSON.parse(localStorage.getItem(COLLAPSED_KEY) || "[]");
+    if (Array.isArray(saved)) collapsedGroups = new Set(saved);
+  } catch (e) { /* ignore */ }
+  function saveCollapsed() {
+    try { localStorage.setItem(COLLAPSED_KEY, JSON.stringify(Array.from(collapsedGroups))); } catch (e) {}
+  }
+  function applyCollapsed() {
+    view.querySelectorAll(".people-group").forEach(header => {
+      const grid = header.nextElementSibling;
+      if (!grid || !grid.classList.contains("people-grid")) return;
+      header.classList.toggle("collapsed", collapsedGroups.has(grid.dataset.group));
+    });
+  }
+  view.querySelectorAll(".people-group").forEach(header => {
+    header.addEventListener("click", () => {
+      const grid = header.nextElementSibling;
+      if (!grid || !grid.classList.contains("people-grid")) return;
+      const key = grid.dataset.group;
+      if (collapsedGroups.has(key)) collapsedGroups.delete(key); else collapsedGroups.add(key);
+      saveCollapsed();
+      applyCollapsed();
+      filterPeople();
+    });
+  });
+  applyCollapsed();
 
   async function pull() {
     if (typeof NOTES_CONFIG === "undefined") return;
