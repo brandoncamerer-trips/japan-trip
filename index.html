@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261119-1530";
+const SITE_BUILD = "20261119-1725";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1525,7 +1525,7 @@ html[data-theme="dark"] .day-head {
   font-style: italic;
 }
 
-/* ---- Current Plan view ---- */
+/* ---- Draft Plan view ---- */
 .plan-view {
   padding: 4px 0 30px;
   max-width: 760px;
@@ -1746,6 +1746,9 @@ a.view-tab {
 @media (max-width: 650px) {
   .archive-wrap {
     flex: 1 1 0;
+    /* Flex so the toggle stretches to the wrap's full height, matching
+       the other tabs when their labels wrap to multiple lines. */
+    display: flex;
   }
 
   .archive-toggle {
@@ -2677,7 +2680,7 @@ tr.best .opt-tag {
           role="tab"
           aria-selected="true"
           type="button"
-        >Current Draft Plan</button>
+        >Draft Plan</button>
         <button
           class="view-tab"
           data-view="people"
@@ -3288,7 +3291,7 @@ tr.best .opt-tag {
     </div>
 
 <div id="planView" class="plan-view">
-      <h2 class="plan-title">Current Draft Plan</h2>
+      <h2 class="plan-title">Draft Plan</h2>
       <p class="plan-intro">The 90-day family trip to Toyohashi &mdash; trialing life in ministry, centered on Toyohashi Grace Baptist Church and Gamagori Baptist Church. Exploring &mdash; nothing booked yet.</p>
       <div class="plan-status">
         <p><strong>Where things stand (Nov 19):</strong></p>
