@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261121-1107";
+const SITE_BUILD = "20261121-1452";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1309,6 +1309,15 @@ html[data-theme="dark"] .day-head {
   flex: 1 1 auto;
   min-width: 0;
   word-break: break-word;
+}
+.person-give {
+  margin-top: 6px;
+  font-size: 13px;
+  line-height: 1.45;
+  opacity: .85;
+}
+.person-give a {
+  color: inherit;
 }
 .person-copy {
   flex: 0 0 auto;
@@ -5360,6 +5369,29 @@ window.peopleOnShow = function () {};
           row.textContent = "---";
         }
         contactEl.appendChild(row);
+      }
+      // Mission-agency giving link (give:<id> override). Renders a "Give"
+      // link below the contact block; removed again if the key goes away.
+      const giveVal = Object.prototype.hasOwnProperty.call(overrides, "give:" + id) ? overrides["give:" + id] : "";
+      let giveEl = card.querySelector(".person-give");
+      if (giveVal) {
+        if (!giveEl) {
+          giveEl = document.createElement("div");
+          giveEl.className = "person-give";
+          card.appendChild(giveEl);
+        }
+        if (giveEl.getAttribute("data-value") !== giveVal) {
+          giveEl.setAttribute("data-value", giveVal);
+          giveEl.innerHTML = "";
+          const giveLink = document.createElement("a");
+          giveLink.href = giveVal;
+          giveLink.target = "_blank";
+          giveLink.rel = "noopener";
+          giveLink.textContent = "Give";
+          giveEl.appendChild(giveLink);
+        }
+      } else if (giveEl) {
+        giveEl.remove();
       }
     });
     filterPeople();
