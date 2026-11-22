@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261121-1610";
+const SITE_BUILD = "20261121-1622";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -917,6 +917,46 @@ html[data-theme="dark"] .day-head {
 
 .arrival-modal .modal-inner {
   text-align: left;
+}
+
+.history-modal {
+  width: min(560px, calc(100% - 32px));
+}
+
+.history-modal .modal-inner {
+  text-align: left;
+  padding: 24px 30px 30px;
+}
+
+.history-list {
+  max-height: 55vh;
+  overflow-y: auto;
+  margin: 12px 0 18px;
+  padding-right: 6px;
+}
+
+.history-day {
+  margin: 18px 0 4px;
+  font: 700 15px Georgia, serif;
+}
+
+.history-day:first-child {
+  margin-top: 4px;
+}
+
+.history-entry {
+  display: flex;
+  gap: 10px;
+  padding: 7px 0;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.history-time {
+  flex: 0 0 68px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .arrival-steps {
@@ -2651,16 +2691,15 @@ tr.best .opt-tag {
     <div class="top-actions">
       <button
         class="icon-btn"
-        id="printBtn"
+        id="historyBtn"
         type="button"
-        aria-label="Print itinerary"
-        title="Print itinerary"
+        aria-label="Change history"
+        title="Change history"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 9V3h12v6"></path>
-          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-          <rect x="6" y="14" width="12" height="7" rx="1"></rect>
-          <path d="M18 12h.01"></path>
+          <path d="M3 12a9 9 0 1 0 2.6-6.4L3 8"></path>
+          <path d="M3 3v5h5"></path>
+          <path d="M12 7v5l4 2"></path>
         </svg>
       </button>
 
@@ -3587,6 +3626,23 @@ tr.best .opt-tag {
     </ol>
 
     <button class="done" id="closeFujiModal" type="button">
+      Done
+    </button>
+  </div>
+</dialog>
+
+<dialog class="modal history-modal" id="historyModal">
+  <div class="modal-stripe"></div>
+
+  <div class="modal-inner">
+    <div class="modal-label">Site updates</div>
+    <h2>Change history</h2>
+
+    <p>Every update to this site, newest first.</p>
+
+    <div class="history-list" id="historyList"></div>
+
+    <button class="done" id="closeHistoryModal" type="button">
       Done
     </button>
   </div>
@@ -4994,12 +5050,214 @@ window.addEventListener(
 );
 
 
+// ---- Change history ----
+// Every deploy to this site, newest first. Times are Pacific.
+// MAINTENANCE: prepend one entry per deploy (date, time, one-line summary).
+const CHANGELOG = [
+  { d: "2026-11-21", t: "4:22 PM", s: "Print button replaced with this change-history view." },
+  { d: "2026-11-21", t: "4:03 PM", s: "Mission-org pages for all connections: 14 more pages on cards and the Links tab (Missionaries section now has 17 entries)." },
+  { d: "2026-11-21", t: "2:51 PM", s: "Mission-agency links labeled (FIM page, Church building fund, BIMI page); Missionaries section added to the Links tab." },
+  { d: "2026-11-21", t: "2:47 PM", s: "Mission-org giving links added to Connections cards (Yamazaki\u2019s FIM pages, Ethel Wilson\u2019s BIMI page)." },
+  { d: "2026-11-21", t: "11:08 AM", s: "Draft Plan budget: Freedenheim apartment option noted (lodging ~$4,760, total ~$18,751)." },
+  { d: "2026-11-21", t: "10:33 AM", s: "Draft Plan status updated: Asada reached out; Freedenheim accepts overseas applications." },
+  { d: "2026-11-20", t: "11:53 AM", s: "Draft Plan status: 90-day unpaid leave offered; work deciding this weekend." },
+  { d: "2026-11-20", t: "8:25 AM", s: "Connections sections now collapsible; Toyohashi and Gamagori split into separate groups." },
+  { d: "2026-11-20", t: "8:21 AM", s: "Links stays split into Hotels, Airbnbs, and Short Term Apartment." },
+  { d: "2026-11-19", t: "5:22 PM", s: "Tab renamed to \u201cDraft Plan\u201d; Archive button height fixed on mobile." },
+  { d: "2026-11-19", t: "3:27 PM", s: "Loisir Hotel and two Kota container trailers added to the Links tab." },
+  { d: "2026-11-19", t: "3:00 PM", s: "Saaya\u2019s renovated house added to the Links tab." },
+  { d: "2026-11-19", t: "2:47 PM", s: "Links heading and intro removed; Hikari no Sono link added under Churches." },
+  { d: "2026-11-19", t: "2:38 PM", s: "Links tab added." },
+  { d: "2026-11-19", t: "1:03 PM", s: "Tab renamed from \u201cCurrent Plan\u201d to \u201cCurrent Draft Plan\u201d." },
+  { d: "2026-11-19", t: "10:15 AM", s: "Funding paragraph touch-up on the Draft Plan tab." },
+  { d: "2026-11-19", t: "9:58 AM", s: "Trains budget cut to $600; trip total now $25,010.73." },
+  { d: "2026-11-19", t: "9:55 AM", s: "Trip dates generalized to \u201cdeparting in January\u201d (specific dates removed)." },
+  { d: "2026-11-19", t: "9:52 AM", s: "Key dates removed from the Draft Plan tab." },
+  { d: "2026-11-19", t: "9:49 AM", s: "Current Plan set as the default tab on load." },
+  { d: "2026-11-19", t: "9:42 AM", s: "Draft Plan budget total fixed to $25,410.73." },
+  { d: "2026-11-19", t: "9:38 AM", s: "Current Plan tab added; Ministry Notes moved into the Archive menu." },
+  { d: "2026-11-18", t: "4:31 PM", s: "Search fixed to match across card field boundaries." },
+  { d: "2026-11-18", t: "4:12 PM", s: "Search matches highlighted in Connections cards." },
+  { d: "2026-11-18", t: "2:18 PM", s: "Search bar added to the Connections tab." },
+  { d: "2026-11-18", t: "1:38 PM", s: "Merge-on-save: a stale tab can no longer wipe server-side changes." },
+  { d: "2026-11-18", t: "1:21 PM", s: "Contact header and copy icon layout polished on Connections cards." },
+  { d: "2026-11-18", t: "1:16 PM", s: "Copy button added to contact lines on Connections cards." },
+  { d: "2026-11-18", t: "1:04 PM", s: "Editable Contact field added; name fixes on Connections cards." },
+  { d: "2026-11-18", t: "12:50 PM", s: "Name and category now editable on Connections cards." },
+  { d: "2026-11-17", t: "11:35 PM", s: "Ministry Notes tab added." },
+  { d: "2026-11-13", t: "8:10 AM", s: "Map stats: miles walked updated to 61.5." },
+  { d: "2026-11-13", t: "1:42 AM", s: "Date removed from the header." },
+  { d: "2026-11-13", t: "1:31 AM", s: "Timeline toolbar hidden on non-Timeline views." },
+  { d: "2026-11-12", t: "10:29 PM", s: "Map stats bar trimmed and polished." },
+  { d: "2026-11-12", t: "10:08 PM", s: "Map stats bar added." },
+  { d: "2026-11-12", t: "1:34 PM", s: "Nov 13 wording: \u201cslow morning\u201d with no souvenir mention." },
+  { d: "2026-11-12", t: "1:19 PM", s: "Nov 13 changed to a slow morning." },
+  { d: "2026-11-12", t: "12:20 PM", s: "Archive tab added." },
+  { d: "2026-11-09", t: "1:47 PM", s: "Add-person form added to Connections." },
+  { d: "2026-11-09", t: "1:37 PM", s: "Connections tab made editable." },
+  { d: "2026-11-09", t: "1:17 PM", s: "Paul\u2019s roles and details updated." },
+  { d: "2026-11-09", t: "1:04 PM", s: "Kondo\u2019s board roles added (TWR Japan, Concise Bible)." },
+  { d: "2026-11-09", t: "12:57 PM", s: "Connections tab added." },
+  { d: "2026-11-09", t: "12:46 PM", s: "CBI details added." },
+  { d: "2026-11-06", t: "10:37 AM", s: "Bus time fixed (8:52 bus, Nov 7)." },
+  { d: "2026-11-06", t: "2:22 AM", s: "Hikari 637 times updated (Nov 6)." },
+  { d: "2026-11-05", t: "10:30 PM", s: "Hikari train times updated (Nov 6)." },
+  { d: "2026-11-05", t: "12:56 AM", s: "Minecraft: one shared crew world." },
+  { d: "2026-11-05", t: "12:45 AM", s: "Minecraft 2D sandbox added as the third game." },
+  { d: "2026-11-05", t: "12:35 AM", s: "Notes and Photos features removed." },
+  { d: "2026-11-05", t: "12:25 AM", s: "Tetris pieces now in 3 colors (green, blue, amber)." },
+  { d: "2026-11-04", t: "11:30 PM", s: "Tetris: one-color pieces fix; layout kept inside the screen edge." },
+  { d: "2026-11-04", t: "11:13 PM", s: "Games cards compacted: start button up top, instructions dropped, smaller Tetris." },
+  { d: "2026-11-04", t: "11:02 PM", s: "Games tab added: Snake and Tetris with leaderboards." },
+  { d: "2026-11-03", t: "7:44 PM", s: "Snake: top-5 leaderboard." },
+  { d: "2026-11-03", t: "3:12 PM", s: "Snake score fix." },
+  { d: "2026-11-03", t: "3:01 PM", s: "Snake leaderboard added." },
+  { d: "2026-11-03", t: "2:47 PM", s: "Snake game tab added." },
+  { d: "2026-11-03", t: "6:03 AM", s: "Gallery lightbox close fix; Add-notes collapses with its card." },
+  { d: "2026-11-03", t: "5:54 AM", s: "Media: lightbox, video support, and notes layout." },
+  { d: "2026-11-03", t: "5:43 AM", s: "Photos and notes updates." },
+  { d: "2026-11-03", t: "5:33 AM", s: "Cache-busting: the site now checks for a newer version." },
+  { d: "2026-11-03", t: "5:24 AM", s: "Shared feed added." },
+  { d: "2026-11-03", t: "5:13 AM", s: "Renton day added (Nov 3)." },
+  { d: "2026-11-03", t: "5:04 AM", s: "Notes tab added." },
+  { d: "2026-11-03", t: "4:45 AM", s: "Complete-day display fix." },
+  { d: "2026-11-03", t: "4:38 AM", s: "Complete days view added." },
+  { d: "2026-11-01", t: "4:49 PM", s: "Timeline times updated." },
+  { d: "2026-11-01", t: "4:22 PM", s: "Train times updated." },
+  { d: "2026-10-30", t: "6:58 PM", s: "Nara area label fix." },
+  { d: "2026-10-30", t: "4:18 AM", s: "DeVerna visit added (Nov 12)." },
+  { d: "2026-10-28", t: "7:14 PM", s: "Fuji popup added." },
+  { d: "2026-10-28", t: "5:38 PM", s: "Romancecar and Fuji updates." },
+  { d: "2026-10-28", t: "6:43 AM", s: "Arrival button fix." },
+  { d: "2026-10-28", t: "6:32 AM", s: "Haneda arrival instructions added." },
+  { d: "2026-10-24", t: "1:07 PM", s: "Monday button and Topgolf added." },
+  { d: "2026-10-24", t: "12:07 PM", s: "Monday link added; Topgolf outing noted." },
+  { d: "2026-10-24", t: "11:25 AM", s: "Kyoto afternoon schedule added." },
+  { d: "2026-10-24", t: "11:19 AM", s: "Morning / Mid-day / Evening sections added." },
+  { d: "2026-10-24", t: "10:34 AM", s: "Day ordering fix." },
+  { d: "2026-10-24", t: "10:23 AM", s: "One card per day fix." },
+  { d: "2026-10-24", t: "9:56 AM", s: "Itinerary overhaul." },
+  { d: "2026-10-24", t: "8:39 AM", s: "Monday page cleanup." },
+  { d: "2026-10-24", t: "8:20 AM", s: "Monday page edits." },
+  { d: "2026-10-24", t: "6:54 AM", s: "Blank tab buttons fix." },
+  { d: "2026-10-23", t: "8:23 PM", s: "Monday page mobile fix." },
+  { d: "2026-10-23", t: "9:35 AM", s: "Countdown added: Nov 2, 11:30 AM." },
+  { d: "2026-10-20", t: "12:18 PM", s: "Favicon added." },
+  { d: "2026-10-20", t: "5:02 AM", s: "Kondo schedule updates." },
+  { d: "2026-10-19", t: "8:45 PM", s: "Nov 2 events grouped into a single timeline card." },
+  { d: "2026-10-19", t: "4:53 PM", s: "Outdated JR Pass references removed." },
+  { d: "2026-10-19", t: "3:02 PM", s: "Draft Train Schedule tab added." },
+  { d: "2026-10-19", t: "10:01 AM", s: "5 Haneda restaurants added." },
+  { d: "2026-10-19", t: "9:59 AM", s: "Nov 6 wording: PBA changed to TWR Board Meeting." },
+  { d: "2026-10-19", t: "9:45 AM", s: "Social preview meta tags and link preview image added." },
+  { d: "2026-10-19", t: "8:33 AM", s: "Dropdowns close on outside click; stay details shown in a modal." },
+  { d: "2026-10-19", t: "8:22 AM", s: "Iidashoten rating updated." },
+  { d: "2026-10-19", t: "8:14 AM", s: "Restaurant list rebuilt with verified 4+ star ratings." },
+  { d: "2026-10-19", t: "8:09 AM", s: "Broken Haneda restaurant links removed." },
+  { d: "2026-10-19", t: "7:57 AM", s: "Dropdown stacking fix (article level)." },
+  { d: "2026-10-19", t: "7:28 AM", s: "Dropdown stacking fix." },
+  { d: "2026-10-19", t: "7:20 AM", s: "Dropdown overflow fix and 4-star filter." },
+  { d: "2026-10-19", t: "7:14 AM", s: "Restaurant dropdown overlay and ratings." },
+  { d: "2026-10-19", t: "7:05 AM", s: "Per-stay restaurant dropdowns." },
+  { d: "2026-10-19", t: "6:57 AM", s: "Per-stay restaurant links." },
+  { d: "2026-10-19", t: "6:51 AM", s: "Toolbar: expand/collapse all and restaurant finder." },
+  { d: "2026-10-19", t: "6:42 AM", s: "Toolbar: tabs aligned with search/filter; filter icon visibility fixed." },
+  { d: "2026-10-19", t: "6:30 AM", s: "Timeline toolbar: filter icon, search, and last-updated stamp." },
+  { d: "2026-10-19", t: "5:56 AM", s: "Map tab: Google My Map embedded with pins." },
+  { d: "2026-10-19", t: "5:23 AM", s: "Map tab: all stop markers shown via KML." },
+  { d: "2026-10-19", t: "5:17 AM", s: "Map tab: Google embed fix (search format)." },
+  { d: "2026-10-19", t: "5:08 AM", s: "Map tab: Google Maps embed." },
+  { d: "2026-10-19", t: "5:01 AM", s: "Map tab added." },
+  { d: "2026-10-19", t: "4:27 AM", s: "Site launched." },
+];
+
+
+function renderHistory() {
+
+  const list =
+    document.getElementById("historyList");
+
+  if (!list || list.dataset.done) {
+    return;
+  }
+
+  const days = [
+    "Sunday", "Monday", "Tuesday", "Wednesday",
+    "Thursday", "Friday", "Saturday"
+  ];
+
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  let html = "";
+  let lastDay = "";
+
+  CHANGELOG.forEach(entry => {
+
+    if (entry.d !== lastDay) {
+      lastDay = entry.d;
+
+      const dt =
+        new Date(entry.d + "T12:00:00");
+
+      html +=
+        '<div class="history-day">' +
+        days[dt.getDay()] + ", " +
+        months[dt.getMonth()] + " " +
+        dt.getDate() + ", " +
+        dt.getFullYear() +
+        "</div>";
+    }
+
+    html +=
+      '<div class="history-entry">' +
+      '<span class="history-time">' + entry.t + "</span>" +
+      "<span>" + entry.s + "</span>" +
+      "</div>";
+
+  });
+
+  list.innerHTML = html;
+  list.dataset.done = "1";
+
+}
+
+
+const historyModal =
+  document.getElementById("historyModal");
+
+
 document
-  .getElementById("printBtn")
-  .addEventListener(
-    "click",
-    printFullItinerary
-  );
+  .getElementById("historyBtn")
+  .addEventListener("click", () => {
+
+    renderHistory();
+    historyModal.showModal();
+
+  });
+
+
+document
+  .getElementById("closeHistoryModal")
+  .addEventListener("click", () => {
+
+    historyModal.close();
+
+  });
+
+
+historyModal.addEventListener("click", event => {
+
+  if (event.target === historyModal) {
+    historyModal.close();
+  }
+
+});
+
+
+// ---- /Change history ----
 
 
 renderFilters();
