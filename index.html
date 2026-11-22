@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261121-1622";
+const SITE_BUILD = "20261121-1628";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -926,6 +926,26 @@ html[data-theme="dark"] .day-head {
 .history-modal .modal-inner {
   text-align: left;
   padding: 24px 30px 30px;
+}
+
+.history-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.history-close:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink);
 }
 
 .history-list {
@@ -3634,6 +3654,8 @@ tr.best .opt-tag {
 <dialog class="modal history-modal" id="historyModal">
   <div class="modal-stripe"></div>
 
+  <button class="history-close" id="closeHistoryModal" type="button" aria-label="Close change history">×</button>
+
   <div class="modal-inner">
     <div class="modal-label">Site updates</div>
     <h2>Change history</h2>
@@ -3641,10 +3663,6 @@ tr.best .opt-tag {
     <p>Every update to this site, newest first.</p>
 
     <div class="history-list" id="historyList"></div>
-
-    <button class="done" id="closeHistoryModal" type="button">
-      Done
-    </button>
   </div>
 </dialog>
 
@@ -5054,6 +5072,7 @@ window.addEventListener(
 // Every deploy to this site, newest first. Times are Pacific.
 // MAINTENANCE: prepend one entry per deploy (date, time, one-line summary).
 const CHANGELOG = [
+  { d: "2026-11-21", t: "4:28 PM", s: "Change-history modal: Done button replaced with an X in the top corner." },
   { d: "2026-11-21", t: "4:22 PM", s: "Print button replaced with this change-history view." },
   { d: "2026-11-21", t: "4:03 PM", s: "Mission-org pages for all connections: 14 more pages on cards and the Links tab (Missionaries section now has 17 entries)." },
   { d: "2026-11-21", t: "2:51 PM", s: "Mission-agency links labeled (FIM page, Church building fund, BIMI page); Missionaries section added to the Links tab." },
