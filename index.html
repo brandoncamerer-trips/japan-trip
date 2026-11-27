@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261127-0958";
+const SITE_BUILD = "20261127-1017";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -2384,6 +2384,16 @@ tr.best .opt-tag {
 .kana-missed { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; margin-top: 10px; }
 .kana-missed span { border: 1px solid rgba(127,127,127,.35); border-radius: 999px; padding: 5px 9px; }
 .kana-source { text-align: center; font-size: 13px; opacity: .75; margin-top: 12px; }
+
+.kana-screen[hidden] { display: none; }
+.kana-setup-note { text-align: center; font-size: 15px; opacity: .8; margin: 0 auto 12px; max-width: 460px; }
+.kana-selection-summary { text-align: center; font-size: 14px; opacity: .78; min-height: 20px; }
+.kana-quiz-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; max-width: 520px; margin: 0 auto 8px; }
+.kana-progress { height: 8px; background: rgba(127,127,127,.22); border-radius: 999px; overflow: hidden; max-width: 520px; margin: 0 auto 8px; }
+.kana-progress-bar { height: 100%; width: 0%; background: #2f7d46; transition: width .25s ease; }
+.kana-quiz-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+.kana-start-main { font-size: 18px; padding: 12px 22px; }
+.kana-start-main:disabled { opacity: .45; cursor: not-allowed; }
 /* ---- Games tab: picker + Tetris (added Nov 5) ---- */
 .games-pick {
   display: flex;
@@ -3562,36 +3572,50 @@ tr.best .opt-tag {
     <div id="languageView" class="language-view" hidden>
       <div class="notes-card language-card">
         <h2 class="notes-title">Language</h2>
-        <div class="kana-controls">
-          <div class="kana-start-row">
-            <button class="tool-btn snake-start" id="kanaStart" type="button">▶ Start quiz</button>
-            <button class="tool-btn" id="kanaReset" type="button">↺ Reset</button>
+        <div class="kana-screen" id="kanaSetup">
+          <p class="kana-setup-note">Choose what to practice, then start the quiz.</p>
+          <div class="kana-controls">
+            <div class="kana-font-row" role="group" aria-label="Kana type">
+              <button class="kana-font-btn active" type="button" data-kana-font="hiragana">Hiragana</button>
+              <button class="kana-font-btn" type="button" data-kana-font="katakana">Katakana</button>
+              <button class="kana-font-btn" type="button" data-kana-font="all">All kana</button>
+            </div>
+            <div class="kana-group-label">Main kana</div>
+            <div class="kana-row-grid" id="kanaMainRows"></div>
+            <div class="kana-group-label">Dakuten kana</div>
+            <div class="kana-row-grid" id="kanaDakutenRows"></div>
+            <div class="kana-group-label">Combination kana</div>
+            <div class="kana-row-grid" id="kanaComboRows"></div>
+            <div class="kana-selection-summary" id="kanaSelectionSummary"></div>
+            <div class="kana-start-row">
+              <button class="tool-btn snake-start kana-start-main" id="kanaStart" type="button">Start quiz</button>
+            </div>
           </div>
-          <div class="kana-font-row" role="group" aria-label="Kana type">
-            <button class="kana-font-btn active" type="button" data-kana-font="hiragana">Hiragana</button>
-            <button class="kana-font-btn" type="button" data-kana-font="katakana">Katakana</button>
-            <button class="kana-font-btn" type="button" data-kana-font="all">All kana</button>
+          <div class="kana-source">Modeled on <a href="https://kana-quiz.tofugu.com/" target="_blank" rel="noopener">Tofugu’s kana quiz</a>.</div>
+        </div>
+        <div class="kana-screen" id="kanaQuiz" hidden>
+          <div class="kana-quiz-top">
+            <button class="tool-btn" id="kanaBack" type="button">← Change selection</button>
+            <span id="kanaProgressText">0 / 0</span>
           </div>
-          <div class="kana-group-label">Main kana</div>
-          <div class="kana-row-grid" id="kanaMainRows"></div>
-          <div class="kana-group-label">Dakuten kana</div>
-          <div class="kana-row-grid" id="kanaDakutenRows"></div>
-          <div class="kana-group-label">Combination kana</div>
-          <div class="kana-row-grid" id="kanaComboRows"></div>
+          <div class="kana-progress"><div class="kana-progress-bar" id="kanaProgressBar"></div></div>
+          <div class="kana-stats">
+            <span>Score: <strong id="kanaScore">0</strong></span>
+            <span>Streak: <strong id="kanaStreak">0</strong></span>
+            <span>Left: <strong id="kanaLeft">0</strong></span>
+          </div>
+          <div class="kana-prompt" id="kanaPrompt">あ</div>
+          <form class="kana-answer-row" id="kanaForm">
+            <input class="kana-answer" id="kanaAnswer" type="text" placeholder="romaji" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Type the romaji">
+            <button class="tool-btn snake-start" id="kanaCheck" type="submit">Check</button>
+          </form>
+          <div class="kana-feedback" id="kanaFeedback" aria-live="polite"></div>
+          <div class="kana-results" id="kanaResults" hidden></div>
+          <div class="kana-quiz-actions" id="kanaQuizActions" hidden>
+            <button class="tool-btn snake-start" id="kanaAgain" type="button">Quiz again</button>
+            <button class="tool-btn" id="kanaChange" type="button">Change selection</button>
+          </div>
         </div>
-        <div class="kana-stats">
-          <span>Score: <strong id="kanaScore">0</strong></span>
-          <span>Streak: <strong id="kanaStreak">0</strong></span>
-          <span>Left: <strong id="kanaLeft">0</strong></span>
-        </div>
-        <div class="kana-prompt" id="kanaPrompt">あ</div>
-        <form class="kana-answer-row" id="kanaForm">
-          <input class="kana-answer" id="kanaAnswer" type="text" placeholder="romaji" autocomplete="off" autocapitalize="none" spellcheck="false" aria-label="Type the romaji">
-          <button class="tool-btn snake-start" id="kanaCheck" type="submit">Check</button>
-        </form>
-        <div class="kana-feedback" id="kanaFeedback" aria-live="polite"></div>
-        <div class="kana-results" id="kanaResults" hidden></div>
-        <div class="kana-source">Modeled on <a href="https://kana-quiz.tofugu.com/" target="_blank" rel="noopener">Tofugu’s kana quiz</a>.</div>
       </div>
     </div>
   </section>
@@ -5558,33 +5582,58 @@ window.languageOnShow = function () {};
   const selected = new Set(ROWS.filter(r => r.group === "main").map(r => r.id));
   let font = "hiragana", deck = [], current = null, score = 0, streak = 0, missed = [], awaitingNext = false;
   const els = {
-    prompt: document.getElementById("kanaPrompt"), answer: document.getElementById("kanaAnswer"), form: document.getElementById("kanaForm"),
+    setup: document.getElementById("kanaSetup"), quiz: document.getElementById("kanaQuiz"), summary: document.getElementById("kanaSelectionSummary"),
+    start: document.getElementById("kanaStart"), prompt: document.getElementById("kanaPrompt"), answer: document.getElementById("kanaAnswer"), form: document.getElementById("kanaForm"),
     feedback: document.getElementById("kanaFeedback"), score: document.getElementById("kanaScore"), streak: document.getElementById("kanaStreak"),
-    left: document.getElementById("kanaLeft"), results: document.getElementById("kanaResults"), check: document.getElementById("kanaCheck")
+    left: document.getElementById("kanaLeft"), results: document.getElementById("kanaResults"), check: document.getElementById("kanaCheck"),
+    progressText: document.getElementById("kanaProgressText"), progressBar: document.getElementById("kanaProgressBar"), actions: document.getElementById("kanaQuizActions")
   };
+  let total = 0, answered = 0;
   function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+  function selectedCount() {
+    let n = 0;
+    ROWS.filter(r => selected.has(r.id)).forEach(r => { n += r.items.length * (font === "all" ? 2 : 1); });
+    return n;
+  }
+  function updateSummary() {
+    const n = selectedCount();
+    els.summary.textContent = n ? `${n} kana selected` : "Select at least one row";
+    els.start.disabled = !n;
+  }
   function buildDeck() {
     deck = [];
     ROWS.filter(r => selected.has(r.id)).forEach(r => r.items.forEach(([h,k,romaji]) => {
       if (font === "hiragana" || font === "all") deck.push({ kana: h, romaji });
       if (font === "katakana" || font === "all") deck.push({ kana: k, romaji });
     }));
-    shuffle(deck);
+    shuffle(deck); total = deck.length; answered = 0;
   }
-  function stats() { els.score.textContent = score; els.streak.textContent = streak; els.left.textContent = deck.length + (current ? 1 : 0); }
+  function stats() {
+    els.score.textContent = score; els.streak.textContent = streak; els.left.textContent = deck.length + (current ? 1 : 0);
+    els.progressText.textContent = `${answered} / ${total}`;
+    els.progressBar.style.width = total ? `${Math.round((answered / total) * 100)}%` : "0%";
+  }
+  function showSetup() {
+    els.setup.hidden = false; els.quiz.hidden = true; current = null; deck = []; updateSummary();
+  }
+  function showQuiz() { els.setup.hidden = true; els.quiz.hidden = false; }
   function next() {
     awaitingNext = false; els.check.textContent = "Check"; els.feedback.textContent = ""; els.feedback.className = "kana-feedback"; els.answer.value = "";
     current = deck.pop() || null;
     if (!current) { finish(); return; }
     els.prompt.textContent = current.kana; stats(); els.answer.focus();
   }
-  function start() { buildDeck(); score = 0; streak = 0; missed = []; els.results.hidden = true; els.results.innerHTML = ""; next(); }
+  function start() {
+    if (!selected.size) { updateSummary(); return; }
+    buildDeck(); score = 0; streak = 0; missed = [];
+    els.results.hidden = true; els.results.innerHTML = ""; els.actions.hidden = true;
+    showQuiz(); next();
+  }
   function finish() {
     els.prompt.textContent = "✓"; stats();
-    const total = score + missed.length;
-    els.results.hidden = false;
+    els.results.hidden = false; els.actions.hidden = false;
     els.results.innerHTML = `<strong>Done:</strong> ${score}/${total} correct` + (missed.length ? `<div class="kana-missed">${missed.map(m => `<span>${m.kana} = ${m.romaji}</span>`).join("")}</div>` : "");
-    els.feedback.textContent = "Start again whenever you’re ready."; els.feedback.className = "kana-feedback good";
+    els.feedback.textContent = "Nice work."; els.feedback.className = "kana-feedback good";
   }
   function accepted(input, romaji) { const v = input.trim().toLowerCase(); return v === romaji || (ALT[romaji] || []).includes(v); }
   function renderRows() {
@@ -5592,26 +5641,31 @@ window.languageOnShow = function () {};
     Object.values(targets).forEach(t => t.innerHTML = "");
     ROWS.forEach(r => {
       const b = document.createElement("button"); b.type = "button"; b.className = "kana-row-btn" + (selected.has(r.id) ? " active" : ""); b.textContent = r.label;
-      b.addEventListener("click", () => { selected.has(r.id) ? selected.delete(r.id) : selected.add(r.id); renderRows(); start(); });
+      b.setAttribute("aria-pressed", selected.has(r.id) ? "true" : "false");
+      b.addEventListener("click", () => { selected.has(r.id) ? selected.delete(r.id) : selected.add(r.id); renderRows(); });
       targets[r.group].appendChild(b);
     });
+    updateSummary();
   }
   document.querySelectorAll("[data-kana-font]").forEach(b => b.addEventListener("click", () => {
-    font = b.dataset.kanaFont; document.querySelectorAll("[data-kana-font]").forEach(x => x.classList.toggle("active", x === b)); start();
+    font = b.dataset.kanaFont; document.querySelectorAll("[data-kana-font]").forEach(x => x.classList.toggle("active", x === b)); updateSummary();
   }));
-  document.getElementById("kanaStart").addEventListener("click", start);
-  document.getElementById("kanaReset").addEventListener("click", start);
+  els.start.addEventListener("click", start);
+  document.getElementById("kanaBack").addEventListener("click", showSetup);
+  document.getElementById("kanaChange").addEventListener("click", showSetup);
+  document.getElementById("kanaAgain").addEventListener("click", start);
   els.form.addEventListener("submit", (e) => {
-    e.preventDefault(); if (!current) { start(); return; }
+    e.preventDefault(); if (!current) return;
     if (awaitingNext) { next(); return; }
+    answered++;
     if (accepted(els.answer.value, current.romaji)) {
       score++; streak++; els.feedback.textContent = "Correct"; els.feedback.className = "kana-feedback good"; stats(); setTimeout(next, 450);
     } else {
       streak = 0; missed.push(current); els.feedback.textContent = `${current.kana} = ${current.romaji}`; els.feedback.className = "kana-feedback bad"; awaitingNext = true; els.check.textContent = "Next"; stats();
     }
   });
-  window.languageOnShow = function () { if (!current && !deck.length) start(); else els.answer.focus(); };
-  renderRows(); start();
+  window.languageOnShow = function () { if (!els.quiz.hidden && current) els.answer.focus(); };
+  renderRows(); showSetup();
 })();
 
 // ---- Connections tab: shared editable names, categories, blurbs, contacts + added people (Supabase) ----
