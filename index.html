@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261127-1017";
+const SITE_BUILD = "20261127-1217";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -2380,6 +2380,11 @@ tr.best .opt-tag {
 .kana-feedback { min-height: 28px; text-align: center; font-weight: 700; margin-top: 10px; }
 .kana-feedback.good { color: #2f7d46; }
 .kana-feedback.bad { color: #b3261e; }
+
+.kana-prompt.kana-flash-good { color: #2f7d46; }
+.kana-prompt.kana-flash-bad { color: #b3261e; }
+.kana-answer.kana-flash-good { border-color: #2f7d46; background: rgba(47,125,70,.18); }
+.kana-answer.kana-flash-bad { border-color: #b3261e; background: rgba(179,38,30,.16); }
 .kana-results { text-align: center; }
 .kana-missed { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; margin-top: 10px; }
 .kana-missed span { border: 1px solid rgba(127,127,127,.35); border-radius: 999px; padding: 5px 9px; }
@@ -5618,7 +5623,7 @@ window.languageOnShow = function () {};
   }
   function showQuiz() { els.setup.hidden = true; els.quiz.hidden = false; }
   function next() {
-    awaitingNext = false; els.check.textContent = "Check"; els.feedback.textContent = ""; els.feedback.className = "kana-feedback"; els.answer.value = "";
+    awaitingNext = false; els.check.textContent = "Check"; els.check.disabled = false; els.answer.disabled = false; els.prompt.classList.remove("kana-flash-good", "kana-flash-bad"); els.answer.classList.remove("kana-flash-good", "kana-flash-bad"); els.feedback.textContent = ""; els.feedback.className = "kana-feedback"; els.answer.value = "";
     current = deck.pop() || null;
     if (!current) { finish(); return; }
     els.prompt.textContent = current.kana; stats(); els.answer.focus();
@@ -5658,10 +5663,12 @@ window.languageOnShow = function () {};
     e.preventDefault(); if (!current) return;
     if (awaitingNext) { next(); return; }
     answered++;
+    els.answer.disabled = true; els.check.disabled = true;
     if (accepted(els.answer.value, current.romaji)) {
-      score++; streak++; els.feedback.textContent = "Correct"; els.feedback.className = "kana-feedback good"; stats(); setTimeout(next, 450);
+      score++; streak++; els.prompt.classList.add("kana-flash-good"); els.answer.classList.add("kana-flash-good"); els.feedback.textContent = "Correct"; els.feedback.className = "kana-feedback good"; stats(); setTimeout(next, 1000);
     } else {
-      streak = 0; missed.push(current); els.feedback.textContent = `${current.kana} = ${current.romaji}`; els.feedback.className = "kana-feedback bad"; awaitingNext = true; els.check.textContent = "Next"; stats();
+      streak = 0; missed.push(current); els.prompt.classList.add("kana-flash-bad"); els.answer.classList.add("kana-flash-bad"); els.feedback.textContent = "Wrong"; els.feedback.className = "kana-feedback bad"; stats();
+      setTimeout(() => { els.feedback.textContent = `${current.kana} = ${current.romaji}`; awaitingNext = true; els.check.textContent = "Next"; els.check.disabled = false; els.check.focus(); }, 1000);
     }
   });
   window.languageOnShow = function () { if (!els.quiz.hidden && current) els.answer.focus(); };
