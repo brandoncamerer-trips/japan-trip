@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261127-1217";
+const SITE_BUILD = "20261127-1226";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -5645,7 +5645,7 @@ window.languageOnShow = function () {};
     const targets = { main: document.getElementById("kanaMainRows"), dakuten: document.getElementById("kanaDakutenRows"), combo: document.getElementById("kanaComboRows") };
     Object.values(targets).forEach(t => t.innerHTML = "");
     ROWS.forEach(r => {
-      const b = document.createElement("button"); b.type = "button"; b.className = "kana-row-btn" + (selected.has(r.id) ? " active" : ""); b.textContent = r.label;
+      const b = document.createElement("button"); b.type = "button"; b.className = "kana-row-btn" + (selected.has(r.id) ? " active" : ""); b.textContent = font === "katakana" ? `${r.items[0][1]} ${r.items[0][2]}` : font === "all" ? `${r.items[0][0]}/${r.items[0][1]} ${r.items[0][2]}` : r.label;
       b.setAttribute("aria-pressed", selected.has(r.id) ? "true" : "false");
       b.addEventListener("click", () => { selected.has(r.id) ? selected.delete(r.id) : selected.add(r.id); renderRows(); });
       targets[r.group].appendChild(b);
@@ -5653,7 +5653,7 @@ window.languageOnShow = function () {};
     updateSummary();
   }
   document.querySelectorAll("[data-kana-font]").forEach(b => b.addEventListener("click", () => {
-    font = b.dataset.kanaFont; document.querySelectorAll("[data-kana-font]").forEach(x => x.classList.toggle("active", x === b)); updateSummary();
+    font = b.dataset.kanaFont; document.querySelectorAll("[data-kana-font]").forEach(x => x.classList.toggle("active", x === b)); renderRows();
   }));
   els.start.addEventListener("click", start);
   document.getElementById("kanaBack").addEventListener("click", showSetup);
