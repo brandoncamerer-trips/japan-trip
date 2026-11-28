@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261127-1654";
+const SITE_BUILD = "20261127-1836";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -2820,6 +2820,19 @@ tr.best .opt-tag {
 
       <button
         class="icon-btn"
+        id="refreshBtn"
+        type="button"
+        aria-label="Refresh page"
+        title="Refresh page"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 12a9 9 0 1 1-2.64-6.36"></path>
+          <path d="M21 3v6h-6"></path>
+        </svg>
+      </button>
+
+      <button
+        class="icon-btn"
         id="themeBtn"
         type="button"
         aria-label="Switch theme"
@@ -5081,6 +5094,20 @@ themeButton.addEventListener(
 );
 
 
+const refreshButton =
+  document.getElementById("refreshBtn");
+
+
+if (refreshButton) {
+  refreshButton.addEventListener(
+    "click",
+    () => {
+      window.location.reload();
+    }
+  );
+}
+
+
 let printSnapshot = null;
 
 
@@ -5167,6 +5194,7 @@ window.addEventListener(
 // Every deploy to this site, newest first. Times are Pacific.
 // MAINTENANCE: prepend one entry per deploy (date, time, one-line summary).
 const CHANGELOG = [
+  { d: "2026-11-27", t: "9:58 AM", s: "Language learning added with a kana quiz for hiragana and katakana practice." },
   { d: "2026-11-26", t: "10:33 AM", s: "Draft Plan: Airbnb estimates rechecked; station-house lodging $11,039.68, total $25,030.68; Saaya no longer covers the full stay." },
   { d: "2026-11-26", t: "10:24 AM", s: "Draft Plan: apartment option removed; waiting for Asada\u2019s response before booking anything." },
   { d: "2026-11-23", t: "9:51 AM", s: "Draft Plan: reply to Asada sent; leave dates Jan 8\u2013Apr 8 sent to work, awaiting approval; apartment application is a PDF form, parking not available without a residence card." },
