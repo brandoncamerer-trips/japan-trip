@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261127-1549";
+const SITE_BUILD = "20261127-1637";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -2838,22 +2838,15 @@ tr.best .opt-tag {
           aria-selected="false"
           type="button"
         >Connections</button>
-        <button
-          class="view-tab"
-          data-view="links"
-          role="tab"
-          aria-selected="false"
-          type="button"
-        >Links</button>
         <div class="archive-wrap">
           <button
-            class="archive-toggle active"
-            id="archiveToggle"
+            class="archive-toggle"
+            id="sbcToggle"
             type="button"
             aria-haspopup="true"
             aria-expanded="false"
-          >Archive ▾</button>
-          <div class="archive-menu" id="archiveMenu" role="menu">
+          >SBC Men&rsquo;s Trip ▾</button>
+          <div class="archive-menu" id="sbcMenu" role="menu">
             <button
               class="view-tab archive-item"
               data-view="timeline"
@@ -2863,13 +2856,6 @@ tr.best .opt-tag {
             >Timeline</button>
             <button
               class="view-tab archive-item"
-              data-view="map"
-              role="tab"
-              aria-selected="false"
-              type="button"
-            >Map</button>
-            <button
-              class="view-tab archive-item"
               data-view="trains"
               role="tab"
               aria-selected="false"
@@ -2877,11 +2863,36 @@ tr.best .opt-tag {
             ><span class="tab-full">Draft Train Schedule</span><span class="tab-short">Trains</span></button>
             <button
               class="view-tab archive-item"
+              data-view="map"
+              role="tab"
+              aria-selected="false"
+              type="button"
+            >Map</button>
+            <button
+              class="view-tab archive-item"
               data-view="snake"
               role="tab"
               aria-selected="false"
               type="button"
             >Games</button>
+          </div>
+        </div>
+        <div class="archive-wrap">
+          <button
+            class="archive-toggle"
+            id="archiveToggle"
+            type="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >Archive ▾</button>
+          <div class="archive-menu" id="archiveMenu" role="menu">
+            <button
+              class="view-tab archive-item"
+              data-view="links"
+              role="tab"
+              aria-selected="false"
+              type="button"
+            >Links</button>
             <button
               class="view-tab archive-item"
               data-view="language"
@@ -2897,6 +2908,7 @@ tr.best .opt-tag {
               type="button"
             >Ministry Notes</button>
           </div>
+        </div>
         </div>
       </div>
 
@@ -5488,7 +5500,9 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     // Archive dropdown: highlight the Archive tab when an archived view is
     // showing, and close the menu after a selection.
     const archiveToggle = document.getElementById("archiveToggle");
-    if (archiveToggle) archiveToggle.classList.toggle("active", view !== "people" && view !== "plan" && view !== "links");
+    if (archiveToggle) archiveToggle.classList.toggle("active", view === "links" || view === "language" || view === "ministry");
+    const sbcToggle = document.getElementById("sbcToggle");
+    if (sbcToggle) sbcToggle.classList.toggle("active", view === "timeline" || view === "trains" || view === "map" || view === "snake");
     closeArchiveMenu();
     document.getElementById("timeline").hidden = view !== "timeline";
     const toolbarRight = document.querySelector(".toolbar-right");
@@ -5517,23 +5531,33 @@ document.querySelectorAll(".view-tab").forEach(tab => {
 
 // ---- Archive dropdown (added Nov 13) ----
 function closeArchiveMenu() {
-  const menu = document.getElementById("archiveMenu");
-  const toggle = document.getElementById("archiveToggle");
-  if (menu) menu.classList.remove("open");
-  if (toggle) toggle.setAttribute("aria-expanded", "false");
+  [["archiveMenu", "archiveToggle"], ["sbcMenu", "sbcToggle"]].forEach(([menuId, toggleId]) => {
+    const menu = document.getElementById(menuId);
+    const toggle = document.getElementById(toggleId);
+    if (menu) menu.classList.remove("open");
+    if (toggle) toggle.setAttribute("aria-expanded", "false");
+  });
 }
 
 (function initArchiveMenu() {
-  const toggle = document.getElementById("archiveToggle");
-  const menu = document.getElementById("archiveMenu");
-  if (!toggle || !menu) return;
-  toggle.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const open = menu.classList.toggle("open");
-    toggle.setAttribute("aria-expanded", open ? "true" : "false");
+  [["archiveToggle", "archiveMenu"], ["sbcToggle", "sbcMenu"]].forEach(([toggleId, menuId]) => {
+    const toggle = document.getElementById(toggleId);
+    const menu = document.getElementById(menuId);
+    if (!toggle || !menu) return;
+    toggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const wasOpen = menu.classList.contains("open");
+      closeArchiveMenu();
+      if (!wasOpen) {
+        menu.classList.add("open");
+        toggle.setAttribute("aria-expanded", "true");
+      }
+    });
   });
   document.addEventListener("click", (e) => {
-    if (!menu.contains(e.target) && e.target !== toggle) closeArchiveMenu();
+    const menus = [document.getElementById("archiveMenu"), document.getElementById("sbcMenu")];
+    const toggles = [document.getElementById("archiveToggle"), document.getElementById("sbcToggle")];
+    if (!menus.some(m => m && m.contains(e.target)) && !toggles.includes(e.target)) closeArchiveMenu();
   });
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeArchiveMenu();
