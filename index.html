@@ -21,7 +21,7 @@
 <title>Japan Journey 2026</title>
 <script>
 // Cache freshness self-check: if the server has a newer build, reload once to it.
-const SITE_BUILD = "20261127-1637";
+const SITE_BUILD = "20261127-1643";
 (function () {
   try {
     if (!/^https?:$/.test(location.protocol)) return;
@@ -1830,6 +1830,11 @@ a.view-tab {
   border-color: var(--navy);
 }
 
+.submenu-toggle { width: 100%; text-align: left; }
+.submenu-toggle.active { background: var(--navy); color: #fff; }
+.submenu { display: none; padding: 2px 0 4px 14px; }
+.submenu.open { display: block; }
+
 @media (max-width: 650px) {
   .archive-wrap {
     flex: 1 1 0;
@@ -2841,50 +2846,11 @@ tr.best .opt-tag {
         <div class="archive-wrap">
           <button
             class="archive-toggle"
-            id="sbcToggle"
-            type="button"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >SBC Men&rsquo;s Trip ▾</button>
-          <div class="archive-menu" id="sbcMenu" role="menu">
-            <button
-              class="view-tab archive-item"
-              data-view="timeline"
-              role="tab"
-              aria-selected="false"
-              type="button"
-            >Timeline</button>
-            <button
-              class="view-tab archive-item"
-              data-view="trains"
-              role="tab"
-              aria-selected="false"
-              type="button"
-            ><span class="tab-full">Draft Train Schedule</span><span class="tab-short">Trains</span></button>
-            <button
-              class="view-tab archive-item"
-              data-view="map"
-              role="tab"
-              aria-selected="false"
-              type="button"
-            >Map</button>
-            <button
-              class="view-tab archive-item"
-              data-view="snake"
-              role="tab"
-              aria-selected="false"
-              type="button"
-            >Games</button>
-          </div>
-        </div>
-        <div class="archive-wrap">
-          <button
-            class="archive-toggle"
             id="archiveToggle"
             type="button"
             aria-haspopup="true"
             aria-expanded="false"
-          >Archive ▾</button>
+          >More ▾</button>
           <div class="archive-menu" id="archiveMenu" role="menu">
             <button
               class="view-tab archive-item"
@@ -2907,6 +2873,43 @@ tr.best .opt-tag {
               aria-selected="false"
               type="button"
             >Ministry Notes</button>
+            <button
+              class="archive-item submenu-toggle"
+              id="sbcToggle"
+              type="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >SBC Men&rsquo;s Trip ▾</button>
+            <div class="submenu" id="sbcMenu" role="menu">
+              <button
+                class="view-tab archive-item"
+                data-view="timeline"
+                role="tab"
+                aria-selected="false"
+                type="button"
+              >Timeline</button>
+              <button
+                class="view-tab archive-item"
+                data-view="trains"
+                role="tab"
+                aria-selected="false"
+                type="button"
+              ><span class="tab-full">Draft Train Schedule</span><span class="tab-short">Trains</span></button>
+              <button
+                class="view-tab archive-item"
+                data-view="map"
+                role="tab"
+                aria-selected="false"
+                type="button"
+              >Map</button>
+              <button
+                class="view-tab archive-item"
+                data-view="snake"
+                role="tab"
+                aria-selected="false"
+                type="button"
+              >Games</button>
+            </div>
           </div>
         </div>
         </div>
@@ -5500,7 +5503,7 @@ document.querySelectorAll(".view-tab").forEach(tab => {
     // Archive dropdown: highlight the Archive tab when an archived view is
     // showing, and close the menu after a selection.
     const archiveToggle = document.getElementById("archiveToggle");
-    if (archiveToggle) archiveToggle.classList.toggle("active", view === "links" || view === "language" || view === "ministry");
+    if (archiveToggle) archiveToggle.classList.toggle("active", ["links", "language", "ministry", "timeline", "trains", "map", "snake"].includes(view));
     const sbcToggle = document.getElementById("sbcToggle");
     if (sbcToggle) sbcToggle.classList.toggle("active", view === "timeline" || view === "trains" || view === "map" || view === "snake");
     closeArchiveMenu();
@@ -5531,39 +5534,45 @@ document.querySelectorAll(".view-tab").forEach(tab => {
 
 // ---- Archive dropdown (added Nov 13) ----
 function closeArchiveMenu() {
-  [["archiveMenu", "archiveToggle"], ["sbcMenu", "sbcToggle"]].forEach(([menuId, toggleId]) => {
-    const menu = document.getElementById(menuId);
-    const toggle = document.getElementById(toggleId);
-    if (menu) menu.classList.remove("open");
-    if (toggle) toggle.setAttribute("aria-expanded", "false");
-  });
+  const menu = document.getElementById("archiveMenu");
+  const toggle = document.getElementById("archiveToggle");
+  const submenu = document.getElementById("sbcMenu");
+  const submenuToggle = document.getElementById("sbcToggle");
+  if (menu) menu.classList.remove("open");
+  if (toggle) toggle.setAttribute("aria-expanded", "false");
+  if (submenu) submenu.classList.remove("open");
+  if (submenuToggle) submenuToggle.setAttribute("aria-expanded", "false");
 }
 
 (function initArchiveMenu() {
-  [["archiveToggle", "archiveMenu"], ["sbcToggle", "sbcMenu"]].forEach(([toggleId, menuId]) => {
-    const toggle = document.getElementById(toggleId);
-    const menu = document.getElementById(menuId);
-    if (!toggle || !menu) return;
-    toggle.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const wasOpen = menu.classList.contains("open");
-      closeArchiveMenu();
-      if (!wasOpen) {
-        menu.classList.add("open");
-        toggle.setAttribute("aria-expanded", "true");
-      }
-    });
+  const toggle = document.getElementById("archiveToggle");
+  const menu = document.getElementById("archiveMenu");
+  const submenuToggle = document.getElementById("sbcToggle");
+  const submenu = document.getElementById("sbcMenu");
+  if (!toggle || !menu) return;
+  toggle.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const wasOpen = menu.classList.contains("open");
+    closeArchiveMenu();
+    if (!wasOpen) {
+      menu.classList.add("open");
+      toggle.setAttribute("aria-expanded", "true");
+    }
   });
+  if (submenuToggle && submenu) {
+    submenuToggle.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const open = submenu.classList.toggle("open");
+      submenuToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    });
+  }
   document.addEventListener("click", (e) => {
-    const menus = [document.getElementById("archiveMenu"), document.getElementById("sbcMenu")];
-    const toggles = [document.getElementById("archiveToggle"), document.getElementById("sbcToggle")];
-    if (!menus.some(m => m && m.contains(e.target)) && !toggles.includes(e.target)) closeArchiveMenu();
+    if (!menu.contains(e.target) && e.target !== toggle) closeArchiveMenu();
   });
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeArchiveMenu();
   });
 })();
-
 
 
 // ---- Connections tab: shared editable names, categories, blurbs, contacts + added people (Supabase) ----
